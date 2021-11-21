@@ -1,0 +1,19 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+{% if form.instance.pk %}
+<h1>Edit Song "{{ form.instance.title }}"</h1>
+{% else %}
+<h1>Add Song</h1>
+{% endif %}
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <button type="submit" name="_addanother" value="_addanother">Save and Add Another</button>
+</form>
+
+{% endblock content %}

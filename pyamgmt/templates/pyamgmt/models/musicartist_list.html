@@ -1,0 +1,27 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}MusicArtist{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>MusicArtist ({{ qs_musicartist.count }})</h1>
+    <a href="{% url 'pyamgmt:musicartist:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        {% for musicartist in qs_musicartist %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicartist:detail' musicartist.pk %}">{{ musicartist.pk }}</a></td>
+            <td>{{ musicartist.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

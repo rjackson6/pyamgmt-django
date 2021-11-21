@@ -1,0 +1,52 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Person{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <a href="{% url 'pyamgmt:person:list' %}">Back to list</a>
+    <h1>Person</h1>
+    <a href="{% url 'pyamgmt:person:edit' person.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ person.pk }}</td>
+        </tr>
+        <tr>
+            <th>First Name</th>
+            <td>{{ person.first_name }}</td>
+        </tr>
+        <tr>
+            <th>Middle Name</th>
+            <td>{{ person.middle_name }}</td>
+        </tr>
+        <tr>
+            <th>Last Name</th>
+            <td>{{ person.last_name }}</td>
+        </tr>
+        <tr>
+            <th>Age</th>
+            <td>{{ person.age }}</td>
+        </tr>
+        <tr>
+            <th>Date of Birth</th>
+            <td>{{ person.date_of_birth }}</td>
+        </tr>
+        {% if person.date_of_death %}
+        <tr>
+            <th>Date of Death</th>
+            <td>{{ person.date_of_death }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>Notes</th>
+            <td>{{ person.notes }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock content %}

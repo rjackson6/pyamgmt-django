@@ -1,0 +1,102 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block extra_css %}
+
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static SELECT2_CSS_URL %}">
+
+{% endblock extra_css %}
+
+
+{% block extra_css_style %}
+
+<style>
+    #content * {
+        min-height: 1em;
+        min-width: 1em;
+    }
+    #txn-entry {
+        border: 1px solid darkred;
+    }
+    #txn-entry + #txn-register {
+        margin-top: 2ex;
+    }
+    #txn-register {
+        border: 1px solid blue;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .amount {
+        text-align: right;
+    }
+    .amount.increase {
+        color: darkgreen;
+    }
+    .amount.decrease {
+        color: darkred;
+    }
+    .txn {
+        border: 1px solid steelblue;
+    }
+    .txn:nth-child(2n) {
+        background-color: gainsboro;
+    }
+    .line-items {
+        border: 1px solid dimgrey;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .line-item {
+
+    }
+    div.header {
+        font-weight: bold;
+    }
+</style>
+
+{% endblock extra_css_style %}
+
+
+{% block content %}
+
+<h1>Transaction Register</h1>
+<div id="txn-entry">{# JS #}</div>
+<div id="txn-register">
+    {% for txn in txns %}
+    <div class="txn">
+        <div class="txn-info">
+            <div>{{ txn.txn_date }}</div>
+            <div>{{ txn.payee.name }}</div>
+        </div>
+        <div class="line-items">
+            <div class="header">Account</div>
+            <div class="header">Debit</div>
+            <div class="header">Credit</div>
+            {% for line_item in txn.line_items.all %}
+            <div class="account">{{ line_item.account }}</div>
+            {% if line_item.debit is True %}
+            <div class="amount debit{% if line_item.debit == line_item.account.debit_increase %} increase{% else %} decrease{% endif %}">{{ line_item.amount|floatformat:2 }}</div>
+            <div class="amount credit"></div>
+            {% else %}
+            <div class="amount debit"></div>
+            <div class="amount credit{% if line_item.debit == line_item.account.debit_increase %} increase{% else %} decrease{% endif %}">{{ line_item.amount|floatformat:2 }}</div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}
+
+
+{% block javascript %}
+
+<script type="text/javascript" src="{% static JQUERY_JS_URL %}"></script>
+<script type="text/javascript" src="{% static SELECT2_JS_URL %}"></script>
+<script type="text/javascript" src="{% static 'pyamgmt/js/txn_register.js' %}"></script>
+
+{% endblock javascript %}

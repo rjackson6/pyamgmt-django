@@ -1,0 +1,54 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AccountAssetReal{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>AccountAssetReal</h1>
+    <a href="{% url 'pyamgmt:accountassetreal:edit' accountassetreal.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th rowspan="4">Account</th>
+            <th>ID</th>
+            <td class="primary-key">{{ accountassetreal.pk }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ accountassetreal.accountasset.account.name }}</td>
+        </tr>
+        <tr>
+            <th>Subtype</th>
+            <td>{{ accountassetreal.accountasset.account.subtype }}</td>
+        </tr>
+        <tr>
+            <th>Parent Account</th>
+            <td>{{ accountassetreal.accountasset.account.parent_account }}</td>
+        </tr>
+        <tr>
+            <th>AccountAsset</th>
+            <th>Subtype</th>
+            <td>{{ accountassetreal.accountasset.subtype }}</td>
+        </tr>
+        <tr>
+            <th>AccountAssetReal</th>
+            <th>Asset</th>
+            <td>{{ accountassetreal.asset }}</td>
+        </tr>
+    </table>
+</div>
+
+<h2>Asset Information</h2>
+{% with accountassetreal.asset as asset %}
+<table>
+    <tr>
+        <th>Asset</th>
+        <td>{{ asset.pk }}</td>
+    </tr>
+</table>
+{% endwith %}
+
+{% endblock content %}

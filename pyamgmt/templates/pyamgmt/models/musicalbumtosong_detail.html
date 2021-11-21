@@ -1,0 +1,56 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}MusicAlbumToSong{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>MusicAlbumToSong</h1>
+    <p class="doc-string">{{ musicalbumtosong|doc }}</p>
+    <a href="{% url 'pyamgmt:musicalbumtosong:edit' musicalbumtosong.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ musicalbumtosong.pk }}</td>
+        </tr>
+        <tr>
+            <th>MusicAlbum</th>
+            <td><a href="{% url 'pyamgmt:musicalbum:detail' musicalbumtosong.musicalbum.pk %}">{{ musicalbumtosong.musicalbum }}</a></td>
+        </tr>
+        <tr>
+            <th>Song</th>
+            <td><a href="{% url 'pyamgmt:song:detail' musicalbumtosong.song.pk %}">{{ musicalbumtosong.song }}</a></td>
+        </tr>
+        <tr>
+            <th>Disc Number</th>
+            <td>{{ musicalbumtosong.disc_number }}</td>
+        </tr>
+        <tr>
+            <th>Track Number</th>
+            <td>{{ musicalbumtosong.track_number }}</td>
+        </tr>
+    </table>
+</div>
+
+{% with musicalbumtosong.musicalbum as musicalbum %}
+<table>
+    <tr>
+        <th>MusicAlbum</th>
+        <td>{{ musicalbum.pk }}</td>
+    </tr>
+</table>
+{% endwith %}
+
+{% with musicalbumtosong.song as song %}
+<table>
+    <tr>
+        <th>Song</th>
+        <td>{{ song.pk }}</td>
+    </tr>
+</table>
+{% endwith %}
+
+{% endblock content %}

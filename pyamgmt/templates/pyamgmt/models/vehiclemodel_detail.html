@@ -1,0 +1,49 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}VehicleModel{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>VehicleModel</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td>{{ vehiclemodel.pk }}</td>
+        </tr>
+        <tr>
+            <th>Make</th>
+            <td><a href="{% url 'pyamgmt:vehiclemake:detail' vehiclemodel.vehiclemake.pk %}">{{ vehiclemodel.vehiclemake.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ vehiclemodel.name }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="model-related">
+    <h2>VehicleTrim</h2>
+    <a href="{% url 'pyamgmt:vehiclemodel:add-vehicletrim' vehiclemodel.pk %}">Add VehicleTrim for this model</a>
+    {% if qs_vehicletrim %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Trim</th>
+        </tr>
+        {% for vehicletrim in qs_vehicletrim %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:vehicletrim:detail' vehicletrim.pk %}">{{ vehicletrim.pk }}</a></td>
+            <td>{{ vehicletrim.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No related VehicleTrim records.</p>
+    {% endif %}
+</div>
+
+{% endblock content %}

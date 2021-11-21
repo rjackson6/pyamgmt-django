@@ -1,0 +1,33 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Unit{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>Unit</h1>
+    <a href="{% url 'pyamgmt:unit:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>System</th>
+            <th>Dimension</th>
+            <th>Name</th>
+            <th>Abbr</th>
+        </tr>
+        {% for unit in qs_unit %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:unit:detail' unit.pk %}">{{ unit.pk }}</a></td>
+            <td>{{ unit.system }}</td>
+            <td>{{ unit.dimension }}</td>
+            <td>{{ unit.name }}</td>
+            <td>{{ unit.abbr }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,23 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+{% block title %}MusicArtistToPerson{% endblock title %}
+
+{% block content %}
+<h1>MusicArtistToPerson</h1>
+{#<a href="{% url 'pyamgmt:music-artist-to-person:add' %}">Add</a>#}
+<table>
+    <tr>
+        <th>ID</th>
+        <th>MusicArtist</th>
+        <th>Person</th>
+    </tr>
+    {% for musicartisttoperson in qs_musicartisttoperson %}
+    <tr>
+        <td class="primary-key"><a href="{% url 'pyamgmt:musicartisttoperson:detail' musicartisttoperson.pk %}">{{ musicartisttoperson.pk }}</a></td>
+        <td>{{ musicartisttoperson.musicartist }}</td>
+        <td>{{ musicartisttoperson.person }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}

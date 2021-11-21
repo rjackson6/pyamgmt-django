@@ -1,0 +1,29 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}PointOfSaleLineItem{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>PointOfSaleLineItem</h1>
+    <a href="{% url 'pyamgmt:pointofsalelineitem:add' %}">Add</a>
+    <table class="model-list__table">
+        <tr>
+            <th>ID</th>
+            <th>Subtype</th>
+            <th>PointOfSale</th>
+        </tr>
+        {% for pointofsalelineitem in qs_pointofsalelineitem %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:pointofsalelineitem:detail' pointofsalelineitem.pk %}">{{ pointofsalelineitem.pk }}</a></td>
+            <td>{{ pointofsalelineitem.subtype }}</td>
+            <td><a href="{% url 'pyamgmt:pointofsale:detail' pointofsalelineitem.pointofsale_id %}">{{ pointofsalelineitem.pointofsale }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

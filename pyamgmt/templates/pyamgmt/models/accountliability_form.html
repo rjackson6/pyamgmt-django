@@ -1,0 +1,14 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ form_account.as_p }}
+    {{ form_accountliability.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock content %}

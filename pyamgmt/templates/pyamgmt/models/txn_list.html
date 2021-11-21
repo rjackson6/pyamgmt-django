@@ -1,0 +1,35 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Txn{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>Txn</h1>
+    <a href="{% url 'pyamgmt:txn:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Payee</th>
+            <th>Balanced</th>
+            <th>Total Debits</th>
+            <th>Total Credits</th>
+        </tr>
+        {% for txn in qs_txn %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:txn:detail' txn.pk %}">{{ txn.pk }}</a></td>
+            <td>{{ txn.txn_date }}</td>
+            <td>{{ txn.payee }}</td>
+            <td>{{ txn.balanced }}</td>
+            <td>{{ txn.debits|floatformat:2 }}</td>
+            <td>{{ txn.credits|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,54 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AssetDiscreteVehicle{% endblock title %}
+
+
+{% block content %}
+
+<h1>AssetDiscreteVehicle</h1>
+<p class="doc-string">{{ assetdiscretevehicle|doc }}</p>
+<ul>
+    {% for field in assetdiscretevehicle|fields %}
+    <li>{{ field }}</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'pyamgmt:assetdiscretevehicle:edit' assetdiscretevehicle.pk %}">Edit</a>
+<table>
+    {# Asset #}
+    <tr>
+        <th rowspan="3">Asset</th>
+        <th>ID</th>
+        <td>{{ assetdiscretevehicle.pk }}</td>
+    </tr>
+    <tr>
+        <th>Subtype</th>
+        <td>{{ assetdiscretevehicle.assetdiscrete.asset.subtype }}</td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>{{ assetdiscretevehicle.assetdiscrete.asset.description }}</td>
+    </tr>
+    {# AssetDiscrete #}
+    <tr>
+        <th rowspan="3">AssetDiscrete</th>
+        <th>Subtype</th>
+        <td>{{ assetdiscretevehicle.assetdiscrete.subtype }}</td>
+    </tr>
+    <tr>
+        <th>Date Acquired</th>
+        <td>{{ assetdiscretevehicle.assetdiscrete.date_acquired }}</td>
+    </tr>
+    <tr>
+        <th>Date Withdrawn</th>
+        <td>{{ assetdiscretevehicle.assetdiscrete.date_withdrawn }}</td>
+    </tr>
+    {# Vehicle #}
+    <tr>
+        <th>Vehicle</th>
+        <th>Vehicle</th>
+        <td><a href="{% url 'pyamgmt:vehicle:detail' assetdiscretevehicle.vehicle_id %}">{{ assetdiscretevehicle.vehicle }}</a></td>
+    </tr>
+</table>
+{% endblock content %}

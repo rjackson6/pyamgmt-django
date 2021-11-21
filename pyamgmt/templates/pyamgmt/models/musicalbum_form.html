@@ -1,0 +1,41 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block css_3p %}
+<link rel="stylesheet" type="text/css" href="{% static SELECT2_CSS_URL %}">
+{% endblock css_3p %}
+
+
+{% block content %}
+
+{% if form.instance.pk %}
+<h1>Edit MusicAlbum</h1>
+{% else %}
+<h1>Add MusicAlbum</h1>
+{% endif %}
+<!-- form method="post" class="form" style="border: 1px solid red;">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">Submit</button>
+</form -->
+<form method="post" class="deform" id="my-form">{% csrf_token %}</form>
+
+{% endblock content %}
+
+
+{% block javascript %}
+
+<script type="text/javascript" src="{% static 'deform/js/deform.js' %}"></script>
+{{ deform|json_script:"deform" }}
+<script>
+let deform;
+docReady(function(){
+    deform = JSON.parse(document.getElementById('deform').textContent);
+    let form = document.getElementById('my-form');
+    DEFORM.parseForm(form, deform);
+    console.log(deform);
+});
+</script>
+
+{% endblock javascript %}

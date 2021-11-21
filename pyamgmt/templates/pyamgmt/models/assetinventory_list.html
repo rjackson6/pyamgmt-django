@@ -1,0 +1,28 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AssetInventory{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>AssetInventory</h1>
+    <p>{{ qs_assetinventory.model|doc }}</p>
+    {#<a href="{% url 'pyamgmt:asset-inventory:add' %}">Add</a>#}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Description</th>
+        </tr>
+        {% for assetinventory in qs_assetinventory %}
+        <tr>
+            <td>{{ assetinventory.pk }}</td>
+            <td>{{ assetinventory.asset.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

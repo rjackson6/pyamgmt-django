@@ -1,0 +1,25 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}CatalogueItemMusicAlbum{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>CatalogueItemMusicAlbum</h1>
+    <a href="{% url 'pyamgmt:catalogueitemmusicalbum:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+        </tr>
+        {% for catalogueitemmusicalbum in qs_catalogueitemmusicalbum %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:catalogueitemmusicalbum:detail' catalogueitemmusicalbum.pk %}">{{ catalogueitemmusicalbum.pk }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

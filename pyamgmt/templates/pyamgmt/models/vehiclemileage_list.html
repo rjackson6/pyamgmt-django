@@ -1,0 +1,23 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}VehicleMileage{% endblock title %}
+
+
+{% block content %}
+
+<h1>VehicleMileage</h1>
+<a href="{% url 'pyamgmt:vehiclemileage:add' %}">Add</a>
+<table>
+    <tr>
+        <th>ID</th>
+    </tr>
+    {% for vehiclemileage in qs_vehiclemileage %}
+    <tr>
+        <td class="primary-key"><a href="{% url 'pyamgmt:vehiclemileage:detail' vehiclemileage.pk %}">{{ vehiclemileage.pk }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock content %}

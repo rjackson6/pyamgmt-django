@@ -1,0 +1,8 @@
+/__pycache__/
+/etc/
+/node_modules/
+/pyamgmt/fixtures/
+/var/
+/venv/
+/db.sqlite3
+*.pyc

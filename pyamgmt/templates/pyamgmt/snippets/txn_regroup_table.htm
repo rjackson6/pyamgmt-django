@@ -1,0 +1,30 @@
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>LineItems</th>
+    </tr>
+    {% regroup qs_txnlineitem by txn as txn_group %}
+    {% for txn, line_items in txn_group %}
+    <tr>
+        <td>{{ txn.id }}</td>
+        <td>{{ txn.txn_date }}</td>
+        <td>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Amount</th>
+                    <th>Debit</th>
+                </tr>
+                {% for line_item in line_items %}
+                <tr>
+                    <td>{{ line_item.id }}</td>
+                    <td>{{ line_item.amount|floatformat:2 }}</td>
+                    <td>{{ line_item.debit }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

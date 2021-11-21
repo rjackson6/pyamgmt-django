@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+{% load static %}
+{% comment %}
+Blocks:
+- head
+  - css_3p
+  - extra_css
+  - extra_css_style
+- body
+  - header
+  - nav
+  - content
+  - footer
+- core_javascript
+- csrf_cookie
+- javascript_3p
+- javascript
+
+{% endcomment %}
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <title>{% block title %}Home{% endblock title %}</title>
+    <link type="text/css" rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    {% block css_3p %}{% endblock css_3p %}
+    {% block extra_css %}{% endblock extra_css %}
+    {% block extra_css_style %}{% endblock extra_css_style %}
+    {% endblock head %}
+</head>
+<body>
+{% block body %}
+{# HEADER #}
+<header id="header">{% block header %}{% endblock header %}</header>
+
+{# NAV #}
+<nav id="nav">{% block nav %}{% endblock nav %}</nav>
+
+{# CONTENT #}
+<div id="content">
+    {% block breadcrumbs %}{% endblock breadcrumbs %}
+    {% block content %}
+    <div>No content for block content!</div>
+    {% endblock content %}
+</div>
+
+{# FOOTER #}
+<footer id="footer">{% block footer %}{% endblock footer %}</footer>
+{% endblock body %}
+
+{% block core_javascript %}
+<script type="text/javascript" src="{% static 'core/js/core.js' %}"></script>
+{% endblock core_javascript %}
+
+{% block csrf_cookie %}
+<script type="text/javascript" src="{% static 'core/js/csrf.js' %}"></script>
+{% endblock csrf_cookie %}
+
+{% block javascript_3p %}
+{% endblock javascript_3p %}
+
+{% block javascript %}
+{% endblock javascript %}
+</body>
+</html>

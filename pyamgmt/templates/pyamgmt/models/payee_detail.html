@@ -1,0 +1,21 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Payee{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>Payee</h1>
+    <a href="{% url 'pyamgmt:payee:edit' payee.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ payee.pk }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock content %}

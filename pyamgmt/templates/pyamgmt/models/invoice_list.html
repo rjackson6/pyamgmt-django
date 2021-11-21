@@ -1,0 +1,34 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Invoice{% endblock title %}
+
+
+{% block breadcrumbs %}
+<div>
+    <a href="{% url 'pyamgmt:home' %}">Home</a>
+    <span> &rarr; </span>
+    <span>Invoice</span>
+</div>
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>Invoice</h1>
+    <p>{{ qs_invoice.model|doc }}</p>
+    <table class="model-list__table">
+        <tr>
+            <th>ID</th>
+        </tr>
+        {% for invoice in qs_invoice %}
+        <tr>
+            <td>{{ invoice.pk }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

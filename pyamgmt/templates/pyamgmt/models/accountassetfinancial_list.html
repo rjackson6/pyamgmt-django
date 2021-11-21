@@ -1,0 +1,45 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AccountAssetFinancial{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>AccountAssetFinancial</h1>
+    <p>{{ qs_accountassetfinancial.model|doc }}</p>
+    <a href="{% url 'pyamgmt:accountassetfinancial:add' %}">Add</a>
+    <table>
+        <tr>
+            <th colspan="4">Account</th>
+            <th colspan="1">AccountAsset</th>
+            <th colspan="1">AccountAssetFinancial</th>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Subtype</th>
+            <th>Parent Account</th>
+
+            <th>Subtype</th>
+
+            <th>Account Number</th>
+        </tr>
+        {% for accountassetfinancial in qs_accountassetfinancial %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:accountassetfinancial:detail' accountassetfinancial.pk %}">{{ accountassetfinancial.pk }}</a></td>
+            <td>{{ accountassetfinancial.accountasset.account.name }}</td>
+            <td>{{ accountassetfinancial.accountasset.account.subtype }}</td>
+            <td>{{ accountassetfinancial.accountasset.account.parent_account }}</td>
+
+            <td>{{ accountassetfinancial.accountasset.subtype }}</td>
+
+            <td>{{ accountassetfinancial.account_number }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

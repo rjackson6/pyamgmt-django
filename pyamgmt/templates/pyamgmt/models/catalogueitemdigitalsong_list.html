@@ -1,0 +1,45 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}CatalogueItemDigitalSong{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>CatalogueItemDigitalSong</h1>
+    {#<a href="{% url 'pyamgmt:catalogue-item-digital-song:add' %}">Add</a>#}
+    <table>
+        <tr>
+            <th colspan="7">CatalogueItem</th>
+            <th>CatalogueItemDigitalSong</th>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Subtype</th>
+            <th>Name</th>
+            <th>ASIN</th>
+            <th>ISBN</th>
+            <th>ISBN13</th>
+            <th>UPC</th>
+
+            <th></th>
+        </tr>
+        {% for catalogueitemdigitalsong in qs_catalogueitemdigitalsong %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:catalogueitemdigitalsong:detail' catalogueitemdigitalsong.pk %}">{{ catalogueitemdigitalsong }}</a></td>
+            <td>{{ catalogueitemdigitalsong.catalogue_item.subtype }}</td>
+            <td>{{ catalogueitemdigitalsong.catalogue_item.name }}</td>
+            <td>{{ catalogueitemdigitalsong.catalogue_item.asin }}</td>
+            <td>{{ catalogueitemdigitalsong.catalogue_item.isbn }}</td>
+            <td>{{ catalogueitemdigitalsong.catalogue_item.isbn_13 }}</td>
+            <td>{{ catalogueitemdigitalsong.catalogue_item.upc }}</td>
+
+            <td></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

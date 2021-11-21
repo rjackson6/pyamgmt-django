@@ -1,0 +1,85 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}CatalogueItemToPointOfSaleLineItem{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>CatalogueItemToPointOfSaleLineItem</h1>
+    <a href="{% url 'pyamgmt:catalogueitemtopointofsalelineitem:edit' catalogueitemtopointofsalelineitem.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ catalogueitemtopointofsalelineitem.pk }}</td>
+        </tr>
+        <tr>
+            <th>CatalogueItem</th>
+            <td>{{ catalogueitemtopointofsalelineitem.catalogueitem }}</td>
+        </tr>
+        <tr>
+            <th>Quantity</th>
+            <td>{{ catalogueitemtopointofsalelineitem.quantity }}</td>
+        </tr>
+        <tr>
+            <th>Unit</th>
+            <td>{{ catalogueitemtopointofsalelineitem.unit.name }}</td>
+        </tr>
+        <tr>
+            <th>Unit Price</th>
+            <td>{{ catalogueitemtopointofsalelineitem.unit_price }}</td>
+        </tr>
+        <tr>
+            <th>Price</th>
+            <td>{{ catalogueitemtopointofsalelineitem.price }}</td>
+        </tr>
+    </table>
+</div>
+
+{% with catalogueitemtopointofsalelineitem.catalogueitem as catalogueitem %}
+<div class="model-related">
+    <h2>CatalogueItem</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key"><a href="{% url 'pyamgmt:catalogueitem:detail' catalogueitem.pk %}">{{ catalogueitem.pk }}</a></td>
+        </tr>
+        <tr>
+            <th>Subtype</th>
+            <td>{{ catalogueitem.subtype }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ catalogueitem.name }}</td>
+        </tr>
+        <tr>
+            <th>ASIN</th>
+            <td>{{ catalogueitem.asin }}</td>
+        </tr>
+    </table>
+</div>
+{% endwith %}
+
+{% with catalogueitemtopointofsalelineitem.pointofsalelineitem as pointofsalelineitem %}
+<div class="model-related">
+    <h2>PointOfSaleLineItem</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key"><a href="{% url 'pyamgmt:pointofsalelineitem:detail' pointofsalelineitem.pk %}">{{ pointofsalelineitem.pk }}</a></td>
+        </tr>
+        <tr>
+            <th>Subtype</th>
+            <td>{{ pointofsalelineitem.subtype }}</td>
+        </tr>
+        <tr>
+            <th>Short Memo</th>
+            <td>{{ pointofsalelineitem.short_memo }}</td>
+        </tr>
+    </table>
+</div>
+{% endwith %}
+
+{% endblock content %}

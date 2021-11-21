@@ -1,0 +1,110 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}MusicArtist{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>MusicArtist</h1>
+    <a href="{% url 'pyamgmt:musicartist:edit' musicartist.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ musicartist.pk }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ musicartist.name }}</td>
+        </tr>
+        <tr>
+            <th>Website</th>
+            <td>{{ musicartist.website }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="model-related">
+    <h2>Activity</h2>
+    <a>Add Activity Record</a>
+    {% if activities %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Year Active</th>
+            <th>Year Inactive</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    {% endif %}
+</div>
+
+<div class="model-related">
+    <h2>Related Persons</h2>
+    {% if qs_musicartisttoperson %}
+    <table class="model-related__table">
+        <tr>
+            <th>ID</th>
+            <th>PersonID</th>
+            <th>Name</th>
+        </tr>
+        {% for record in qs_musicartisttoperson %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicartisttoperson:detail' record.pk %}">{{ record.pk }}</a></td>
+            <td class="primary-key"><a href="{% url 'pyamgmt:person:detail' record.person.pk %}">{{ record.person.pk }}</a></td>
+            <td>{{ record.person.full_name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+
+<div class="model-related">
+    <h2>Music Albums</h2>
+    {% if qs_musicalbumtomusicartist %}
+    <table class="model-related__table">
+        <tr>
+            <th>ID</th>
+            <th>MusicAlbumID</th>
+            <th>Title</th>
+            <th>Year Produced</th>
+        </tr>
+        {% for record in qs_musicalbumtomusicartist %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbumtomusicartist:detail' record.pk %}">{{ record.pk }}</a></td>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbum:detail' record.musicalbum.pk %}">{{ record.musicalbum.pk }}</a></td>
+            <td>{{ record.musicalbum.title }}</td>
+            <td>{{ record.musicalbum.year_produced }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+
+<div class="model-related">
+    <h2>Songs</h2>
+    {% if qs_musicartisttosong %}
+    <table class="model-related__table">
+        <tr>
+            <th>M2MID</th>
+            <th>SongID</th>
+            <th>Title</th>
+        </tr>
+        {% for record in qs_musicartisttosong %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicartisttosong:detail' record.pk %}">{{ record.pk }}</a></td>
+            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' record.song.pk %}">{{ record.song.pk }}</a></td>
+            <td>{{ record.song.title }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+
+{% endblock content %}

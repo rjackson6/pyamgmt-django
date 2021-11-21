@@ -1,0 +1,28 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<form id="form" method="post" class="form">
+    {% csrf_token %}
+{#    {{ form }}#}
+{#    <button type="submit">Submit</button>#}
+</form>
+
+{% endblock content %}
+
+
+{% block javascript %}
+
+<script type="text/javascript" src="{% static 'deform/js/deform.js' %}"></script>
+{{ form.as_dict|json_script:"deform" }}
+<script>
+docReady(function(){
+    let form = document.getElementById('form');
+    let deform = JSON.parse(document.getElementById('deform').textContent);
+    DEFORM.parseForm(form, deform);
+});
+</script>
+
+{% endblock javascript %}

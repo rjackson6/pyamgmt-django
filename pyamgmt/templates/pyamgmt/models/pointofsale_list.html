@@ -1,0 +1,31 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}PointOfSale{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>PointOfSale</h1>
+    <a href="{% url 'pyamgmt:pointofsale:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Party</th>
+            <th>Date</th>
+            <th>Time</th>
+        </tr>
+        {% for pointofsale in qs_pointofsale %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:pointofsale:detail' pointofsale.pk %}">{{ pointofsale.pk }}</a></td>
+            <td>{{ pointofsale.party }}</td>
+            <td>{{ pointofsale.pointofsale_date }}</td>
+            <td>{{ pointofsale.pointofsale_time }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

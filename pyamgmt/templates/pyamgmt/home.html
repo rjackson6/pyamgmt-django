@@ -1,0 +1,102 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block breadcrumbs %}
+<div>
+    <span>Home</span>
+</div>
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+
+<h1>Asset Management</h1>
+<div style="display: flex;">
+    <div>
+        <h2>Models</h2>
+        {% include 'pyamgmt/snippets/models_ul.htm' %}
+    </div>
+    <div>
+        <h2>M2M Models</h2>
+        <ul>
+            <li>
+                CatalogueItem
+                <ul>
+                    <li><a>CatalogueItemToInvoiceLineItem</a></li>
+                    <li><a>CatalogueItemToOrderLineItem</a></li>
+                    <li><a href="{% url 'pyamgmt:catalogueitemtopointofsalelineitem:list' %}">CatalogueItemToPointOfSaleLineItem</a></li>
+                </ul>
+            </li>
+            <li>
+                InvoiceLineItem
+                <ul>
+                    <li><a>CatalogueItemToInvoiceLineItem</a></li>
+                    <li><a>InvoiceLineItemToNonCatalogueItem</a></li>
+                </ul>
+            </li>
+            <li>
+                MusicAlbum
+                <ul>
+                    <li><a href="{% url 'pyamgmt:musicalbumtomusicartist:list' %}">MusicAlbumToMusicArtist</a></li>
+                    <li><a href="{% url 'pyamgmt:musicalbumtosong:list' %}">MusicAlbumToSong</a></li>
+                </ul>
+            </li>
+            <li>
+                MusicArtist
+                <ul>
+                    <li><a href="{% url 'pyamgmt:musicalbumtomusicartist:list' %}">MusicAlbumToMusicArtist</a></li>
+                    <li><a>MusicArtistToPerson</a></li>
+                    <li><a href="{% url 'pyamgmt:musicartisttosong:list' %}">MusicArtistToSong</a></li>
+                </ul>
+            </li>
+            <li>
+                NonCatalogueItem
+                <ul>
+                    <li><a>InvoiceLineItemToNonCatalogueItem</a></li>
+                </ul>
+            </li>
+            <li>
+                OrderLineItem
+                <ul>
+                    <li><a>CatalogueItemToOrderLineItem</a></li>
+                </ul>
+            </li>
+            <li>
+                Person
+                <ul>
+                    <li><a>MusicArtistToPerson</a></li>
+                </ul>
+            </li>
+            <li>
+                PointOfSale
+                <ul>
+                    <li><a>PointOfSaleToTxn</a></li>
+                </ul>
+            </li>
+            <li>
+                PointOfSaleLineItem
+                <ul>
+                    <li><a href="{% url 'pyamgmt:catalogueitemtopointofsalelineitem:list' %}">CatalogueItemToPointOfSaleLineItem</a></li>
+                </ul>
+            </li>
+            <li>
+                Song
+                <ul>
+                    <li><a href="{% url 'pyamgmt:musicalbumtosong:list' %}">MusicAlbumToSong</a></li>
+                    <li><a href="{% url 'pyamgmt:musicartisttosong:list' %}">MusicArtistToSong</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <h2>Available Models</h2>
+        <ul>
+            {% for model in models %}
+            <li>{{ model }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,38 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}CatalogueItem{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>CatalogueItem</h1>
+    <p class="doc-string">{{ qs_catalogueitem.model|doc }}</p>
+    <a href="{% url 'pyamgmt:catalogueitem:add' %}">Add</a>
+    <table class="model-list__table">
+        <tr>
+            <th>ID</th>
+            <th>Subtype</th>
+            <th>Name</th>
+            <th>ASIN</th>
+            <th>ISBN</th>
+            <th>ISBN13</th>
+            <th>UPC</th>
+        </tr>
+        {% for catalogueitem in qs_catalogueitem %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:catalogueitem:detail' catalogueitem.pk %}">{{ catalogueitem.pk }}</a></td>
+            <td>{{ catalogueitem.subtype }}</td>
+            <td>{{ catalogueitem.name }}</td>
+            <td>{{ catalogueitem.asin }}</td>
+            <td>{{ catalogueitem.isbn }}</td>
+            <td>{{ catalogueitem.isbn_13 }}</td>
+            <td>{{ catalogueitem.upc }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

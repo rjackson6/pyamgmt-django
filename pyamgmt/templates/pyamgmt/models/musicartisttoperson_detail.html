@@ -1,0 +1,32 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}MusicArtistToPerson{% endblock title %}
+
+
+{% block content %}
+<div class="model-detail">
+    <h1>MusicArtistToPerson</h1>
+    <a href="{% url 'pyamgmt:musicartisttoperson:edit' musicartisttoperson.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ musicartisttoperson.pk }}</td>
+        </tr>
+        <tr>
+            <th>MusicArtist</th>
+            <td>{{ musicartisttoperson.musicartist }}</td>
+        </tr>
+        <tr>
+            <th>Person</th>
+            <td>{{ musicartisttoperson.person }}</td>
+        </tr>
+        <tr>
+            <th>Active?</th>
+            <td>{{ musicartisttoperson.is_active }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock content %}

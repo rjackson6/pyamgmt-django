@@ -1,0 +1,33 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}VehicleMileage{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>VehicleMileage</h1>
+    <a href="{% url 'pyamgmt:vehiclemileage:edit' vehiclemileage.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th>ID</th>
+            <td>{{ vehiclemileage.pk }}</td>
+        </tr>
+        <tr>
+            <th>Odometer Date</th>
+            <td>{{ vehiclemileage.odometer_date }}</td>
+        </tr>
+        <tr>
+            <th>Odometer Time</th>
+            <td>{{ vehiclemileage.odometer_time }}</td>
+        </tr>
+        <tr>
+            <th>Odometer Miles</th>
+            <td>{{ vehiclemileage.odometer_miles }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock content %}

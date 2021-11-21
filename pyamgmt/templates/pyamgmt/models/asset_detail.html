@@ -1,0 +1,35 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Asset{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>Asset</h1>
+    <p class="doc-string">{{ asset|doc }}</p>
+    <ul>
+        {% for field in asset|fields %}
+        <li>{{ field }}</li>
+        {% endfor %}
+    </ul>
+    <table class="model-detail__table">
+        <tr>
+            <th rowspan="3">Asset</th>
+            <th>ID</th>
+            <td>{{ asset.pk }}</td>
+        </tr>
+        <tr>
+            <th>Subtype</th>
+            <td>{{ asset.subtype }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ asset.description }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,29 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}VehicleMake{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>VehicleMake</h1>
+    <a href="{% url 'pyamgmt:vehiclemake:add' %}">Add</a>
+    <table class="model-list__detail">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>VehicleModel Count</th>
+        </tr>
+        {% for vehiclemake in qs_vehiclemake %}
+        <tr class="record">
+            <td class="primary-key"><a href="{% url 'pyamgmt:vehiclemake:detail' vehiclemake.pk %}">{{ vehiclemake.pk }}</a></td>
+            <td>{{ vehiclemake.name }}</td>
+            <td>{{ vehiclemake.vehiclemodel_count }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

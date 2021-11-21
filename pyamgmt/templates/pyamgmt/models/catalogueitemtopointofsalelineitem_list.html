@@ -1,0 +1,35 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}CatalogueItemToPointOfSaleLineItem{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>CatalogueItemToPointOfSaleLineItem</h1>
+    <a href="{% url 'pyamgmt:catalogueitemtopointofsalelineitem:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>CatalogueItem</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Unit Price</th>
+            <th>Price</th>
+        </tr>
+        {% for catalogueitemtopointofsalelineitem in qs_catalogueitemtopointofsalelineitem %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:catalogueitemtopointofsalelineitem:detail' catalogueitemtopointofsalelineitem.pk %}">{{ catalogueitemtopointofsalelineitem.pk }}</a></td>
+            <td>{{ catalogueitemtopointofsalelineitem.catalogueitem }}</td>
+            <td>{{ catalogueitemtopointofsalelineitem.quantity|floatformat:3 }}</td>
+            <td>{{ catalogueitemtopointofsalelineitem.unit.name }}</td>
+            <td>{{ catalogueitemtopointofsalelineitem.unit_price|floatformat:3 }}</td>
+            <td>{{ catalogueitemtopointofsalelineitem.price|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

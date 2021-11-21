@@ -1,0 +1,42 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Song{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>Song</h1>
+    <a href="{% url 'pyamgmt:song:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Artist(s)</th>
+            <th>Duration</th>
+            <th>Cover</th>
+            <th>Lyrics</th>
+        </tr>
+        {% for song in qs_song %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' song.pk %}">{{ song.pk }}</a></td>
+            <td>{{ song.title }}</td>
+            <td>
+                {% for musicartisttosong in song.musicartisttosong_set.all %}
+                {{ musicartisttosong.musicartist.name }}
+                {% if not forloop.last %}
+                <br>
+                {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ song.duration }}</td>
+            <td>{{ song.is_cover }}</td>
+            <td>{{ song.lyrics|truncatewords:3 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

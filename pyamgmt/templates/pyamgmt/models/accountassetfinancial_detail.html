@@ -1,0 +1,46 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AccountAssetFinancial{% endblock title%}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>AccountAssetFinancial</h1>
+    <a href="{% url 'pyamgmt:accountassetfinancial:edit' accountassetfinancial.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th rowspan="3">Account</th>
+            <th>ID</th>
+            <td class="primary-key">{{ accountassetfinancial.pk }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ accountassetfinancial.accountasset.account.name }}</td>
+        </tr>
+        <tr>
+            <th>Parent Account</th>
+            <td>{{ accountassetfinancial.accountasset.account.parent_account }}</td>
+        </tr>
+        <tr>
+            <th>AccountAsset</th>
+            <th>Subtype</th>
+            <td>{{ accountassetfinancial.accountasset.subtype }}</td>
+        </tr>
+        <tr>
+            <th>AccountAssetFinancial</th>
+            <th>Account Number</th>
+            <td>{{ accountassetfinancial.account_number }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="model-related">
+    <h2>Transactions</h2>
+    <h3>Balance: {{ accountassetfinancial.accountasset.account.balance|floatformat:2 }}</h3>
+    {% include 'pyamgmt/snippets/txn_regroup_table.htm' %}
+</div>
+
+{% endblock content %}

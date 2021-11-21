@@ -1,0 +1,37 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Unit{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>Unit</h1>
+    <a href="{% url 'pyamgmt:unit:edit' unit.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ unit.pk }}</td>
+        </tr>
+        <tr>
+            <th>System</th>
+            <td>{{ unit.system }}</td>
+        </tr>
+        <tr>
+            <th>Dimension</th>
+            <td>{{ unit.dimension }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ unit.name }}</td>
+        </tr>
+        <tr>
+            <th>Abbr</th>
+            <td>{{ unit.abbr }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock content %}

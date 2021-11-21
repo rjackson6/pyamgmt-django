@@ -1,0 +1,29 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AccountLiability{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>AccountLiability</h1>
+    <a href="{% url 'pyamgmt:accountliability:edit' accountliability.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th>Name</th>
+            <td>{{ accountliability.account.name }}</td>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ accountliability.pk }}</td>
+        </tr>
+        <tr>
+            <th>Account Number</th>
+            <td>{{ accountliability.account_number }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock content %}

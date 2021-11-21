@@ -1,0 +1,53 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Txn{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>Txn</h1>
+    <a href="{% url 'pyamgmt:txn:edit' txn.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th>ID</th>
+            <td>{{ txn.pk }}</td>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <td>{{ txn.txn_date }}</td>
+        </tr>
+        <tr>
+            <th>Payee</th>
+            <td>{{ txn.payee }}</td>
+        </tr>
+        <tr>
+            <th>Reference Total</th>
+            <td>{{ txn.ref_total|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <th>Memo</th>
+            <td>{{ txn.memo }}</td>
+        </tr>
+    </table>
+</div>
+<div class="model-related">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Account</th>
+            <th>Amount</th>
+        </tr>
+        {% for txnlineitem in txn.line_items.all %}
+        <tr>
+            <td>{{ txnlineitem.pk }}</td>
+            <td>{{ txnlineitem.account }}</td>
+            <td>{{ txnlineitem.amount|floatformat:"2" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

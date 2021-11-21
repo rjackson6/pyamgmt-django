@@ -1,0 +1,30 @@
+/* Details for a single record */
+.model-detail {
+    border-color: green;
+    border-style: ridge;
+    border-width: 10px;
+}
+.model-detail__table {
+
+}
+
+.model-list {
+    border-color: dodgerblue;
+    border-style: ridge;
+    border-width: 10px;
+}
+.model-list__table {
+
+}
+
+/* List of related records */
+.model-related {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-color: orangered;
+    border-style: ridge;
+    border-width: 10px;
+}
+.model-related__table {
+
+}

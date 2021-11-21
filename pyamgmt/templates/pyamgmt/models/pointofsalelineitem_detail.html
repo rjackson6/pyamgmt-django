@@ -1,0 +1,50 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}PointOfSaleLineItem{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>PointOfSaleLineItem</h1>
+    <a href="{% url 'pyamgmt:pointofsalelineitem:edit' pointofsalelineitem.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ pointofsalelineitem.pk }}</td>
+        </tr>
+        <tr>
+            <th>Subtype</th>
+            <td>{{ pointofsalelineitem.subtype }}</td>
+        </tr>
+        <tr>
+            <th>Short Memo</th>
+            <td>{{ pointofsalelineitem.short_memo }}</td>
+        </tr>
+        {% if pointofsalelineitem.subtype == pointofsalelineitem.Subtype.CATALOGUE_ITEM %}
+        <tr>
+            <td colspan="2">---</td>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <td>{{ pointofsalelineitem.catalogueitemtopointofsalelineitem.pk }}</td>
+        </tr>
+        <tr>
+            <th>Quantity</th>
+            <td>{{ pointofsalelineitem.catalogueitemtopointofsalelineitem.quantity }}</td>
+        </tr>
+        <tr>
+            <th>Unit</th>
+            <td>{{ pointofsalelineitem.catalogueitemtopointofsalelineitem.unit }}</td>
+        </tr>
+        <tr>
+            <th>Unit Price</th>
+            <td>{{ pointofsalelineitem.catalogueitemtopointofsalelineitem.unit_price }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+{% endblock content %}

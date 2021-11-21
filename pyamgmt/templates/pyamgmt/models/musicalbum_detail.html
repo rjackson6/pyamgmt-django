@@ -1,0 +1,91 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}MusicAlbum{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>MusicAlbum</h1>
+    <ul style="display: none;">
+        {% for field in musicalbum|fields %}
+        <li>{{ field }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'pyamgmt:musicalbum:edit' musicalbum.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ musicalbum.pk }}</td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ musicalbum.title }}</td>
+        </tr>
+        <tr>
+            <th>MusicArtist(s)</th>
+            <td>
+                {% if musicalbum.musicartists %}
+                <ul>
+                    {% for musicartist in musicalbum.musicartists.all %}
+                    <li><a href="{% url 'pyamgmt:musicartist:detail' musicartist.pk %}">{{ musicartist.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                None?
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Total Discs</th>
+            <td>{{ musicalbum.total_discs }}</td>
+        </tr>
+        <tr>
+            <th>Total Tracks</th>
+            <td>{{ musicalbum.total_songs }}</td>
+        </tr>
+        <tr>
+            <th>Duration</th>
+            <td>{{ musicalbum.duration }}</td>
+        </tr>
+        <tr>
+            <th>Copyright</th>
+            <td>{{ musicalbum.year_copyright }}</td>
+        </tr>
+        <tr>
+            <th>Produced</th>
+            <td>{{ musicalbum.year_produced }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="model-related">
+    <h2>Tracks</h2>
+    <a href="{% url 'pyamgmt:musicalbum:add-song' musicalbum.pk %}">Add Track</a>
+    {% if qs_musicalbumtosong %}
+    <table class="model-related__table">
+        <tr>
+            <th>M2MID</th>
+            <th>SongID</th>
+            <th>Title</th>
+            <th>Disc Number</th>
+            <th>Track Number</th>
+            <th>Duration</th>
+        </tr>
+        {% for record in qs_musicalbumtosong %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbumtosong:detail' record.pk %}">{{ record.pk }}</a></td>
+            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' record.song.pk %}">{{ record.song.pk }}</a></td>
+            <td>{{ record.song.title }}</td>
+            <td>{{ record.disc_number }}</td>
+            <td>{{ record.track_number }}</td>
+            <td>{{ record.song.duration }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+
+{% endblock content %}

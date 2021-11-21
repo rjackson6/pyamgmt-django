@@ -1,0 +1,33 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+{% block title %}MusicAlbumToMusicArtist{% endblock title %}
+
+
+{% block breadcrumbs %}
+<div>
+    <a href="{% url 'pyamgmt:home' %}">Home</a>
+</div>
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+<div class="model-list">
+    <h1>MusicAlbumToMusicArtist ({{ qs_musicalbumtomusicartist.count }})</h1>
+    <a href="{% url 'pyamgmt:musicalbumtomusicartist:add' %}">Add</a>
+    <table class="model-list__table">
+        <tr>
+            <th>ID</th>
+            <th>MusicAlbum</th>
+            <th>MusicArtist</th>
+        </tr>
+        {% for musicalbumtomusicartist in qs_musicalbumtomusicartist %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbumtomusicartist:detail' musicalbumtomusicartist.pk %}">{{ musicalbumtomusicartist.pk }}</a></td>
+            <td>{{ musicalbumtomusicartist.musicalbum }}</td>
+            <td>{{ musicalbumtomusicartist.musicartist }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock content %}

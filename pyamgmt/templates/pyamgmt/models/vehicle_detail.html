@@ -1,0 +1,143 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Vehicle{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>Vehicle</h1>
+    <p class="doc-string">{{ vehicle|doc }}</p>
+    <a href="{% url 'pyamgmt:vehicle:edit' vehicle.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td>{{ vehicle.vehicleyear.pk }}</td>
+        </tr>
+        <tr>
+            <th>VIN</th>
+            <td class="monospace">{{ vehicle.vin }}</td>
+        </tr>
+        <tr>
+            <th>Make</th>
+            <td><a href="{% url 'pyamgmt:vehiclemake:detail' vehicle.vehicleyear.vehicletrim.vehiclemodel.vehiclemake.pk %}">{{ vehicle.vehicleyear.vehicletrim.vehiclemodel.vehiclemake.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Model</th>
+            <td><a href="{% url 'pyamgmt:vehiclemodel:detail' vehicle.vehicleyear.vehicletrim.vehiclemodel.pk %}">{{ vehicle.vehicleyear.vehicletrim.vehiclemodel.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Trim</th>
+            <td><a href="{% url 'pyamgmt:vehicletrim:detail' vehicle.vehicleyear.vehicletrim.pk %}">{{ vehicle.vehicleyear.vehicletrim.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Year</th>
+            <td><a href="{% url 'pyamgmt:vehicleyear:detail' vehicle.vehicleyear.pk %}">{{ vehicle.vehicleyear.year }}</a></td>
+        </tr>
+    </table>
+</div>
+
+<h2>Mileage Records</h2>
+<a href="{% url 'pyamgmt:vehicle:add-vehiclemileage' vehicle.pk %}">Add VehicleMileage Record</a>
+{% if vehiclemileage_records %}
+<div style="display: grid; grid-template-columns: 1fr 1fr; max-height: 50vh;">
+    <div class="table-wrapper" style="max-height: 50vh; overflow-y: auto;">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Odometer</th>
+            </tr>
+            {% for mileage_record in vehiclemileage_records %}
+            <tr>
+                <td><a href="{% url 'pyamgmt:vehiclemileage:detail' mileage_record.pk %}">{{ mileage_record.pk }}</a></td>
+                <td>{{ mileage_record.odometer_date }}</td>
+                <td>{{ mileage_record.odometer_time }}</td>
+                <td>{{ mileage_record.odometer_miles }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="plotly-mileage-chart" style="min-height: 400px;"></div>
+</div>
+{% else %}
+<p>No mileage readings recorded.</p>
+{% endif %}
+
+{% endblock content %}
+
+
+{% block javascript %}
+
+<script type="text/javascript" src="{% static PLOTLY_JS_URL %}"></script>
+{{ chart_data|json_script:'chart-data' }}
+{{ average_mileage|json_script:'average-mileage' }}
+{{ nhtsa_api_data|json_script:'nhtsa-api-data' }}
+<script>
+const chartMileage = function chartMileage(){
+    let odometer_miles = [],
+        odometer_date = [],
+        avg_start_date = [],
+        avg_mileage = [];
+    for (let i = 0; i < chart_data.length; i++) {
+        let record = chart_data[i];
+        odometer_miles.push(record['odometer_miles']);
+        odometer_date.push(record['odometer_date']);
+    }
+    for (let i = 0; i < avg_data.length; i++) {
+        let record = avg_data[i];
+        avg_start_date.push(record['end_date']);
+        avg_mileage.push(record['daily_average']);
+    }
+    let data = [
+        {
+            name: 'Total Miles',
+            type: 'scatter',
+            x: odometer_date,
+            y: odometer_miles
+        },
+        {
+            name: 'Daily Avg',
+            type: 'scatter',
+            x: avg_start_date,
+            y: avg_mileage,
+            yaxis: 'y2',
+            fill: 'tozeroy'
+        }
+    ];
+    let layout = {
+        title: 'Mileage',
+        xaxis: {
+            title: 'Date',
+            // fixedrange: true  // also disables zoom through that axis
+
+        },
+        yaxis: {
+            title: 'Odometer',
+            overlaying: 'y2'
+        },
+        yaxis2: {
+            title: 'Daily Avg',
+            //overlaying: 'y',
+            side: 'right'
+        }
+    };
+    Plotly.newPlot('plotly-mileage-chart', data, layout, {responsive: true, scrollZoom: true});
+};
+
+let chart_data, avg_data, nhtsa_api_data;
+
+docReady(function(){
+    chart_data = JSON.parse(document.getElementById('chart-data').textContent);
+    avg_data = JSON.parse(document.getElementById('average-mileage').textContent);
+    nhtsa_api_data = JSON.parse(document.getElementById('nhtsa-api-data').textContent)
+    if (chart_data.length > 1) {
+        chartMileage();
+    }
+});
+</script>
+
+{% endblock javascript %}

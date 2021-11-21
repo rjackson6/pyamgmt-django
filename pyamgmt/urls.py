@@ -1,0 +1,408 @@
+from django.urls import include, path
+
+import pyamgmt.views
+
+app_name = 'pyamgmt'
+
+_account_urls = ([
+    path('', pyamgmt.views.models.account_list, name='list'),
+    path('add/', pyamgmt.views.models.account_form, name='add'),
+    path('<int:account_pk>/', include([
+        path('', pyamgmt.views.models.account_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.account_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_accountasset_urls = ([
+    path('', pyamgmt.views.models.accountasset_list, name='list'),
+    path('add/', pyamgmt.views.models.accountasset_form, name='add'),
+    path('<int:accountasset_pk>/', include([
+        path('', pyamgmt.views.models.accountasset_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.accountasset_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_accountassetfinancial_urls = ([
+    path('', pyamgmt.views.models.accountassetfinancial_list, name='list'),
+    path('add/', pyamgmt.views.models.accountassetfinancial_form, name='add'),
+    path('<int:accountassetfinancial_pk>/', include([
+        path('', pyamgmt.views.models.accountassetfinancial_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.accountassetfinancial_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_accountassetreal_urls = ([
+    path('', pyamgmt.views.models.accountassetreal_list, name='list'),
+    path('add/', pyamgmt.views.models.accountassetreal_form, name='add'),
+    path('<int:accountassetreal_pk>/', include([
+        path('', pyamgmt.views.models.accountassetreal_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.accountassetreal_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_accountexpense_urls = ([
+    path('', pyamgmt.views.models.accountexpense_list, name='list'),
+    path('add/', pyamgmt.views.models.accountexpense_form, name='add'),
+    path('<int:accountexpense_pk>/', include([
+        path('', pyamgmt.views.models.accountexpense_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.accountexpense_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_accountincome_urls = ([
+    path('', pyamgmt.views.models.accountincome_list, name='list'),
+    path('add/', pyamgmt.views.models.accountincome_form, name='add'),
+    path('<int:accountincome_pk>/', include([
+        path('', pyamgmt.views.models.accountincome_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.accountincome_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_accountliability_urls = ([
+    path('', pyamgmt.views.models.accountliability_list, name='list'),
+    path('add/', pyamgmt.views.models.accountliability_form, name='add'),
+    path('<int:accountliability_pk>/', include([
+        path('', pyamgmt.views.models.accountliability_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.accountliability_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_asset_urls = ([
+    path('', pyamgmt.views.models.asset_list, name='list'),
+    # path('add/', pyamgmt.views.models.asset_form, name='add'),
+    path('<int:asset_pk>/', include([
+        path('', pyamgmt.views.models.asset_detail, name='detail'),
+        # path('edit/', pyamgmt.views.models.asset_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_assetdiscrete_urls = ([
+    path('', pyamgmt.views.models.assetdiscrete_list, name='list'),
+    path('<int:assetdiscrete_pk>/', include([
+        path('', pyamgmt.views.models.assetdiscrete_detail, name='detail')
+    ]))
+], 'pyamgmt')
+
+_assetdiscretevehicle_urls = ([
+    path('', pyamgmt.views.models.assetdiscretevehicle_list, name='list'),
+    path('add/', pyamgmt.views.models.assetdiscretevehicle_form, name='add'),
+    path('<int:assetdiscretevehicle_pk>/', include([
+        path('', pyamgmt.views.models.assetdiscretevehicle_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.assetdiscretevehicle_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_assetinventory_urls = ([
+    path('', pyamgmt.views.models.assetinventory_list, name='list'),
+    # path('add/', pyamgmt.views.models.asset_inventory_form, name='add'),
+    path('<int:assetinventory_pk>/', include([
+        # path('', pyamgmt.views.models.asset_inventory_detail, name='detail'),
+        # path('edit/', pyamgmt.views.models.asset_inventory_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_catalogueitem_urls = ([
+    path('', pyamgmt.views.models.catalogueitem_list, name='list'),
+    path('add/', pyamgmt.views.models.catalogueitem_form, name='add'),
+    path('<int:catalogueitem_pk>/', include([
+        path('', pyamgmt.views.models.catalogueitem_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.catalogueitem_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_catalogueitemdigitalsong_urls = ([
+    path('', pyamgmt.views.models.catalogueitemdigitalsong_list, name='list'),
+    path('add/', pyamgmt.views.models.catalogueitemdigitalsong_form, name='add'),
+    path('<int:catalogueitemdigitalsong_pk>/', include([
+        path('', pyamgmt.views.models.catalogueitemdigitalsong_detail,
+             name='detail'),
+        path('edit/', pyamgmt.views.models.catalogueitemdigitalsong_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_catalogueitemmusicalbum_urls = ([
+    path('', pyamgmt.views.models.catalogueitemmusicalbum_list, name='list'),
+    path('add/', pyamgmt.views.models.catalogueitemmusicalbum_form, name='add'),
+    path('<int:catalogueitemmusicalbum_pk>/', include([
+        path('', pyamgmt.views.models.catalogueitemmusicalbum_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.catalogueitemmusicalbum_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_catalogueitemtopointofsalelineitem_urls = ([
+    path('', pyamgmt.views.models.catalogueitemtopointofsalelineitem_list, name='list'),
+    path('add/', pyamgmt.views.models.catalogueitemtopointofsalelineitem_form,
+         name='add'),
+    path('<int:catalogueitemtopointofsalelineitem_pk>/', include([
+        path('', pyamgmt.views.models.catalogueitemtopointofsalelineitem_detail,
+             name='detail'),
+        path('edit/', pyamgmt.views.models.catalogueitemtopointofsalelineitem_form,
+             name='edit')
+    ]))
+], 'pyamgmt')
+
+_invoice_urls = ([
+    path('', pyamgmt.views.models.invoice_list, name='list')
+], 'pyamgmt')
+
+_musicalbum_urls = ([
+    path('', pyamgmt.views.models.musicalbum_list, name='list'),
+    path('add/', pyamgmt.views.models.musicalbum_form, name='add'),
+    path('<int:musicalbum_pk>/', include([
+        path('', pyamgmt.views.models.musicalbum_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.musicalbum_form, name='edit'),
+        path('add-song/', pyamgmt.views.models.musicalbum_add_song_form, name='add-song'),
+        path('add-songs/', pyamgmt.views.models.musicalbum_addsongs_form, name='add-songs')
+    ]))
+], 'pyamgmt')
+
+_musicalbumtomusicartist_urls = ([
+    path('', pyamgmt.views.models.musicalbumtomusicartist_list, name='list'),
+    path('add/', pyamgmt.views.models.musicalbumtomusicartist_form, name='add'),
+    path('<int:musicalbumtomusicartist_pk>/', include([
+        path('', pyamgmt.views.models.musicalbumtomusicartist_detail,
+             name='detail'),
+        path('edit/', pyamgmt.views.models.musicalbumtomusicartist_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_musicalbumtosong_urls = ([
+    path('', pyamgmt.views.models.musicalbumtosong_list, name='list'),
+    path('add/', pyamgmt.views.models.musicalbumtosong_form, name='add'),
+    path('<int:musicalbumtosong_pk>/', include([
+        path('', pyamgmt.views.models.musicalbumtosong_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.musicalbumtosong_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_musicartist_urls = ([
+    path('', pyamgmt.views.models.musicartist_list, name='list'),
+    path('add/', pyamgmt.views.models.musicartist_form, name='add'),
+    path('<int:musicartist_pk>/', include([
+        path('', pyamgmt.views.models.musicartist_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.musicartist_form, name='edit'),
+        path('add-music-album/', pyamgmt.views.models.musicalbumtomusicartist_form,
+             name='add'),
+        path('add-person/', pyamgmt.views.models.musicartisttoperson_form, name='add-person')
+    ]))
+], 'pyamgmt')
+
+_musicartisttoperson_urls = ([
+    path('', pyamgmt.views.models.musicartisttoperson_list, name='list'),
+    path('add/', pyamgmt.views.models.musicartisttoperson_form, name='add'),
+    path('<int:musicartisttoperson_pk>/', include([
+        path('', pyamgmt.views.models.musicartisttoperson_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.musicartisttoperson_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_musicartisttosong_urls = ([
+    path('', pyamgmt.views.models.musicartisttosong_list, name='list'),
+    # path('add/')
+    path('<int:musicartisttosong_pk>/', include([
+        path('', pyamgmt.views.models.musicartisttosong_detail, name='detail')
+    ]))
+], 'pyamgmt')
+
+_party_urls = ([
+    path('', pyamgmt.views.models.party_list, name='list'),
+    path('add/', pyamgmt.views.models.party_form, name='add'),
+    path('<int:party_pk>/', include([
+        path('', pyamgmt.views.models.party_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.party_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_payee_urls = ([
+    path('', pyamgmt.views.models.payee_list, name='list'),
+    path('add/', pyamgmt.views.models.payee_form, name='add'),
+    path('<int:payee_pk>/', include([
+        path('', pyamgmt.views.models.payee_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.payee_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_person_urls = ([
+    path('', pyamgmt.views.models.person_list, name='list'),
+    path('add/', pyamgmt.views.models.person_form, name='add'),
+    path('<int:person_pk>/', include([
+        path('', pyamgmt.views.models.person_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.person_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_pointofsale_urls = ([
+    path('', pyamgmt.views.models.pointofsale_list, name='list'),
+    path('add/', pyamgmt.views.models.pointofsale_form, name='add'),
+    path('<int:pointofsale_pk>/', include([
+        path('', pyamgmt.views.models.pointofsale_detail, name='detail'),
+        path('add-point-of-sale-document/', pyamgmt.views.models.pointofsaledocument_form,
+             name='add-pointofsaledocument'),
+        path('add-point-of-sale-line-item/', pyamgmt.views.models.pointofsalelineitem_form,
+             name='add-pointofsalelineitem'),
+        path('edit/', pyamgmt.views.models.pointofsale_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_pointofsaledocument_urls = ([
+    path('', pyamgmt.views.models.pointofsaledocument_list, name='list'),
+    path('add/', pyamgmt.views.models.pointofsaledocument_form, name='add'),
+    path('<int:pointofsaledocument_pk>/', include([
+        path('', pyamgmt.views.models.pointofsaledocument_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.pointofsaledocument_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_pointofsalelineitem_urls = ([
+    path('', pyamgmt.views.models.pointofsalelineitem_list, name='list'),
+    path('add/', pyamgmt.views.models.pointofsalelineitem_form, name='add'),
+    path('<int:pointofsalelineitem_pk>/', include([
+        path('', pyamgmt.views.models.pointofsalelineitem_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.pointofsalelineitem_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_song_urls = ([
+    path('', pyamgmt.views.models.song_list, name='list'),
+    path('add/', pyamgmt.views.models.song_form, name='add'),
+    path('<int:song_pk>/', include([
+        path('', pyamgmt.views.models.song_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.song_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_songtosong_urls = ([
+    path('', pyamgmt.views.models.songtosong_list, name='list')
+], 'pyamgmt')
+
+_txn_urls = ([
+    path('', pyamgmt.views.models.txn_list, name='list'),
+    path('add/', pyamgmt.views.models.txn_form, name='add'),
+    path('<int:txn_pk>/', include([
+        path('', pyamgmt.views.models.txn_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.txn_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_txnlineitem_urls = ([
+    path('', pyamgmt.views.models.txnlineitem_list, name='list'),
+    path('<int:txnlineitem_pk>/', include([
+        path('', pyamgmt.views.models.txnlineitem_detail, name='detail')
+    ]))
+], 'pyamgmt')
+
+_unit_urls = ([
+    path('', pyamgmt.views.models.unit_list, name='list'),
+    path('add/', pyamgmt.views.models.unit_form, name='add'),
+    path('<int:unit_pk>/', include([
+        path('', pyamgmt.views.models.unit_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.unit_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_vehicle_urls = ([
+    path('', pyamgmt.views.models.vehicle_list, name='list'),
+    path('add/', pyamgmt.views.models.vehicle_form, name='add'),
+    path('<int:vehicle_pk>/', include([
+        path('', pyamgmt.views.models.vehicle_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.vehicle_form, name='edit'),
+        path('add-vehicle-mileage/', pyamgmt.views.models.vehiclemileage_form, name='add-vehiclemileage')
+    ]))
+], 'pyamgmt')
+
+_vehiclemake_urls = ([
+    path('', pyamgmt.views.models.vehiclemake_list, name='list'),
+    path('add/', pyamgmt.views.models.vehiclemake_form, name='add'),
+    path('<int:vehiclemake_pk>/', include([
+        path('', pyamgmt.views.models.vehiclemake_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.vehiclemake_form, name='edit'),
+        path('add-vehicle-model/', pyamgmt.views.models.vehiclemodel_form, name='add-vehiclemodel')
+    ]))
+], 'pyamgmt')
+
+_vehiclemileage_urls = ([
+    path('', pyamgmt.views.models.vehiclemileage_list, name='list'),
+    path('add/', pyamgmt.views.models.vehiclemileage_form, name='add'),
+    path('<int:vehiclemileage_pk>/', include([
+        path('', pyamgmt.views.models.vehiclemileage_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.vehiclemileage_form, name='edit')
+    ]))
+], 'pyamgmt')
+
+_vehiclemodel_urls = ([
+    path('', pyamgmt.views.models.vehiclemodel_list, name='list'),
+    path('add/', pyamgmt.views.models.vehiclemodel_form, name='add'),
+    path('<int:vehiclemodel_pk>/', include([
+        path('', pyamgmt.views.models.vehiclemodel_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.vehiclemodel_form, name='edit'),
+        path('add-vehicle-trim/', pyamgmt.views.models.vehicletrim_form, name='add-vehicletrim')
+    ]))
+], 'pyamgmt')
+
+_vehicletrim_urls = ([
+    path('', pyamgmt.views.models.vehicletrim_list, name='list'),
+    path('add/', pyamgmt.views.models.vehicletrim_form, name='add'),
+    path('<int:vehicletrim_pk>/', include([
+        path('', pyamgmt.views.models.vehicletrim_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.vehicletrim_form, name='edit'),
+        path('add-vehicle-year/', pyamgmt.views.models.vehicleyear_form, name='add-vehicleyear')
+    ]))
+], 'pyamgmt')
+
+_vehicleyear_urls = ([
+    path('', pyamgmt.views.models.vehicleyear_list, name='list'),
+    path('add/', pyamgmt.views.models.vehicleyear_form, name='add'),
+    path('<int:vehicleyear_pk>/', include([
+        path('', pyamgmt.views.models.vehicleyear_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.vehicleyear_form, name='edit'),
+        path('add-vehicle/', pyamgmt.views.models.vehicle_form, name='add-vehicle')
+    ]))
+], 'pyamgmt')
+
+urlpatterns = [
+    path('', pyamgmt.views.general.home, name='home'),
+    path('account/', include(_account_urls, namespace='account')),
+    path('account-asset/', include(_accountasset_urls, namespace='accountasset')),
+    path('account-asset-financial/', include(_accountassetfinancial_urls, namespace='accountassetfinancial')),
+    path('account-asset-real/', include(_accountassetreal_urls, namespace='accountassetreal')),
+    path('account-expense/', include(_accountexpense_urls, namespace='accountexpense')),
+    path('account-income/', include(_accountincome_urls, namespace='accountincome')),
+    path('account-liability/', include(_accountliability_urls, namespace='accountliability')),
+    path('asset/', include(_asset_urls, namespace='asset')),
+    path('asset-discrete/', include(_assetdiscrete_urls, namespace='assetdiscrete')),
+    path('asset-discrete-vehicle/', include(_assetdiscretevehicle_urls, namespace='assetdiscretevehicle')),
+    path('asset-inventory/', include(_assetinventory_urls, namespace='assetinventory')),
+    path('catalogue-item/', include(_catalogueitem_urls, namespace='catalogueitem')),
+    path('catalogue-item-digital-song/', include(_catalogueitemdigitalsong_urls, namespace='catalogueitemdigitalsong')),
+    path('catalogue-item-music-album/', include(_catalogueitemmusicalbum_urls, namespace='catalogueitemmusicalbum')),
+    path('catalogue-item-to-point-of-sale-line-item/', include(
+        _catalogueitemtopointofsalelineitem_urls, namespace='catalogueitemtopointofsalelineitem'
+    )),
+    path('invoice/', include(_invoice_urls, namespace='invoice')),
+    path('music-album/', include(_musicalbum_urls, namespace='musicalbum')),
+    path('music-album-to-music-artist/', include(_musicalbumtomusicartist_urls, namespace='musicalbumtomusicartist')),
+    path('music-album-to-song/', include(_musicalbumtosong_urls, namespace='musicalbumtosong')),
+    path('music-artist/', include(_musicartist_urls, namespace='musicartist')),
+    path('music-artist-to-person/', include(_musicartisttoperson_urls, namespace='musicartisttoperson')),
+    path('music-artist-to-song/', include(_musicartisttosong_urls, namespace='musicartisttosong')),
+    path('party/', include(_party_urls, namespace='party')),
+    path('payee/', include(_payee_urls, namespace='payee')),
+    path('person/', include(_person_urls, namespace='person')),
+    path('point-of-sale/', include(_pointofsale_urls, namespace='pointofsale')),
+    path('point-of-sale-document/', include(_pointofsaledocument_urls, namespace='pointofsaledocument')),
+    path('point-of-sale-line-item/', include(_pointofsalelineitem_urls, namespace='pointofsalelineitem')),
+    path('song/', include(_song_urls, namespace='song')),
+    path('song-to-song/', include(_songtosong_urls, namespace='songtosong')),
+    path('txn/', include(_txn_urls, namespace='txn')),
+    path('txnlineitem/', include(_txnlineitem_urls, namespace='txnlineitem')),
+    path('unit/', include(_unit_urls, namespace='unit')),
+    path('vehicle/', include(_vehicle_urls, namespace='vehicle')),
+    path('vehicle-make/', include(_vehiclemake_urls, namespace='vehiclemake')),
+    path('vehicle-mileage/', include(_vehiclemileage_urls, namespace='vehiclemileage')),
+    path('vehicle-model/', include(_vehiclemodel_urls, namespace='vehiclemodel')),
+    path('vehicle-trim/', include(_vehicletrim_urls, namespace='vehicletrim')),
+    path('vehicle-year/', include(_vehicleyear_urls, namespace='vehicleyear')),
+    # Specialized URLs
+    path('experimental/', pyamgmt.views.experimental.current, name='experimental'),
+    path('txn-register/', pyamgmt.views.txn_register.txn_register, name='txn-register')
+]

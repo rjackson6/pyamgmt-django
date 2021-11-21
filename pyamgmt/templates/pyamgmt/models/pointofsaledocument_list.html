@@ -1,0 +1,19 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+{% block title %}PointOfSaleDocument{% endblock title %}
+
+{% block content %}
+<h1>PointOfSaleDocument</h1>
+<a href="{% url 'pyamgmt:pointofsaledocument:add' %}">Add</a>
+<table>
+    <tr>
+        <th>ID</th>
+    </tr>
+    {% for pointofsaledocument in qs_pointofsaledocument %}
+    <tr>
+        <td class="primary-key"><a href="{% url 'pyamgmt:pointofsaledocument:detail' pointofsaledocument.pk %}">{{ pointofsaledocument.pk }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}

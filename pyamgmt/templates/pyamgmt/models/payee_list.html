@@ -1,0 +1,29 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Payee{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>Payee</h1>
+    <a href="{% url 'pyamgmt:payee:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Memo</th>
+        </tr>
+        {% for payee in qs_payee %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:payee:detail' payee.pk %}">{{ payee.pk }}</a></td>
+            <td>{{ payee.name }}</td>
+            <td>{{ payee.memo }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

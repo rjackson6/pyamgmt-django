@@ -1,0 +1,34 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Account{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>Account</h1>
+    {#<a href="{% url 'pyamgmt:account:add' %}">Add</a>#}
+    <p>{{ qs_account.model|doc }}</p>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Subtype</th>
+            <th>Name</th>
+            <th>Debits</th>
+            <th>Credits</th>
+        </tr>
+        {% for account in qs_account %}
+        <tr class="record">
+            <td class="primary-key"><a href="{% url 'pyamgmt:account:detail' account.pk %}">{{ account.pk }}</a></td>
+            <td>{{ account.subtype }}</td>
+            <td>{{ account.name }}</td>
+            <td>{% if account.debits %}${{ account.debits|floatformat:0 }}{% endif %}</td>
+            <td>{% if account.credits %}${{ account.credits|floatformat:0 }}{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

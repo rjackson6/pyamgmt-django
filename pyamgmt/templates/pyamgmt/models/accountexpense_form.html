@@ -1,0 +1,32 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block breadcrumbs %}
+
+<div>
+    <a href="{% url 'pyamgmt:home' %}">Home</a>
+    <span> &rarr; </span>
+    <a href="{% url 'pyamgmt:accountexpense:list' %}">AccountExpense</a>
+    <span> &rarr; </span>
+    {% if form_accountexpense.instance.pk %}
+    <span>Edit {{ form_accountexpense.instance }}</span>
+    {% else %}
+    <span>Add</span>
+    {% endif %}
+</div>
+<hr>
+
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ form_account }}
+    {{ form_accountexpense }}
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock content %}

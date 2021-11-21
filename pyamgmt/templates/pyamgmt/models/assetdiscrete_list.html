@@ -1,0 +1,40 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AssetDiscrete{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>AssetDiscrete</h1>
+    <p class="doc-string">{{ qs_assetdiscrete.model|doc }}</p>
+    {#<a href="{% url 'pyamgmt:assetdiscrete:add' %}">Add</a>#}
+    <table>
+        <tr>
+            <th colspan="2">Asset</th>
+            <th colspan="3">AssetDiscrete</th>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Description</th>
+
+            <th>Subtype</th>
+            <th>Date Acquired</th>
+            <th>Date Withdrawn</th>
+        </tr>
+        {% for assetdiscrete in qs_assetdiscrete %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:assetdiscrete:detail' assetdiscrete.pk %}">{{ assetdiscrete.pk }}</a></td>
+            <td>{{ assetdiscrete.asset.description }}</td>
+
+            <td>{{ assetdiscrete.subtype }}</td>
+            <td>{{ assetdiscrete.date_acquired }}</td>
+            <td>{{ assetdiscrete.date_withdrawn }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

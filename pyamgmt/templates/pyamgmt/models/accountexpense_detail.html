@@ -1,0 +1,52 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AccountExpense{% endblock title %}
+
+
+{% block breadcrumbs %}
+<div>
+    <a href="{% url 'pyamgmt:home' %}">Home</a>
+    <span> &rarr; </span>
+    <a href="{% url 'pyamgmt:accountexpense:list' %}">AccountExpense</a>
+    <span> &rarr; </span>
+    <span>{{ accountexpense }}</span>
+</div>
+<hr>
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>AccountExpense</h1>
+    <a href="{% url 'pyamgmt:accountexpense:edit' accountexpense.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th rowspan="4">Account</th>
+            <th>ID</th>
+            <td class="primary-key">{{ accountexpense.pk }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ accountexpense.account.name }}</td>
+        </tr>
+        <tr>
+            <th>Parent Account</th>
+            <td>{{ accountexpense.account.parent_account }}</td>
+        </tr>
+        <tr>
+            <th>Child Accounts</th>
+            <td>
+                <ul>
+                    {% for child_account in accountexpense.account.child_accounts.all %}
+                    <li>{{ child_account }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+
+{% endblock content %}

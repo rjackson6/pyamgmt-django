@@ -1,0 +1,34 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+{% block title %}TxnLineItem{% endblock title %}
+
+{% block content %}
+<h1>TxnLineItem</h1>
+<table class="model-detail__table">
+    <tr>
+        <th>ID</th>
+        <td>{{ txnlineitem.pk }}</td>
+    </tr>
+    <tr>
+        <th>Txn</th>
+        <td><a href="{% url 'pyamgmt:txn:detail' txnlineitem.txn.pk %}">{{ txnlineitem.txn }}</a></td>
+    </tr>
+    <tr>
+        <th>Account</th>
+        <td>{{ txnlineitem.account }}</td>
+    </tr>
+    <tr>
+        <th>Amount</th>
+        <td>{{ txnlineitem.amount }}</td>
+    </tr>
+    <tr>
+        <th>Debit</th>
+        <td>{{ txnlineitem.debit }}</td>
+    </tr>
+    <tr>
+        <th>Memo</th>
+        <td>{{ txnlineitem.memo }}</td>
+    </tr>
+</table>
+{% endblock content %}

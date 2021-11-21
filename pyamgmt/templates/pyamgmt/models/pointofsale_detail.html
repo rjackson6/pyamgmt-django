@@ -1,0 +1,61 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+{% block title %}PointOfSale{% endblock title %}
+
+{% block content %}
+<h1>PointOfSale</h1>
+<a href="{% url 'pyamgmt:pointofsale:edit' pointofsale.pk %}">Edit</a>
+<table>
+    <tr>
+        <th>ID</th>
+        <td class="primary-key">{{ pointofsale.pk }}</td>
+    </tr>
+    <tr>
+        <th>Party</th>
+        <td>{{ pointofsale.party }}</td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <td>{{ pointofsale.pointofsale_date }}</td>
+    </tr>
+    <tr>
+        <th>Time</th>
+        <td>{{ pointofsale.pointofsale_time }}</td>
+    </tr>
+    <tr>
+        <th>Total</th>
+        <td>{{ pointofsale.line_item_total }}</td>
+    </tr>
+</table>
+<h2>Documents</h2>
+<a href="{% url 'pyamgmt:pointofsaledocument:add' pointofsale.pk %}">Add Document</a>
+<table>
+    <tr>
+        <th>ID</th>
+    </tr>
+    {% for document in related_documents %}
+    <tr>
+        <td class="primary-key"><a href="{% url 'pyamgmt:pointofsaledocument:detail' document.pk %}">{{ document.pk }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+<h2>Line Items</h2>
+<a href="{% url 'pyamgmt:point-of-sale-line-item:add' pointofsale.pk %}">Add Line Item</a>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Subtype</th>
+        <th>Short Memo</th>
+        <th></th>
+    </tr>
+    {% for related_line_item in related_line_items %}
+    <tr>
+        <td class="primary-key"><a href="{% url 'pyamgmt:point-of-sale-line-item:detail' related_line_item.pk %}">{{ related_line_item.pk }}</a></td>
+        <td>{{ related_line_item.subtype }}</td>
+        <td>{{ related_line_item.short_memo }}</td>
+        <td>{{ related_line_item.catalogueitemtopointofsalelineitem.quantity }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}

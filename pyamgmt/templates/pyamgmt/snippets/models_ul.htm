@@ -1,0 +1,77 @@
+<ul>
+    <li>
+        <a href="{% url 'pyamgmt:account:list' %}">Account</a>
+        <ul>
+            <li>
+                <a href="{% url 'pyamgmt:accountasset:list' %}">Asset</a>
+                <ul>
+                    <li><a href="{% url 'pyamgmt:accountassetfinancial:list' %}">Financial</a></li>
+                    <li><a href="{% url 'pyamgmt:accountassetreal:list' %}">Real</a></li>
+                </ul>
+            </li>
+            <li><a>Equity</a></li>
+            <li><a href="{% url 'pyamgmt:accountexpense:list' %}">Expense</a></li>
+            <li><a href="{% url 'pyamgmt:accountincome:list' %}">Income</a></li>
+            <li>
+                <a href="{% url 'pyamgmt:accountliability:list' %}">Liability</a>
+                <ul>
+                    <li><a>Secured</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a href="{% url 'pyamgmt:asset:list' %}">Asset</a>
+        <ul>
+            <li>
+                <a href="{% url 'pyamgmt:assetdiscrete:list' %}">Discrete</a>
+                <ul>
+                    <li>CatalogueItem</li>
+                    <li><a href="{% url 'pyamgmt:assetdiscretevehicle:list' %}">Vehicle</a></li>
+                </ul>
+            </li>
+            <li><a href="{% url 'pyamgmt:assetinventory:list' %}">Inventory</a></li>
+        </ul>
+    </li>
+    <li><a>AssetType</a></li>
+    <li>
+        <a href="{% url 'pyamgmt:catalogueitem:list' %}">CatalogueItem</a>
+        <ul>
+            <li><a href="{% url 'pyamgmt:catalogueitemdigitalsong:list' %}">CatalogueItemDigitalSong</a></li>
+            <li><a href="{% url 'pyamgmt:catalogueitemmusicalbum:list' %}">CatalogueItemMusicAlbum</a></li>
+        </ul>
+    </li>
+    <li><a href="{% url 'pyamgmt:invoice:list' %}">Invoice</a></li>
+    <li><a>InvoiceLineItem</a></li>
+    <li><a>MediaFormat</a></li>
+    <li><a>MotionPicture</a></li>
+    <li><a href="{% url 'pyamgmt:musicalbum:list' %}">MusicAlbum</a></li>
+    <li><a href="{% url 'pyamgmt:musicartist:list' %}">MusicArtist</a></li>
+    <li><a>MusicArtistActivity</a></li>
+    <li><a>MusicArtistToPersonActivity</a></li>
+    <li><a>NonCatalogueItem</a></li>
+    <li><a>Order</a></li>
+    <li><a>OrderLineItem</a></li>
+    <li>
+        <a href="{% url 'pyamgmt:party:list' %}">Party</a>
+        <ul>
+            <li><a>PartyCompany</a></li>
+            <li><a>PartyPerson</a></li>
+        </ul>
+    </li>
+    <li><a href="{% url 'pyamgmt:payee:list' %}">Payee</a></li>
+    <li><a href="{% url 'pyamgmt:person:list' %}">Person</a></li>
+    <li><a href="{% url 'pyamgmt:pointofsale:list' %}">PointOfSale</a></li>
+    <li><a>PointOfSaleDocument</a></li>
+    <li><a href="{% url 'pyamgmt:pointofsalelineitem:list' %}">PointOfSaleLineItem</a></li>
+    <li><a>Seller</a></li>
+    <li><a href="{% url 'pyamgmt:song:list' %}">Song</a></li>
+    <li><a href="{% url 'pyamgmt:txn:list' %}">Txn</a></li>
+    <li><a href="{% url 'pyamgmt:txnlineitem:list' %}">TxnLineItem</a></li>
+    <li><a href="{% url 'pyamgmt:unit:list' %}">Unit</a></li>
+    <li><a href="{% url 'pyamgmt:vehicle:list' %}">Vehicle</a></li>
+    <li><a href="{% url 'pyamgmt:vehiclemake:list' %}">VehicleMake</a></li>
+    <li><a href="{% url 'pyamgmt:vehiclemodel:list' %}">VehicleModel</a></li>
+    <li><a href="{% url 'pyamgmt:vehicletrim:list' %}">VehicleTrim</a></li>
+    <li><a href="{% url 'pyamgmt:vehicleyear:list' %}">VehicleYear</a></li>
+</ul>

@@ -1,0 +1,39 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Vehicle{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>Vehicle</h1>
+    <a href="{% url 'pyamgmt:vehicle:add' %}">Add</a>
+    <table class="model-list__table">
+        <tr>
+            <th>ID</th>
+            <th>Year</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Trim</th>
+            <th>VIN</th>
+            <th>Last Mileage Date</th>
+            <th>Last Mileage</th>
+        </tr>
+        {% for vehicle in qs_vehicle %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:vehicle:detail' vehicle.pk %}">{{ vehicle.pk }}</a></td>
+            <td><a href="{% url 'pyamgmt:vehicleyear:detail' vehicle.vehicleyear.pk %}">{{ vehicle.vehicleyear.year }}</a></td>
+            <td><a href="{% url 'pyamgmt:vehiclemake:detail' vehicle.vehicleyear.vehicletrim.vehiclemodel.vehiclemake.pk %}">{{ vehicle.vehicleyear.vehicletrim.vehiclemodel.vehiclemake.name }}</a></td>
+            <td><a href="{% url 'pyamgmt:vehiclemodel:detail' vehicle.vehicleyear.vehicletrim.vehiclemodel.pk %}">{{ vehicle.vehicleyear.vehicletrim.vehiclemodel.name }}</a></td>
+            <td><a href="{% url 'pyamgmt:vehicletrim:detail' vehicle.vehicleyear.vehicletrim.pk %}">{{ vehicle.vehicleyear.vehicletrim.name }}</a></td>
+            <td class="monospace">{{ vehicle.vin }}</td>
+            <td>{{ vehicle.vehiclemileage_set.first.odometer_date }}</td>
+            <td>{{ vehicle.vehiclemileage_set.first.odometer_miles }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

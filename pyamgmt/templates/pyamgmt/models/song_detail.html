@@ -1,0 +1,80 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Song{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>Song</h1>
+    <a href="{% url 'pyamgmt:song:edit' song.pk %}">Edit</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td>{{ song.pk }}</td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ song.title }}</td>
+        </tr>
+        <tr>
+            <th>Duration</th>
+            <td>{{ song.duration }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="model-related">
+    <h2>Music Artists</h2>
+    {% if related_artists %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        {% for related_artist in related_artists %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicartist:detail' related_artist.musicartist.pk %}">{{ related_artist.musicartist.pk }}</a></td>
+            <td>{{ related_artist.musicartist.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No records.</p>
+    {% endif %}
+</div>
+
+<div class="model-related">
+    <h2>Music Albums which Feature this Song</h2>
+    {% if related_albums %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>DiscNumber</th>
+            <th>TrackNumber</th>
+        </tr>
+        {% for record in related_albums %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbum:detail' record.musicalbum.pk %}">{{ record.musicalbum.pk }}</a></td>
+            <td>{{ record.musicalbum.title }}</td>
+            <td>{{ record.disc_number }}</td>
+            <td>{{ record.track_number }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No records.</p>
+    {% endif %}
+</div>
+
+{% if song.lyrics %}
+<div>
+    <h3>Lyrics</h3>
+    <pre>{{ song.lyrics }}</pre>
+</div>
+{% endif %}
+
+{% endblock content %}

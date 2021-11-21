@@ -1,0 +1,27 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Party{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>Party</h1>
+    <a href="{% url 'pyamgmt:party:add' %}">Add</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        {% for party in qs_party %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:party:detail' party.pk %}">{{ party.pk }}</a></td>
+            <td>{{ party.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

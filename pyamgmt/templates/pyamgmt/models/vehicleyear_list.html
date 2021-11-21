@@ -1,0 +1,33 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}VehicleYear{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>VehicleYear</h1>
+    <a href="{% url 'pyamgmt:vehicleyear:add' %}">Add</a>
+    <table class="model-list__table">
+        <tr>
+            <th>ID</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Trim</th>
+            <th>Year</th>
+        </tr>
+        {% for vehicleyear in qs_vehicleyear %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:vehicleyear:detail' vehicleyear.pk %}">{{ vehicleyear.pk }}</a></td>
+            <td><a href="{% url 'pyamgmt:vehiclemake:detail' vehicleyear.vehicletrim.vehiclemodel.vehiclemake.pk %}">{{ vehicleyear.vehicletrim.vehiclemodel.vehiclemake.name }}</a></td>
+            <td><a href="{% url 'pyamgmt:vehiclemodel:detail' vehicleyear.vehicletrim.vehiclemodel.pk %}">{{ vehicleyear.vehicletrim.vehiclemodel.name }}</a></td>
+            <td><a href="{% url 'pyamgmt:vehicletrim:detail' vehicleyear.vehicletrim.pk %}">{{ vehicleyear.vehicletrim.name }}</a></td>
+            <td>{{ vehicleyear.year }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

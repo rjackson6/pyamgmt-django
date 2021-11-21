@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+    <h1>Home</h1>
+    <p>You're here!</p>
+    <h2>Modules</h2>
+    <ul>
+        <li><a href="{% url 'pyamgmt:home' %}">PyAssetManagement</a></li>
+    </ul>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<h1>Transaction (TXN)</h1>
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ form }}
+    <h2>Line Items:</h2>
+    <table>
+        {{ formset }}
+    </table>
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock content %}

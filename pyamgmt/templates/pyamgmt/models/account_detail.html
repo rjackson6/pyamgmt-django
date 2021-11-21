@@ -1,0 +1,65 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}Account{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>Account</h1>
+    <a href="{% url 'pyamgmt:account:edit' account.pk %}">Edit</a>
+    <table class="model-detail__table">
+        <tr>
+            <th>ID</th>
+            <td class="primary-key">{{ account.pk }}</td>
+        </tr>
+        <tr>
+            <th>Subtype</th>
+            <td>{{ account.subtype }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ account.name }}</td>
+        </tr>
+        <tr>
+            <th>Parent Account</th>
+            <td>{{ account.parent_account }}</td>
+        </tr>
+        <tr>
+            <th>Child Accounts</th>
+            <td>
+                <ul>
+                    {% for child_account in account.child_accounts.all %}
+                    <li>{{ child_account.name }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="model-related">
+    <h2>Transactions</h2>
+    <table class="model-related__table">
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Payee</th>
+            <th>Debit</th>
+        </tr>
+        {% for txnlineitem in account.txnlineitem_set.all %}
+        <tr>
+            <td><a href="{% url 'pyamgmt:txnlineitem:detail' txnlineitem.pk %}">{{ txnlineitem.pk }}</a></td>
+            <td>{{ txnlineitem.txn.txn_date }}</td>
+            <td style="text-align: right;">{% if account.debit_increase and txnlineitem.debit %}+{% endif %}{{ txnlineitem.amount|floatformat:2 }}</td>
+            <td>{{ txnlineitem.txn.payee.name }}</td>
+            <td>{{ txnlineitem.debit }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}

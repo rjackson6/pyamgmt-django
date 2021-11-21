@@ -1,0 +1,31 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+{#<form method="post">#}
+{#    {{ formset }}#}
+{#</form>#}
+<h1>Editing Tracks for {{ formset.instance }}</h1>
+<form method="post" id="form" class="deform">{% csrf_token %}</form>
+
+{% endblock content %}
+
+
+{% block javascript_3p %}
+
+{% endblock javascript_3p %}
+
+
+{% block javascript %}
+
+{{ formset.as_dict|json_script:"formset" }}
+<script type="text/javascript" src="{% static 'deform/js/deform.js' %}"></script>
+<script>
+let formset = JSON.parse(document.getElementById('formset').textContent);
+console.log(formset);
+DEFORM.parseForm(document.getElementById('form'), formset);
+</script>
+
+{% endblock javascript %}

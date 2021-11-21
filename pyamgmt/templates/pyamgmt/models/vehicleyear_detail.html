@@ -1,0 +1,57 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}VehicleYear{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-detail">
+    <h1>VehicleYear</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td>{{ vehicleyear.pk }}</td>
+        </tr>
+        <tr>
+            <th>Make</th>
+            <td><a href="{% url 'pyamgmt:vehiclemake:detail' vehicleyear.vehicletrim.vehiclemodel.vehiclemake.pk %}">{{ vehicleyear.vehicletrim.vehiclemodel.vehiclemake.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Model</th>
+            <td><a href="{% url 'pyamgmt:vehiclemodel:detail' vehicleyear.vehicletrim.vehiclemodel.pk %}">{{ vehicleyear.vehicletrim.vehiclemodel.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Trim</th>
+            <td><a href="{% url 'pyamgmt:vehicletrim:detail' vehicleyear.vehicletrim.pk %}">{{ vehicleyear.vehicletrim.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Year</th>
+            <td>{{ vehicleyear.year }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="model-related">
+    <h2>Vehicles</h2>
+    <a href="{% url 'pyamgmt:vehicleyear:add-vehicle' vehicleyear.pk %}">Add a specific Vehicle produced and issued with a VIN.</a>
+    {% if qs_vehicle %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>VIN</th>
+        </tr>
+        {% for vehicle in qs_vehicle %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:vehicle:detail' vehicle.pk %}">{{ vehicle.pk }}</a></td>
+            <td class="monospace">{{ vehicle.vin }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No related Vehicle records.</p>
+    {% endif %}
+</div>
+
+{% endblock content %}

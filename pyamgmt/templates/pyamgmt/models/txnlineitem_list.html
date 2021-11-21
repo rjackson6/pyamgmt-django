@@ -1,0 +1,19 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+{% block title %}TxnLineItem{% endblock title %}
+
+{% block content %}
+<h1>TxnLineItem</h1>
+<a href="{% url 'pyamgmt:txnlineitem:add' %}">Add</a>
+<table>
+    <tr>
+        <th>ID</th>
+    </tr>
+    {% for txnlineitem in qs_txnlineitem %}
+    <tr>
+        <td class="primary-key"><a href="{% url 'pyamgmt:txnlineitem:detail' txnlineitem.pk %}">{{ txnlineitem.pk }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}

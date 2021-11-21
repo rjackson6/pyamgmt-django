@@ -1,0 +1,50 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}AccountAssetReal{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>AccountAssetReal</h1>
+    <p>{{ qs_accountassetreal.model|doc }}</p>
+    <a href="{% url 'pyamgmt:accountassetreal:add' %}">Add</a>
+    <table>
+        <tr>
+            <th colspan="4">Account</th>
+            <th colspan="1">AccountAsset</th>
+            <th colspan="1">AccountAssetReal</th>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Subtype</th>
+            <th>Parent Account</th>
+
+            <th>Subtype</th>
+
+            <th>Asset</th>
+        </tr>
+        {% for accountassetreal in qs_accountassetreal %}
+        <tr>
+            <td class="primary-key"><a href="{% url 'pyamgmt:accountassetreal:detail' accountassetreal.pk %}">{{ accountassetreal.pk }}</a></td>
+            <td>{{ accountassetreal.accountasset.account.name }}</td>
+            <td>{{ accountassetreal.accountasset.account.subtype }}</td>
+            <td>{{ accountassetreal.accountasset.account.parent_account }}</td>
+
+            <td>{{ accountassetreal.accountasset.subtype }}</td>
+
+            <td>
+                {% url 'pyamgmt:asset:detail' accountassetreal.asset_id as asset_url %}
+                {% if asset_url %}
+                <a href="{{ asset_url }}">{{ accountassetreal.asset }}</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}
