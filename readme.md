@@ -39,3 +39,7 @@ This originally branched from a project that was being developed using Python's 
 Rather than using a local application using SQLAlchemy with a local SQLite database, I decided to change my mindset of architecture to better align with the tools that I build commercially. Instead of packaging a Python application that would be installed on one or more machines, and setting up the networking for multiple instances to access the same database, I started to favor the idea of using a "real" web server that locally networked machines could access via HTTP. When I set up the first debugging instance, and realized that I could access my application from my smartphone's browser, I knew there was no going back.
 
 With that in mind, I started to refactor my original project into a Django application.
+
+## Disclaimers
+
+This is very much a personal project that I use for learning and testing technologies that are new to me. It is far from being complete or functional, and may never reach such a stage of where I would call it "done".
