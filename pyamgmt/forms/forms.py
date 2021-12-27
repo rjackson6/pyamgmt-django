@@ -209,24 +209,26 @@ class MusicAlbumToMusicArtistForm(ModelForm):
 
 
 class MusicAlbumToSongForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        musicalbum = kwargs.pop('musicalbum', None)
-        # song = kwargs.pop('song', None)  # If coming from other model
-        super().__init__(*args, **kwargs)
-        if musicalbum is not None:
-            self.initial['musicalbum'] = musicalbum
-            self.fields['musicalbum'].disabled = True
+    pass
+    # def __init__(self, *args, **kwargs):
+    #     musicalbum = kwargs.pop('musicalbum', None)
+    #     # song = kwargs.pop('song', None)  # If coming from other model
+    #     super().__init__(*args, **kwargs)
+    #     if musicalbum is not None:
+    #         self.initial['musicalbum'] = musicalbum
+    #         self.fields['musicalbum'].disabled = True
+    #
+    # class Meta:
+    #     model = MusicAlbumToSong
+    #     exclude = BASE_AUDITABLE_FIELDS
 
-    class Meta:
-        model = MusicAlbumToSong
-        exclude = BASE_AUDITABLE_FIELDS
 
-
-MusicAlbumToSongFormSet = inlineformset_factory(
-    MusicAlbum,
-    MusicAlbumToSong,
-    fields='__all__'
-)
+MusicAlbumToSongFormSet = None
+# inlineformset_factory(
+#     MusicAlbum,
+#     MusicAlbumToSong,
+#     fields='__all__'
+# )
 
 
 class MusicArtistForm(ModelForm):

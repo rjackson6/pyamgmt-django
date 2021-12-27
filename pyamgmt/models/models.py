@@ -5,7 +5,7 @@ __all__ = [
     'CatalogueItem', 'CatalogueItemDigitalSong', 'CatalogueItemMusicAlbum',
     'CatalogueItemToInvoiceLineItem', 'CatalogueItemToOrderLineItem', 'CatalogueItemToPointOfSaleLineItem',
     'Invoice', 'InvoiceLineItem', 'InvoiceLineItemToNonCatalogueItem',
-    'MediaFormat', 'MusicAlbum', 'MusicAlbumToMusicArtist', 'MusicAlbumToSong', 'MusicAlbumArtwork', 'MusicArtist',
+    'MediaFormat', 'MusicAlbum', 'MusicAlbumToMusicArtist', 'MusicAlbumArtwork', 'MusicArtist',
     'MusicArtistToPerson', 'MusicArtistToSong',
     'NonCatalogueItem',
     'Order', 'OrderLineItem',
@@ -437,22 +437,33 @@ class MusicAlbum(BaseAuditable):
     musicartists = ManyToManyField(
         'MusicArtist', through='MusicAlbumToMusicArtist', related_name='musicalbums', blank=True
     )
-    songs = ManyToManyField('Song', through='MusicAlbumToSong', related_name='musicalbums', blank=True)
+    # songs = ManyToManyField('Song', through='MusicAlbumToSong', related_name='musicalbums', blank=True)
+    songrecordings = ManyToManyField('SongRecording', through='MusicAlbumToSongRecording', blank=True)
 
     def __str__(self):
         return f'{self.title}'
 
     @cached_property
     def duration(self):
-        return self.songs.aggregate(Sum('duration'))['duration__sum']
+        return self.songrecordings.aggregate(Sum('duration'))['duration__sum']
 
     @cached_property
     def total_songs(self):
-        return self.songs.count()
+        return self.songrecordings.count()
 
 
 # class MusicAlbumEdition(BaseAuditable):
 #     """Further specifies an edition of an album, such as Special Edition, Remaster, etc."""
+
+
+class MusicAlbumArtwork(BaseAuditable):
+    """Holds zero or many images relating to a MusicAlbum."""
+    musicalbum = ForeignKey(MusicAlbum, on_delete=CASCADE)
+    musicalbum_id: int
+    image = ImageField()
+
+    def __str__(self):
+        return f'MusicAlbumArtwork {self.pk}: {self.musicalbum_id}'
 
 
 class MusicAlbumToMusicArtist(BaseAuditable):
@@ -476,40 +487,28 @@ class MusicAlbumToMusicArtist(BaseAuditable):
         return f'MusicAlbumToMusicArtist {self.pk}: {self.musicalbum_id}-{self.musicartist_id}'
 
 
-class MusicAlbumToSong(BaseAuditable):
-    """Through model for relating MusicAlbum to Song.
-    An album may have many songs; a song may be present on many albums.
-    """
+class MusicAlbumToSongRecording(BaseAuditable):
     disc_number = PositiveSmallIntegerField(null=True, blank=True)
     musicalbum = ForeignKey(MusicAlbum, on_delete=CASCADE)
     musicalbum_id: int
-    song = ForeignKey('Song', on_delete=CASCADE)
-    song_id: int
+    songrecording = ForeignKey('SongRecording', on_delete=CASCADE)
+    songrecording_id: int
     track_number = PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['musicalbum', 'song'], name='unique_musicalbumtosong'
+                fields=['musicalbum', 'songrecording'],
+                name='unique_musicalbumtosongrecording'
             ),
             UniqueConstraint(
                 fields=['musicalbum', 'disc_number', 'track_number'],
-                name='unique_musicalbumtosong_disc_track'
+                name='unique_musicalbumtosongrecording_disc_track'
             )
         ]
 
     def __str__(self):
-        return f'MusicAlbumToSong {self.pk}: {self.musicalbum_id}-{self.song_id}'
-
-
-class MusicAlbumArtwork(BaseAuditable):
-    """Holds zero or many images relating to a MusicAlbum."""
-    musicalbum = ForeignKey(MusicAlbum, on_delete=CASCADE)
-    musicalbum_id: int
-    image = ImageField()
-
-    def __str__(self):
-        return f'MusicAlbumArtwork {self.pk}: {self.musicalbum_id}'
+        return f'MusicAlbumToSongRecording {self.pk}: {self.musicalbum_id}-{self.songrecording_id}'
 
 
 class MusicArtist(BaseAuditable):
@@ -604,17 +603,22 @@ class MusicArtistToSong(BaseAuditable):
         return f'MusicArtistToSong {self.pk}: {self.musicartist_id}-{self.song_id}'
 
 
-class MusicArtistToSongVersion(BaseAuditable):
-    """"""
+class MusicArtistToSongRecording(BaseAuditable):
     musicartist = ForeignKey(MusicArtist, on_delete=CASCADE)
     musicartist_id: int
-    songversion = ForeignKey('SongVersion', on_delete=CASCADE)
-    songversion_id: int
+    songrecording = ForeignKey('SongRecording', on_delete=CASCADE)
+    songrecording_id: int
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['musicartist', 'songversion'], name='unique_musicartisttosongversion')
+            UniqueConstraint(
+                fields=['musicartist', 'songrecording'],
+                name='unique_musicartisttosongrecording'
+            )
         ]
+
+    def __str__(self):
+        return f'MusicArtistToSongRecording {self.pk}: {self.musicartist_id}-{self.songrecording_id}'
 
 
 class NonCatalogueItem(BaseAuditable):
@@ -817,7 +821,9 @@ class Seller(BaseAuditable):
 
 
 class Song(BaseAuditable):
-    """A particular recording or rendition of a song."""
+    """A particular rendition of a song.
+    This is actually a bit abstract, in that it does not fully represent the recordings or derivative works.
+    """
     duration = DurationField(null=True, blank=True, validators=[validate_positive_timedelta])
     is_cover = BooleanField(default=False)
     is_instrumental = BooleanField(null=True, blank=True)
@@ -838,52 +844,12 @@ class SongRecording(BaseAuditable):
         STUDIO = 'STUDIO', 'Studio Recording'
     duration = DurationField(null=True, blank=True, validators=[validate_positive_timedelta])
     lyrics = TextField(blank=True, default='')
-    # musicartists = ManyToManyField()
-    recording_type = CharField(max_length=6, choices=RecordingType.choices, default=RecordingType.STUDIO)
-
-
-class SongToSongRecording(BaseAuditable):
-    """"""
-    class Version(TextChoices):
-        ORIGINAL = 'ORIGINAL', 'Original'
-        ARRANGEMENT = 'ARRANGEMENT', 'Arrangement'
-        COMPILATION = 'COMPILATION', 'Compilation'
-        COVER = 'COVER', 'Cover'
-        INSTRUMENTAL = 'INSTRUMENTAL', 'Instrumental'
-        MASHUP = 'MASHUP', 'Mash-up'
-        REMASTER = 'REMASTER', 'Remaster'
-        REMIX = 'REMIX', 'Remix'
-    song = ForeignKey(Song, on_delete=CASCADE)
-    song_id: int
-    songrecording = ForeignKey(SongRecording, on_delete=CASCADE)
-    songrecording_id: int
-    version = CharField(max_length=12, choices=Version.choices, default=Version.ORIGINAL)
-
-    class Meta:
-        constraints = [
-            UniqueConstraint(fields=['song', 'songrecording'], name='unique_songtosongrecording')
-        ]
-
-
-class SongVersion(BaseAuditable):
-    """TODO: Actually is the particular recording or rendition of a song."""
-    class Version(TextChoices):
-        ORIGINAL = 'ORIGINAL', 'Original'
-        ARRANGEMENT = 'ARRANGEMENT', 'Arrangement'
-        COMPILATION = 'COMPILATION', 'Compilation'
-        COVER = 'COVER', 'Cover'
-        INSTRUMENTAL = 'INSTRUMENTAL', 'Instrumental'
-        MASHUP = 'MASHUP', 'Mash-up'
-        REMASTER = 'REMASTER', 'Remaster'
-        REMIX = 'REMIX', 'Remix'
-    duration = DurationField(null=True, blank=True, validators=[validate_positive_timedelta])
-    lyrics = TextField(blank=True, default='')
     musicartists = ManyToManyField(
-        MusicArtist, through='MusicArtistToSongVersion',
+        MusicArtist, through='MusicArtistToSongRecording',
         related_name='+'
     )
-    # song = ForeignKey(Song, on_delete=PROTECT)
-    version = CharField(max_length=31, choices=Version.choices, default=Version.ORIGINAL)
+    song = ForeignKey(Song, on_delete=CASCADE)
+    recording_type = CharField(max_length=6, choices=RecordingType.choices, default=RecordingType.STUDIO)
 
 
 class SongToSong(BaseAuditable):

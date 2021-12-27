@@ -1,6 +1,7 @@
 /__pycache__/
 /etc/
 /node_modules/
+/pyamgmt/dev/
 /pyamgmt/fixtures/
 /var/
 /venv/
