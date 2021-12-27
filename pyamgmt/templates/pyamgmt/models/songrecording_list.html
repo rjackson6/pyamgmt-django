@@ -2,26 +2,26 @@
 {% load static %}
 
 
-{% block title %}Song{% endblock title %}
+{% block title %}SongRecording{% endblock title %}
 
 
 {% block content %}
 
 <div class="model-list">
-    <h1>Song</h1>
-    <a href="{% url 'pyamgmt:song:add' %}">Add</a>
+    <h1>SongRecording</h1>
+{#    <a href="{% url 'pyamgmt:song:add' %}">Add</a>#}
     <table>
         <tr>
             <th>ID</th>
             <th>Title</th>
             <th>Artist(s)</th>
+            <th>Duration</th>
             <th>Lyrics</th>
-            <th>Recordings</th>
         </tr>
-        {% for song in qs_song %}
+        {% for songrecording in qs_songrecording %}
         <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' song.pk %}">{{ song.pk }}</a></td>
-            <td>{{ song.title }}</td>
+            <td class="primary-key"><a href="{% url 'pyamgmt:songrecording:detail' songrecording.pk %}">{{ songrecording.pk }}</a></td>
+            <td>{{ songrecording.song.title }}</td>
             <td>
                 {% for musicartisttosong in song.musicartisttosong_set.all %}
                 {{ musicartisttosong.musicartist.name }}
@@ -30,8 +30,8 @@
                 {% endif %}
                 {% endfor %}
             </td>
+            <td>{{ songrecording.duration }}</td>
             <td>{{ song.lyrics|truncatewords:3 }}</td>
-            <td>{{ song.songrecording__count }}</td>
         </tr>
         {% endfor %}
     </table>

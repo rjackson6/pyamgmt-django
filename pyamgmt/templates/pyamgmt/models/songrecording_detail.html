@@ -2,27 +2,27 @@
 {% load static %}
 
 
-{% block title %}Song{% endblock title %}
+{% block title %}SongRecording{% endblock title %}
 
 
 {% block content %}
 
 <div class="model-detail">
-    <h1>Song</h1>
-    <a href="{% url 'pyamgmt:song:edit' song.pk %}">Edit</a>
+    <h1>SongRecording</h1>
+{#    <a href="{% url 'pyamgmt:song:edit' song.pk %}">Edit</a>#}
     <table>
         <tr>
             <th>ID</th>
-            <td>{{ song.pk }}</td>
+            <td>{{ songrecording.pk }}</td>
         </tr>
         <tr>
             <th>Title</th>
-            <td>{{ song.title }}</td>
+            <td>{{ songrecording.song.title }}</td>
         </tr>
-{#        <tr>#}
-{#            <th>Duration</th>#}
-{#            <td>{{ song.duration }}</td>#}
-{#        </tr>#}
+        <tr>
+            <th>Duration</th>
+            <td>{{ songrecording.duration }}</td>
+        </tr>
     </table>
 </div>
 

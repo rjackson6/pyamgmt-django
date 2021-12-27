@@ -714,15 +714,15 @@ def musicalbum_list(request):
 def musicalbum_detail(request, musicalbum_pk: int):
     context = {}
     musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
-    qs_musicalbumtosong = (
-        MusicAlbumToSong.objects
+    qs_musicalbumtosongrecording = (
+        MusicAlbumToSongRecording.objects
         .filter(musicalbum=musicalbum)
-        .select_related('song')
+        .select_related('songrecording__song')
         .order_by('disc_number', 'track_number')
     )
     context.update({
         'musicalbum': musicalbum,
-        'qs_musicalbumtosong': qs_musicalbumtosong
+        'qs_musicalbumtosongrecording': qs_musicalbumtosongrecording
     })
     return render(request, 'pyamgmt/models/musicalbum_detail.html', context)
 
@@ -809,7 +809,7 @@ def musicalbumtomusicartist_form(request, musicalbumtomusicartist_pk: int = None
 def musicalbumtosongrecording_list(request):
     """"""
     context = {}
-    
+
 
 
 def musicalbumtosong_list(request):
@@ -1166,6 +1166,7 @@ def song_list(request):
                 )
             )
         )
+        .annotate(Count('songrecording'))
         .order_by('title')
     )
     context.update({'qs_song': qs_song})
@@ -1175,11 +1176,11 @@ def song_list(request):
 def song_detail(request, song_pk: int):
     context = {}
     song = Song.objects.get(pk=song_pk)
-    related_albums = MusicAlbumToSong.objects.filter(song=song).select_related('musicalbum')
+    # related_albums = MusicAlbumToSong.objects.filter(song=song).select_related('musicalbum')
     related_artists = MusicArtistToSong.objects.filter(song=song).select_related('musicartist')
     context.update({
         'song': song,
-        'related_albums': related_albums,
+        # 'related_albums': related_albums,
         'related_artists': related_artists
     })
     return render(request, 'pyamgmt/models/song_detail.html', context)
@@ -1200,6 +1201,23 @@ def song_form(request, song_pk:int = None):
         return redirect('pyamgmt:song:list')
     context.update({'form': form})
     return render(request, 'pyamgmt/models/song_form.html', context)
+
+
+def songrecording_list(request):
+    context = {}
+    qs_songrecording = (
+        SongRecording.objects
+        .select_related('song')
+    )
+    context.update({'qs_songrecording': qs_songrecording})
+    return render(request, 'pyamgmt/models/songrecording_list.html', context)
+
+
+def songrecording_detail(request, songrecording_pk: int):
+    context = {}
+    songrecording = SongRecording.objects.select_related('song').get(pk=songrecording_pk)
+    context.update({'songrecording': songrecording})
+    return render(request, 'pyamgmt/models/songrecording_detail.html', context)
 
 
 def songtosong_list(request):

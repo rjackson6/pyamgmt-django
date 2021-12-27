@@ -272,6 +272,13 @@ _song_urls = ([
     ]))
 ], 'pyamgmt')
 
+_songrecording_urls = ([
+    path('', pyamgmt.views.models.songrecording_list, name='list'),
+    path('<int:songrecording_pk>/', include([
+        path('', pyamgmt.views.models.songrecording_detail, name='detail')
+    ]))
+], 'pyamgmt')
+
 _songtosong_urls = ([
     path('', pyamgmt.views.models.songtosong_list, name='list')
 ], 'pyamgmt')
@@ -396,6 +403,7 @@ urlpatterns = [
     path('point-of-sale-document/', include(_pointofsaledocument_urls, namespace='pointofsaledocument')),
     path('point-of-sale-line-item/', include(_pointofsalelineitem_urls, namespace='pointofsalelineitem')),
     path('song/', include(_song_urls, namespace='song')),
+    path('song-recording/', include(_songrecording_urls, namespace='songrecording')),
     path('song-to-song/', include(_songtosong_urls, namespace='songtosong')),
     path('txn/', include(_txn_urls, namespace='txn')),
     path('txnlineitem/', include(_txnlineitem_urls, namespace='txnlineitem')),

@@ -11,7 +11,7 @@ __all__ = [
     'Order', 'OrderLineItem',
     'Party', 'PartyCompany', 'PartyPerson', 'PartyType', 'Payee', 'Person',
     'PointOfSale', 'PointOfSaleDocument', 'PointOfSaleLineItem',
-    'Seller', 'Song',
+    'Seller', 'Song', 'SongRecording',
     'Txn', 'TxnLineItem',
     'Unit',
     'Vehicle', 'VehicleMake', 'VehicleMileage', 'VehicleModel', 'VehicleTrim', 'VehicleYear'

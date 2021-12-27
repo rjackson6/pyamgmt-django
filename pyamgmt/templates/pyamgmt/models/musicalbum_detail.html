@@ -64,24 +64,28 @@
 <div class="model-related">
     <h2>Tracks</h2>
     <a href="{% url 'pyamgmt:musicalbum:add-song' musicalbum.pk %}">Add Track</a>
-    {% if qs_musicalbumtosong %}
+    {% if qs_musicalbumtosongrecording %}
     <table class="model-related__table">
         <tr>
             <th>M2MID</th>
+            <th>SongRecordingID</th>
             <th>SongID</th>
             <th>Title</th>
             <th>Disc Number</th>
             <th>Track Number</th>
             <th>Duration</th>
         </tr>
-        {% for record in qs_musicalbumtosong %}
+        {% for record in qs_musicalbumtosongrecording %}
         <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbumtosong:detail' record.pk %}">{{ record.pk }}</a></td>
-            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' record.song.pk %}">{{ record.song.pk }}</a></td>
-            <td>{{ record.song.title }}</td>
+{#            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbumtosong:detail' record.pk %}">{{ record.pk }}</a></td>#}
+{#            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' record.song.pk %}">{{ record.song.pk }}</a></td>#}
+            <td>{{ record.pk }}</td>
+            <td class="primary-key"><a href="{% url 'pyamgmt:songrecording:detail' record.songrecording.pk %}">{{ record.songrecording.pk }}</a></td>
+            <td class="primary-key"><a>{{ record.songrecording.song.pk }}</a></td>
+            <td>{{ record.songrecording.song.title }}</td>
             <td>{{ record.disc_number }}</td>
             <td>{{ record.track_number }}</td>
-            <td>{{ record.song.duration }}</td>
+            <td>{{ record.songrecording.duration }}</td>
         </tr>
         {% endfor %}
     </table>

@@ -1,0 +1,17 @@
+html {
+    background-color: #222222;
+    color: #dddddd;
+}
+th, td {
+    border: 1px solid #cccccc;
+}
+
+#content a:link,
+#content a:visited {
+    color: lightskyblue;
+    text-decoration: none;
+}
+#content a:link:hover {
+    background-color: #444444;
+    border: 1px solid #bbbbbb;
+}
