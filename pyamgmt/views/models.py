@@ -806,6 +806,12 @@ def musicalbumtomusicartist_form(request, musicalbumtomusicartist_pk: int = None
     return render(request, 'pyamgmt/models/musicalbumtomusicartist_form.html', context)
 
 
+def musicalbumtosongrecording_list(request):
+    """"""
+    context = {}
+    
+
+
 def musicalbumtosong_list(request):
     """List all records from model MusicAlbumToSong."""
     context = {}

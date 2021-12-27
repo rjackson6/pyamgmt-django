@@ -5,8 +5,8 @@ __all__ = [
     'CatalogueItem', 'CatalogueItemDigitalSong', 'CatalogueItemMusicAlbum',
     'CatalogueItemToInvoiceLineItem', 'CatalogueItemToOrderLineItem', 'CatalogueItemToPointOfSaleLineItem',
     'Invoice', 'InvoiceLineItem', 'InvoiceLineItemToNonCatalogueItem',
-    'MediaFormat', 'MusicAlbum', 'MusicAlbumToMusicArtist', 'MusicAlbumArtwork', 'MusicArtist',
-    'MusicArtistToPerson', 'MusicArtistToSong',
+    'MediaFormat', 'MusicAlbum', 'MusicAlbumArtwork', 'MusicAlbumToMusicArtist', 'MusicAlbumToSongRecording',
+    'MusicArtist', 'MusicArtistToPerson', 'MusicArtistToSong',
     'NonCatalogueItem',
     'Order', 'OrderLineItem',
     'Party', 'PartyCompany', 'PartyPerson', 'PartyType', 'Payee', 'Person',
@@ -824,9 +824,6 @@ class Song(BaseAuditable):
     """A particular rendition of a song.
     This is actually a bit abstract, in that it does not fully represent the recordings or derivative works.
     """
-    duration = DurationField(null=True, blank=True, validators=[validate_positive_timedelta])
-    is_cover = BooleanField(default=False)
-    is_instrumental = BooleanField(null=True, blank=True)
     lyrics = TextField(blank=True, default='')
     musicartists = ManyToManyField(
         MusicArtist, through='MusicArtistToSong',

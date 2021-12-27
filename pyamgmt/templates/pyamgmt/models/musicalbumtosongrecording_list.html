@@ -1,0 +1,27 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+{% block title %}MusicAlbumToSongRecording{% endblock title %}
+
+{% block content %}
+<h1>MusicAlbumToSongRecording (WIP)</h1>
+<a href="{% url 'pyamgmt:musicalbumtosong:add' %}">Add</a>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>MusicAlbum</th>
+        <th>SongRecording / Song</th>
+        <th>DiscNumber</th>
+        <th>TrackNumber</th>
+    </tr>
+    {% for musicalbumtosongrecording in qs_musicalbumtosongrecording %}
+    <tr>
+        <td class="primary-key"><a href="{% url 'pyamgmt:musicalbumtosong:detail' musicalbumtosongrecording.pk %}">{{ musicalbumtosongrecording.pk }}</a></td>
+        <td>{{ musicalbumtosongrecording.musicalbum }}</td>
+        <td>{{ musicalbumtosongrecording.songrecording }} / {{ musicalbumtosongrecording.songrecording.song }}</td>
+        <td>{{ musicalbumtosongrecording.disc_number }}</td>
+        <td>{{ musicalbumtosongrecording.track_number }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}

@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 import pyamgmt.views
+from pyamgmt.views import models_cbv
 
 app_name = 'pyamgmt'
 
@@ -382,6 +383,9 @@ urlpatterns = [
     path('music-album/', include(_musicalbum_urls, namespace='musicalbum')),
     path('music-album-to-music-artist/', include(_musicalbumtomusicartist_urls, namespace='musicalbumtomusicartist')),
     path('music-album-to-song/', include(_musicalbumtosong_urls, namespace='musicalbumtosong')),
+    #
+    path('music-album-to-song-recording/', models_cbv.MusicAlbumToSongRecordingView.as_view()),
+    #
     path('music-artist/', include(_musicartist_urls, namespace='musicartist')),
     path('music-artist-to-person/', include(_musicartisttoperson_urls, namespace='musicartisttoperson')),
     path('music-artist-to-song/', include(_musicartisttosong_urls, namespace='musicartisttosong')),
