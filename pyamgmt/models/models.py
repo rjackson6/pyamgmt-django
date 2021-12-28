@@ -248,6 +248,26 @@ class AssetType(BaseAuditable):
         return f'AssetType {self.pk}: {self.name}'
 
 
+class Book(BaseAuditable):
+    """Every CRUD app needs a book model."""
+    title = CharField(max_length=255)
+    # publisher
+    # authors
+
+    def __str__(self):
+        return f'{self.title}'
+
+
+# class BookMedia -- the distributed work, in print, ebook, audio
+# audiobooks present a complication. Similar to music, they are a recorded performance with one or more narrators
+
+
+class BookToMotionPicture(BaseAuditable):
+    """Film adaptations of books."""
+    book = ForeignKey(Book, on_delete=CASCADE)
+    motionpicture = ForeignKey("MotionPicture", on_delete=CASCADE)
+
+
 class CatalogueItem(BaseAuditable):
     """An item, most likely tangible, with unique registries in other global systems.
     Can generally be ordered, purchased, re-sold, and accumulated as a discrete asset or inventory.
@@ -408,6 +428,11 @@ class MotionPicture(BaseAuditable):
 
 # class MotionPictureEdition(BaseAuditable):
 #     """"""
+
+
+class MotionPictureRecording(BaseAuditable):
+    """Released edition of a motion picture, taking into account media (digital, DVD, maybe even distributor)"""
+    motionpicture = ForeignKey(MotionPicture, on_delete=PROTECT)
 
 
 class MotionPictureToMusicAlbum(BaseAuditable):
