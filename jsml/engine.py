@@ -1,3 +1,19 @@
+class Element:
+    pass
+
+
+class Div(Element):
+    pass
+
+
+class Table(Element):
+    pass
+
+
+class Tr(Element):
+    pass
+
+
 class JSONTemplate:
     """"""
     ALLOWED_TAGS = {

@@ -1,12 +1,28 @@
 from django.db.models import Prefetch
+from django.shortcuts import render
+from django.views import View
 from django.views.generic.base import TemplateView
 
-from pyamgmt.models import MusicAlbumToSongRecording, MusicArtistToSong, Song
+from pyamgmt.models import *
 
 
 # class MusicAlbumToSongRecordingView(View):
 #     def get(self, request):
 #         return HttpResponse('working')
+
+
+class MusicAlbumListView(View):
+    def get(self, request):
+        context = {}
+        qs_musicalbum = (
+            MusicAlbum.objects
+            .prefetch_related(
+                Prefetch('musicartists', queryset=MusicArtist.objects.order_by('name'))
+            )
+            .order_by('title')
+        )
+        context.update({'qs_musicalbum': qs_musicalbum})
+        return render(request, 'pyamgmt/models/musicalbum_list.html', context)
 
 
 class MusicAlbumToSongRecordingView(TemplateView):

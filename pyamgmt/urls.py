@@ -1,7 +1,6 @@
 from django.urls import include, path
 
 import pyamgmt.views
-from pyamgmt.views import models_cbv
 
 app_name = 'pyamgmt'
 
@@ -146,6 +145,10 @@ _invoice_urls = ([
     path('', pyamgmt.views.models.invoice_list, name='list')
 ], 'pyamgmt')
 
+_motionpicture_urls = ([
+    path('', pyamgmt.views.models.motionpicture_list, name='list')
+], 'pyamgmt')
+
 _musicalbum_urls = ([
     path('', pyamgmt.views.models.musicalbum_list, name='list'),
     path('add/', pyamgmt.views.models.musicalbum_form, name='add'),
@@ -167,13 +170,8 @@ _musicalbumtomusicartist_urls = ([
     ]))
 ], 'pyamgmt')
 
-_musicalbumtosong_urls = ([
-    path('', pyamgmt.views.models.musicalbumtosong_list, name='list'),
-    path('add/', pyamgmt.views.models.musicalbumtosong_form, name='add'),
-    path('<int:musicalbumtosong_pk>/', include([
-        path('', pyamgmt.views.models.musicalbumtosong_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.musicalbumtosong_form, name='edit')
-    ]))
+_musicalbumtosongrecording_urls = ([
+    path('', pyamgmt.views.models.musicalbumtosongrecording_list, name='list')
 ], 'pyamgmt')
 
 _musicartist_urls = ([
@@ -203,6 +201,10 @@ _musicartisttosong_urls = ([
     path('<int:musicartisttosong_pk>/', include([
         path('', pyamgmt.views.models.musicartisttosong_detail, name='detail')
     ]))
+], 'pyamgmt')
+
+_musicartisttosongrecording_urls = ([
+    path('', pyamgmt.views.models.musicartisttosongrecording_list, name='list')
 ], 'pyamgmt')
 
 _party_urls = ([
@@ -387,12 +389,12 @@ urlpatterns = [
         _catalogueitemtopointofsalelineitem_urls, namespace='catalogueitemtopointofsalelineitem'
     )),
     path('invoice/', include(_invoice_urls, namespace='invoice')),
+    path('motion-picture/', include(_motionpicture_urls, namespace='motionpicture')),
     path('music-album/', include(_musicalbum_urls, namespace='musicalbum')),
     path('music-album-to-music-artist/', include(_musicalbumtomusicartist_urls, namespace='musicalbumtomusicartist')),
-    path('music-album-to-song/', include(_musicalbumtosong_urls, namespace='musicalbumtosong')),
-    #
-    path('music-album-to-song-recording/', models_cbv.MusicAlbumToSongRecordingView.as_view()),
-    #
+    path('music-album-to-song-recording/', include(
+        _musicalbumtosongrecording_urls, namespace='musicalbumtosongrecording'
+    )),
     path('music-artist/', include(_musicartist_urls, namespace='musicartist')),
     path('music-artist-to-person/', include(_musicartisttoperson_urls, namespace='musicartisttoperson')),
     path('music-artist-to-song/', include(_musicartisttosong_urls, namespace='musicartisttosong')),

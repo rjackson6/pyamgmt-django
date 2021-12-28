@@ -5,13 +5,15 @@ __all__ = [
     'CatalogueItem', 'CatalogueItemDigitalSong', 'CatalogueItemMusicAlbum',
     'CatalogueItemToInvoiceLineItem', 'CatalogueItemToOrderLineItem', 'CatalogueItemToPointOfSaleLineItem',
     'Invoice', 'InvoiceLineItem', 'InvoiceLineItemToNonCatalogueItem',
-    'MediaFormat', 'MusicAlbum', 'MusicAlbumArtwork', 'MusicAlbumToMusicArtist', 'MusicAlbumToSongRecording',
-    'MusicArtist', 'MusicArtistToPerson', 'MusicArtistToSong',
+    'MediaFormat',
+    'MotionPicture',
+    'MusicAlbum', 'MusicAlbumArtwork', 'MusicAlbumToMusicArtist', 'MusicAlbumToSongRecording',
+    'MusicArtist', 'MusicArtistToPerson', 'MusicArtistToSong', 'MusicArtistToSongRecording',
     'NonCatalogueItem',
     'Order', 'OrderLineItem',
     'Party', 'PartyCompany', 'PartyPerson', 'PartyType', 'Payee', 'Person',
     'PointOfSale', 'PointOfSaleDocument', 'PointOfSaleLineItem',
-    'Seller', 'Song', 'SongRecording',
+    'Seller', 'Song', 'SongRecording', 'SongToSong',
     'Txn', 'TxnLineItem',
     'Unit',
     'Vehicle', 'VehicleMake', 'VehicleMileage', 'VehicleModel', 'VehicleTrim', 'VehicleYear'
@@ -116,7 +118,7 @@ class AccountAssetFinancial(BaseAuditable):
     accountasset = OneToOneField(AccountAsset, on_delete=CASCADE, primary_key=True)
     accountasset_id: int
     account_number = CharField(max_length=63, null=True, blank=True)
-    institution = None
+    institution = None  # TODO
 
 
 class AccountAssetReal(BaseAuditable):
@@ -279,7 +281,6 @@ class CatalogueItemDigitalSong(BaseAuditable):
     Even if a song is released as a "Single", that "Single" still requires a medium for physical distribution, which
     makes it a "Single Album"
     """
-    # length = DurationField(null=True, blank=True, validators=[validate_positive_timedelta])
     catalogueitem = OneToOneField(CatalogueItem, on_delete=CASCADE, primary_key=True)
     catalogueitem_id: int
 
@@ -334,6 +335,9 @@ class CatalogueItemToPointOfSaleLineItem(BaseAuditable):
     @property
     def price(self):
         return self.quantity * self.unit_price
+
+
+# Company -- difference between business and company is arguably legal structure. Company is probably the best term
 
 
 class Invoice(BaseAuditable):
@@ -407,7 +411,7 @@ class MotionPicture(BaseAuditable):
 
 
 class MotionPictureToMusicAlbum(BaseAuditable):
-    """Relates a Motion Picture to its Soundtrack."""
+    """Relates a motion picture to its soundtrack (more specifically, its film score, if published)."""
     motionpicture = ForeignKey(MotionPicture, on_delete=CASCADE)
     motionpicture_id: int
     musicalbum = ForeignKey('MusicAlbum', on_delete=CASCADE)
@@ -415,7 +419,14 @@ class MotionPictureToMusicAlbum(BaseAuditable):
 
 
 # class MotionPictureToSong(BaseAuditable):
-#     """"""
+#     """Not sure if needed, but would account for one-off non-score non-soundtrack songs.
+#     There are some conventions here. "Original Soundtrack" and "Music from the Motion Picture" sometimes imply
+#      different meanings. I don't know if soundtracks or film scores are always published, either.
+#     """
+#     motionpicture = ForeignKey(MotionPicture, on_delete=CASCADE)
+#     motionpicture_id: int
+#     song = ForeignKey("Song", on_delete=CASCADE)
+#     song_id: int
 
 
 class MusicAlbum(BaseAuditable):
@@ -437,7 +448,6 @@ class MusicAlbum(BaseAuditable):
     musicartists = ManyToManyField(
         'MusicArtist', through='MusicAlbumToMusicArtist', related_name='musicalbums', blank=True
     )
-    # songs = ManyToManyField('Song', through='MusicAlbumToSong', related_name='musicalbums', blank=True)
     songrecordings = ManyToManyField('SongRecording', through='MusicAlbumToSongRecording', blank=True)
 
     def __str__(self):
@@ -514,11 +524,12 @@ class MusicAlbumToSongRecording(BaseAuditable):
 class MusicArtist(BaseAuditable):
     """An individual musician or a group of musicians."""
     name = CharField(max_length=255, unique=True)
-    songs = ManyToManyField('Song', through='MusicArtistToSong', related_name='+', blank=True)
     website = URLField(
         null=True, blank=True,
         help_text="Website or homepage for this music artist."
     )
+    # Relationships
+    songs = ManyToManyField('Song', through='MusicArtistToSong', related_name='+', blank=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -825,32 +836,47 @@ class Song(BaseAuditable):
     This is actually a bit abstract, in that it does not fully represent the recordings or derivative works.
     """
     lyrics = TextField(blank=True, default='')
+    title = CharField(max_length=255)
+    # Relationships
     musicartists = ManyToManyField(
         MusicArtist, through='MusicArtistToSong',
-        related_name='+')
-    title = CharField(max_length=255)
+        related_name='+'
+    )
 
     def __str__(self):
         return f'{self.title}'
 
 
 class SongRecording(BaseAuditable):
-    """TODO: Newer than the other new model."""
+    """"""
     class RecordingType(TextChoices):
         LIVE = 'LIVE', 'Live Performance'
         STUDIO = 'STUDIO', 'Studio Recording'
     duration = DurationField(null=True, blank=True, validators=[validate_positive_timedelta])
     lyrics = TextField(blank=True, default='')
+    song = ForeignKey(Song, on_delete=CASCADE)
+    recording_type = CharField(max_length=6, choices=RecordingType.choices, default=RecordingType.STUDIO)
+    # Relationships
     musicartists = ManyToManyField(
         MusicArtist, through='MusicArtistToSongRecording',
         related_name='+'
     )
-    song = ForeignKey(Song, on_delete=CASCADE)
-    recording_type = CharField(max_length=6, choices=RecordingType.choices, default=RecordingType.STUDIO)
 
 
 class SongToSong(BaseAuditable):
-    """Many to many for Songs which are covers and/or mashups."""
+    """Many to many for Songs which are covers, arrangements, or other derivatives."""
+    # relationship: enum or foreign key lookup
+    # tagging may play a part in this too (acoustic, instrumental)
+    class SongRelationship(TextChoices):
+        ARRANGEMENT = 'ARRANGEMENT', 'Arrangement'
+        # COMPILATION = 'COMPILATION'
+        COVER = 'COVER', 'Cover'
+        # EDIT = 'EDIT'
+        INSTRUMENTAL = 'INSTRUMENTAL', 'Instrumental'
+        OVERTURE = 'OVERTURE', 'Overture'
+        MASHUP = 'MASHUP', 'Mash-up'
+        # REMASTER = 'REMASTER'
+        REMIX = 'REMIX', 'Remix'
     song_derivative = ForeignKey(
         Song, on_delete=CASCADE,
         related_name='+'
@@ -861,6 +887,19 @@ class SongToSong(BaseAuditable):
         related_name='+'
     )
     song_original_id: int
+    song_relationship = CharField(max_length=15, choices=SongRelationship.choices)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=['song_derivative', 'song_original'],
+                name='unique_songtosong'
+            )
+        ]
+
+    def clean(self):
+        if self.song_original == self.song_derivative:
+            raise ValidationError("Original and derivative must be different.")
 
 
 # class State(BaseAuditable):
@@ -1080,3 +1119,43 @@ class VehicleYear(BaseAuditable):
 
     def __str__(self):
         return f'VehicleYear {self.pk}: {self.vehicletrim_id}-{self.year}'
+
+
+# class VideoGame(BaseAuditable):
+#     """"""
+#     # developer(s) - person or company or other entity
+#     # genre(s)
+#     # language?
+#     # platform: PC, PS4, NES, SNES - not mutually exclusive; m2m
+#     # publisher(s) - usually a company, but could be independently published or n/a
+#     # release date - different per platform, port, region, or market (part of m2m)
+#     # tag(s)? Something looser than genre, though not required.
+#     # title
+#     # Could also relate to people: voice acting, developers, directors, composers, producers
+#     # Relates to music via soundtracks (songs vs albums is debatable, like movies)
+#     #  Like, an "unofficial" OST is kind of an issue for copyright, but not every game was published alongside an OST
+#     # Not every game is regionalized right? NTSC / PAL / JP was common for consoles. Region # is a thing for media.
+#
+#
+# class VideoGameAddon(BaseAuditable):
+#     """DLC, Expansion pack, or other additional components that are optional."""
+#     # videogame = ForeignKey
+#     # release date
+#     # title / name
+#     # type, such as DLC, expansion, addon, content, in-game something (or tags may be appropriate)
+#
+#
+# class VideoGamePlatform(BaseAuditable):
+#     """"""
+#     # May also be a commodity, asset, or catalogue item, but we will probably keep this abstracted from the physical
+#     #  consoles or assemblies
+#     name = CharField(max_length=31)
+#     short_name = CharField(max_length=15)
+#
+#
+# class VideoGameToVideoGamePlatform(BaseAuditable):
+#     """"""
+#     # release_date
+#     # videogame
+#     # videogameplatform
+#     # TODO: region...

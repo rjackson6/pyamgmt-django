@@ -696,6 +696,13 @@ def invoice_list(request):
     return render(request, 'pyamgmt/models/invoice_list.html', context)
 
 
+def motionpicture_list(request):
+    context = {}
+    qs_motionpicture = MotionPicture.objects.all()
+    context.update({'qs_motionpicture': qs_motionpicture})
+    return render(request, 'pyamgmt/models/motionpicture_list.html', context)
+
+
 def musicalbum_list(request):
     """List all records from model MusicAlbum."""
     context = {}
@@ -809,31 +816,23 @@ def musicalbumtomusicartist_form(request, musicalbumtomusicartist_pk: int = None
 def musicalbumtosongrecording_list(request):
     """"""
     context = {}
-
-
-
-def musicalbumtosong_list(request):
-    """List all records from model MusicAlbumToSong."""
-    context = {}
-    qs_musicalbumtosong = (
-        MusicAlbumToSong.objects
-        .select_related('musicalbum', 'song')
+    qs_musicalbumtosongrecording = (
+        MusicAlbumToSongRecording.objects
+        .select_related('musicalbum', 'songrecording__song')
     )
-    context.update({'qs_musicalbumtosong': qs_musicalbumtosong})
-    return render(request, 'pyamgmt/models/musicalbumtosong_list.html', context)
+    context.update({'qs_musicalbumtosongrecording': qs_musicalbumtosongrecording})
+    return render(request, 'pyamgmt/models/musicalbumtosongrecording_list.html', context)
 
 
-def musicalbumtosong_detail(request, musicalbumtosong_pk: int):
+def musicalbumtosongrecording_detail(request, musicalbumtosongrecording_pk: int):
     context = {}
-    musicalbumtosong = (
-        MusicAlbumToSong.objects
-        .select_related('musicalbum', 'song')
-        .get(pk=musicalbumtosong_pk)
+    musicalbumtosongrecording = (
+        MusicAlbumToSongRecording.objects
+        .select_related('musicalbum', 'songrecording__song')
+        .get(pk=musicalbumtosongrecording_pk)
     )
-    context.update({
-        'musicalbumtosong': musicalbumtosong
-    })
-    return render(request, 'pyamgmt/models/musicalbumtosong_detail.html', context)
+    context.update({'musicalbumtosongrecording': musicalbumtosongrecording})
+    return render(request, 'pyamgmt/models/musicalbumtosongrecording_detail.html', context)
 
 
 def musicalbumtosong_form(request, musicalbumtosong_pk: int = None):
@@ -947,6 +946,10 @@ def musicartisttosong_detail(request, musicartisttosong_pk: int):
     return HttpResponse('under construction')
 
 
+def musicartisttosongrecording_list(request):
+    return HttpResponse('under construction')
+
+
 def party_list(request):
     """List all records from model Party."""
     context = {}
@@ -1016,6 +1019,8 @@ def person_list(request):
     context = {}
     qs_person = Person.objects.order_by('last_name', 'first_name', 'id')
     context.update({'qs_person': qs_person})
+    response = render(request, 'pyamgmt/models/person_list.html', context)
+    print(dir(response))
     return render(request, 'pyamgmt/models/person_list.html', context)
 
 
@@ -1208,6 +1213,7 @@ def songrecording_list(request):
     qs_songrecording = (
         SongRecording.objects
         .select_related('song')
+        .prefetch_related('song__musicartisttosong_set__musicartist')  # original artist
     )
     context.update({'qs_songrecording': qs_songrecording})
     return render(request, 'pyamgmt/models/songrecording_list.html', context)
@@ -1216,12 +1222,22 @@ def songrecording_list(request):
 def songrecording_detail(request, songrecording_pk: int):
     context = {}
     songrecording = SongRecording.objects.select_related('song').get(pk=songrecording_pk)
-    context.update({'songrecording': songrecording})
+    related_albums = MusicAlbumToSongRecording.objects.filter(songrecording=songrecording).select_related('musicalbum')
+    related_artists = MusicArtistToSongRecording.objects.filter(songrecording=songrecording).select_related('musicartist')
+    context.update({
+        'songrecording': songrecording,
+        'related_albums': related_albums,
+        'related_artists': related_artists
+    })
     return render(request, 'pyamgmt/models/songrecording_detail.html', context)
 
 
 def songtosong_list(request):
-    return HttpResponse('under construction')
+    """"""
+    context = {}
+    qs_songtosong = SongToSong.objects.all()
+    context.update({'qs_songtosong': qs_songtosong})
+    return render(request, 'pyamgmt/models/songtosong_list.html', context)
 
 
 def txn_list(request):

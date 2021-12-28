@@ -11,7 +11,8 @@ th, td {
     color: lightskyblue;
     text-decoration: none;
 }
-#content a:link:hover {
+#content a:link:hover,
+#content a:visited:hover {
     background-color: #444444;
     border: 1px solid #bbbbbb;
 }

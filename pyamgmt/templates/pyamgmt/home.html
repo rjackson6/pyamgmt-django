@@ -39,7 +39,7 @@
                 MusicAlbum
                 <ul>
                     <li><a href="{% url 'pyamgmt:musicalbumtomusicartist:list' %}">MusicAlbumToMusicArtist</a></li>
-                    <li><a href="{% url 'pyamgmt:musicalbumtosong:list' %}">MusicAlbumToSong</a></li>
+                    <li><a href="{% url 'pyamgmt:musicalbumtosongrecording:list' %}">MusicAlbumToSongRecording</a></li>
                 </ul>
             </li>
             <li>
@@ -48,6 +48,7 @@
                     <li><a href="{% url 'pyamgmt:musicalbumtomusicartist:list' %}">MusicAlbumToMusicArtist</a></li>
                     <li><a>MusicArtistToPerson</a></li>
                     <li><a href="{% url 'pyamgmt:musicartisttosong:list' %}">MusicArtistToSong</a></li>
+                    <li><a>MusicArtistToSongRecording</a></li>
                 </ul>
             </li>
             <li>
@@ -83,8 +84,15 @@
             <li>
                 Song
                 <ul>
-                    <li><a href="{% url 'pyamgmt:musicalbumtosong:list' %}">MusicAlbumToSong</a></li>
                     <li><a href="{% url 'pyamgmt:musicartisttosong:list' %}">MusicArtistToSong</a></li>
+                    <li><a href="{% url 'pyamgmt:songtosong:list' %}">SongToSong</a></li>
+                </ul>
+            </li>
+            <li>
+                SongRecording
+                <ul>
+                    <li><a href="{% url 'pyamgmt:musicalbumtosongrecording:list' %}">MusicAlbumToSongRecording</a></li>
+                    <li><a>MusicArtistToSongRecording</a></li>
                 </ul>
             </li>
         </ul>

@@ -1,0 +1,22 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}SongToSong{% endblock title %}
+
+
+{% block content %}
+
+<div class="model-list">
+    <h1>SongToSong</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+        </tr>
+        {% for songtosong in qs_songtosong %}
+        <td><a>{{ songtosong.pk }}</a></td>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock content %}
