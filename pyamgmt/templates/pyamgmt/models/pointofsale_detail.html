@@ -54,7 +54,7 @@
         <td class="primary-key"><a href="{% url 'pyamgmt:point-of-sale-line-item:detail' related_line_item.pk %}">{{ related_line_item.pk }}</a></td>
         <td>{{ related_line_item.subtype }}</td>
         <td>{{ related_line_item.short_memo }}</td>
-        <td>{{ related_line_item.catalogueitemtopointofsalelineitem.quantity }}</td>
+        <td>{{ related_line_item.catalogitemtopointofsalelineitem.quantity }}</td>
     </tr>
     {% endfor %}
 </table>

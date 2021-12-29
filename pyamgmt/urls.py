@@ -101,42 +101,42 @@ _assetinventory_urls = ([
     ]))
 ], 'pyamgmt')
 
-_catalogueitem_urls = ([
-    path('', pyamgmt.views.models.catalogueitem_list, name='list'),
-    path('add/', pyamgmt.views.models.catalogueitem_form, name='add'),
-    path('<int:catalogueitem_pk>/', include([
-        path('', pyamgmt.views.models.catalogueitem_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.catalogueitem_form, name='edit')
+_catalogitem_urls = ([
+    path('', pyamgmt.views.models.catalogitem_list, name='list'),
+    path('add/', pyamgmt.views.models.catalogitem_form, name='add'),
+    path('<int:catalogitem_pk>/', include([
+        path('', pyamgmt.views.models.catalogitem_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.catalogitem_form, name='edit')
     ]))
 ], 'pyamgmt')
 
-_catalogueitemdigitalsong_urls = ([
-    path('', pyamgmt.views.models.catalogueitemdigitalsong_list, name='list'),
-    path('add/', pyamgmt.views.models.catalogueitemdigitalsong_form, name='add'),
-    path('<int:catalogueitemdigitalsong_pk>/', include([
-        path('', pyamgmt.views.models.catalogueitemdigitalsong_detail,
+_catalogitemdigitalsong_urls = ([
+    path('', pyamgmt.views.models.catalogitemdigitalsong_list, name='list'),
+    path('add/', pyamgmt.views.models.catalogitemdigitalsong_form, name='add'),
+    path('<int:catalogitemdigitalsong_pk>/', include([
+        path('', pyamgmt.views.models.catalogitemdigitalsong_detail,
              name='detail'),
-        path('edit/', pyamgmt.views.models.catalogueitemdigitalsong_form, name='edit')
+        path('edit/', pyamgmt.views.models.catalogitemdigitalsong_form, name='edit')
     ]))
 ], 'pyamgmt')
 
-_catalogueitemmusicalbum_urls = ([
-    path('', pyamgmt.views.models.catalogueitemmusicalbum_list, name='list'),
-    path('add/', pyamgmt.views.models.catalogueitemmusicalbum_form, name='add'),
-    path('<int:catalogueitemmusicalbum_pk>/', include([
-        path('', pyamgmt.views.models.catalogueitemmusicalbum_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.catalogueitemmusicalbum_form, name='edit')
+_catalogitemmusicalbum_urls = ([
+    path('', pyamgmt.views.models.catalogitemmusicalbum_list, name='list'),
+    path('add/', pyamgmt.views.models.catalogitemmusicalbum_form, name='add'),
+    path('<int:catalogitemmusicalbum_pk>/', include([
+        path('', pyamgmt.views.models.catalogitemmusicalbum_detail, name='detail'),
+        path('edit/', pyamgmt.views.models.catalogitemmusicalbum_form, name='edit')
     ]))
 ], 'pyamgmt')
 
-_catalogueitemtopointofsalelineitem_urls = ([
-    path('', pyamgmt.views.models.catalogueitemtopointofsalelineitem_list, name='list'),
-    path('add/', pyamgmt.views.models.catalogueitemtopointofsalelineitem_form,
+_catalogitemtopointofsalelineitem_urls = ([
+    path('', pyamgmt.views.models.catalogitemtopointofsalelineitem_list, name='list'),
+    path('add/', pyamgmt.views.models.catalogitemtopointofsalelineitem_form,
          name='add'),
-    path('<int:catalogueitemtopointofsalelineitem_pk>/', include([
-        path('', pyamgmt.views.models.catalogueitemtopointofsalelineitem_detail,
+    path('<int:catalogitemtopointofsalelineitem_pk>/', include([
+        path('', pyamgmt.views.models.catalogitemtopointofsalelineitem_detail,
              name='detail'),
-        path('edit/', pyamgmt.views.models.catalogueitemtopointofsalelineitem_form,
+        path('edit/', pyamgmt.views.models.catalogitemtopointofsalelineitem_form,
              name='edit')
     ]))
 ], 'pyamgmt')
@@ -382,11 +382,11 @@ urlpatterns = [
     path('asset-discrete/', include(_assetdiscrete_urls, namespace='assetdiscrete')),
     path('asset-discrete-vehicle/', include(_assetdiscretevehicle_urls, namespace='assetdiscretevehicle')),
     path('asset-inventory/', include(_assetinventory_urls, namespace='assetinventory')),
-    path('catalogue-item/', include(_catalogueitem_urls, namespace='catalogueitem')),
-    path('catalogue-item-digital-song/', include(_catalogueitemdigitalsong_urls, namespace='catalogueitemdigitalsong')),
-    path('catalogue-item-music-album/', include(_catalogueitemmusicalbum_urls, namespace='catalogueitemmusicalbum')),
-    path('catalogue-item-to-point-of-sale-line-item/', include(
-        _catalogueitemtopointofsalelineitem_urls, namespace='catalogueitemtopointofsalelineitem'
+    path('catalog-item/', include(_catalogitem_urls, namespace='catalogitem')),
+    path('catalog-item-digital-song/', include(_catalogitemdigitalsong_urls, namespace='catalogitemdigitalsong')),
+    path('catalog-item-music-album/', include(_catalogitemmusicalbum_urls, namespace='catalogitemmusicalbum')),
+    path('catalog-item-to-point-of-sale-line-item/', include(
+        _catalogitemtopointofsalelineitem_urls, namespace='catalogitemtopointofsalelineitem'
     )),
     path('invoice/', include(_invoice_urls, namespace='invoice')),
     path('motion-picture/', include(_motionpicture_urls, namespace='motionpicture')),

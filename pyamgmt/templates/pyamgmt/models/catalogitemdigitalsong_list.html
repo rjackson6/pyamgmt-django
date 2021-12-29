@@ -26,15 +26,15 @@
 
             <th></th>
         </tr>
-        {% for catalogueitemdigitalsong in qs_catalogueitemdigitalsong %}
+        {% for catalogitemdigitalsong in qs_catalogitemdigitalsong %}
         <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:catalogueitemdigitalsong:detail' catalogueitemdigitalsong.pk %}">{{ catalogueitemdigitalsong }}</a></td>
-            <td>{{ catalogueitemdigitalsong.catalogue_item.subtype }}</td>
-            <td>{{ catalogueitemdigitalsong.catalogue_item.name }}</td>
-            <td>{{ catalogueitemdigitalsong.catalogue_item.asin }}</td>
-            <td>{{ catalogueitemdigitalsong.catalogue_item.isbn }}</td>
-            <td>{{ catalogueitemdigitalsong.catalogue_item.isbn_13 }}</td>
-            <td>{{ catalogueitemdigitalsong.catalogue_item.upc }}</td>
+            <td class="primary-key"><a href="{% url 'pyamgmt:catalogitemdigitalsong:detail' catalogitemdigitalsong.pk %}">{{ catalogitemdigitalsong }}</a></td>
+            <td>{{ catalogitemdigitalsong.catalogue_item.subtype }}</td>
+            <td>{{ catalogitemdigitalsong.catalogue_item.name }}</td>
+            <td>{{ catalogitemdigitalsong.catalogue_item.asin }}</td>
+            <td>{{ catalogitemdigitalsong.catalogue_item.isbn }}</td>
+            <td>{{ catalogitemdigitalsong.catalogue_item.isbn_13 }}</td>
+            <td>{{ catalogitemdigitalsong.catalogue_item.upc }}</td>
 
             <td></td>
         </tr>

@@ -9,14 +9,14 @@
 
 <div class="model-list">
     <h1>CatalogueItemMusicAlbum</h1>
-    <a href="{% url 'pyamgmt:catalogueitemmusicalbum:add' %}">Add</a>
+    <a href="{% url 'pyamgmt:catalogitemmusicalbum:add' %}">Add</a>
     <table>
         <tr>
             <th>ID</th>
         </tr>
-        {% for catalogueitemmusicalbum in qs_catalogueitemmusicalbum %}
+        {% for catalogitemmusicalbum in qs_catalogitemmusicalbum %}
         <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:catalogueitemmusicalbum:detail' catalogueitemmusicalbum.pk %}">{{ catalogueitemmusicalbum.pk }}</a></td>
+            <td class="primary-key"><a href="{% url 'pyamgmt:catalogitemmusicalbum:detail' catalogitemmusicalbum.pk %}">{{ catalogitemmusicalbum.pk }}</a></td>
         </tr>
         {% endfor %}
     </table>

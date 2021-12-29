@@ -2,8 +2,8 @@ __all__ = [
     'AccountForm', 'AccountAssetForm', 'AccountAssetFinancialForm', 'AccountAssetRealForm', 'AccountExpenseForm',
     'AccountIncomeForm', 'AccountLiabilityForm',
     'AssetForm', 'AssetFormVehicle', 'AssetDiscreteForm', 'AssetDiscreteVehicleForm',
-    'CatalogueItemForm', 'CatalogueItemDigitalSongForm', 'CatalogueItemMusicAlbumForm',
-    'CatalogueItemToPointOfSaleLineItemForm',
+    'CatalogItemForm', 'CatalogItemDigitalSongForm', 'CatalogItemMusicAlbumForm',
+    'CatalogItemToPointOfSaleLineItemForm',
     'MusicAlbumForm', 'MusicAlbumToMusicArtistForm', 'MusicAlbumToSongForm', 'MusicArtistForm',
     'MusicArtistToPersonForm',
     'PartyForm', 'PayeeForm', 'PersonForm', 'PointOfSaleForm', 'PointOfSaleDocumentForm', 'PointOfSaleLineItemForm',
@@ -145,11 +145,11 @@ class AssetDiscreteForm(ModelForm):
         exclude = BASE_AUDITABLE_FIELDS + ('asset',)
 
 
-class AssetDiscreteCatalogueItemForm(ModelForm):
-    prefix = 'asset-discrete-catalogue-item'
+class AssetDiscreteCatalogItemForm(ModelForm):
+    prefix = 'asset-discrete-catalog-item'
 
     class Meta:
-        model = AssetDiscreteCatalogueItem
+        model = AssetDiscreteCatalogItem
         exclude = BASE_AUDITABLE_FIELDS + ('assetdiscrete',)
 
 
@@ -161,27 +161,27 @@ class AssetDiscreteVehicleForm(ModelForm):
         exclude = BASE_AUDITABLE_FIELDS + ('assetdiscrete',)
 
 
-class CatalogueItemForm(ModelForm):
+class CatalogItemForm(ModelForm):
     class Meta:
-        model = CatalogueItem
+        model = CatalogItem
         exclude = BASE_AUDITABLE_FIELDS
 
 
-class CatalogueItemDigitalSongForm(ModelForm):
+class CatalogItemDigitalSongForm(ModelForm):
     class Meta:
-        model = CatalogueItemDigitalSong
+        model = CatalogItemDigitalSong
         exclude = BASE_AUDITABLE_FIELDS
 
 
-class CatalogueItemMusicAlbumForm(ModelForm):
+class CatalogItemMusicAlbumForm(ModelForm):
     class Meta:
-        model = CatalogueItemMusicAlbum
+        model = CatalogItemMusicAlbum
         exclude = BASE_AUDITABLE_FIELDS
 
 
-class CatalogueItemToPointOfSaleLineItemForm(ModelForm):
+class CatalogItemToPointOfSaleLineItemForm(ModelForm):
     class Meta:
-        model = CatalogueItemToPointOfSaleLineItem
+        model = CatalogItemToPointOfSaleLineItem
         exclude = BASE_AUDITABLE_FIELDS
 
 

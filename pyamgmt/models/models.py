@@ -1,15 +1,15 @@
 __all__ = [
     'Account', 'AccountAsset', 'AccountAssetFinancial', 'AccountAssetReal', 'AccountEquity', 'AccountExpense',
     'AccountIncome', 'AccountLiability',
-    'Asset', 'AssetDiscrete', 'AssetDiscreteCatalogueItem', 'AssetDiscreteVehicle', 'AssetInventory', 'AssetType',
-    'CatalogueItem', 'CatalogueItemDigitalSong', 'CatalogueItemMusicAlbum',
-    'CatalogueItemToInvoiceLineItem', 'CatalogueItemToOrderLineItem', 'CatalogueItemToPointOfSaleLineItem',
-    'Invoice', 'InvoiceLineItem', 'InvoiceLineItemToNonCatalogueItem',
+    'Asset', 'AssetDiscrete', 'AssetDiscreteCatalogItem', 'AssetDiscreteVehicle', 'AssetInventory', 'AssetType',
+    'CatalogItem', 'CatalogItemDigitalSong', 'CatalogItemMusicAlbum',
+    'CatalogItemToInvoiceLineItem', 'CatalogItemToOrderLineItem', 'CatalogItemToPointOfSaleLineItem',
+    'Invoice', 'InvoiceLineItem', 'InvoiceLineItemToNonCatalogItem',
     'MediaFormat',
     'MotionPicture',
     'MusicAlbum', 'MusicAlbumArtwork', 'MusicAlbumToMusicArtist', 'MusicAlbumToSongRecording',
     'MusicArtist', 'MusicArtistToPerson', 'MusicArtistToSong', 'MusicArtistToSongRecording',
-    'NonCatalogueItem',
+    'NonCatalogItem',
     'Order', 'OrderLineItem',
     'Party', 'PartyCompany', 'PartyPerson', 'PartyType', 'Payee', 'Person',
     'PointOfSale', 'PointOfSaleDocument', 'PointOfSaleLineItem',
@@ -199,7 +199,7 @@ class Asset(BaseAuditable):
 class AssetDiscrete(BaseAuditable):
     """An item that is uniquely identifiable."""
     class Subtype(TextChoices):
-        CATALOGUE_ITEM = 'CATALOGUE_ITEM', 'CATALOGUE_ITEM'
+        CATALOG_ITEM = 'CATALOG_ITEM', 'CATALOG_ITEM'
         VEHICLE = 'VEHICLE', 'VEHICLE'
     asset = OneToOneField(Asset, on_delete=CASCADE, primary_key=True)
     asset_id: int
@@ -208,12 +208,12 @@ class AssetDiscrete(BaseAuditable):
     subtype = CharField(max_length=31, choices=Subtype.choices, default='NONE')
 
 
-class AssetDiscreteCatalogueItem(BaseAuditable):
-    """A discrete asset that can relate to a CatalogueItem."""
+class AssetDiscreteCatalogItem(BaseAuditable):
+    """A discrete asset that can relate to a CatalogItem."""
     assetdiscrete = OneToOneField(AssetDiscrete, on_delete=CASCADE, primary_key=True)
     assetdiscrete_id: int
-    catalogueitem = ForeignKey('CatalogueItem', on_delete=PROTECT)
-    catalogueitem_id: int
+    catalogitem = ForeignKey('CatalogItem', on_delete=PROTECT)
+    catalogitem_id: int
 
 
 class AssetDiscreteVehicle(BaseAuditable):
@@ -231,8 +231,8 @@ class AssetInventory(BaseAuditable):
     """An item that is not uniquely identifiable; stockable."""
     asset = OneToOneField(Asset, on_delete=CASCADE, primary_key=True)
     asset_id: int
-    catalogueitem = OneToOneField('CatalogueItem', on_delete=PROTECT)  # OneToOne because inventory should accumulate
-    catalogueitem_id: int
+    catalogitem = OneToOneField('CatalogItem', on_delete=PROTECT)  # OneToOne because inventory should accumulate
+    catalogitem_id: int
     quantity = IntegerField(default=1)
 
 
@@ -258,20 +258,34 @@ class Book(BaseAuditable):
         return f'{self.title}'
 
 
-# class BookMedia -- the distributed work, in print, ebook, audio
+class BookEdition(BaseAuditable):
+    book = ForeignKey(Book, on_delete=PROTECT)
+    edition = PositiveSmallIntegerField()
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['book', 'edition'], name='unique_bookedition')
+        ]
+
+
+# class BookPublication -- the distributed work, in print, ebook, audio
 # audiobooks present a complication. Similar to music, they are a recorded performance with one or more narrators
+class BookPublication(BaseAuditable):
+    bookedition = ForeignKey(BookEdition, on_delete=PROTECT)
+    format = None  # TODO
+    publisher = None  # TODO
 
 
 class BookToMotionPicture(BaseAuditable):
-    """Film adaptations of books."""
+    """Film adaptations of books. The edition of the book doesn't really matter."""
     book = ForeignKey(Book, on_delete=CASCADE)
     motionpicture = ForeignKey("MotionPicture", on_delete=CASCADE)
 
 
-class CatalogueItem(BaseAuditable):
+class CatalogItem(BaseAuditable):
     """An item, most likely tangible, with unique registries in other global systems.
     Can generally be ordered, purchased, re-sold, and accumulated as a discrete asset or inventory.
-    Opposite of "NonCatalogueItem", and does not cover labor hours, services, or warranties.
+    Opposite of "NonCatalogItem", and does not cover labor hours, services, or warranties.
     """
     class Subtype(TextChoices):
         DIGITAL_SONG = 'DIGITAL_SONG', 'DIGITAL_SONG'
@@ -293,64 +307,64 @@ class CatalogueItem(BaseAuditable):
     )
 
     def __str__(self):
-        return f'CatalogueItem {self.pk}: {self.name}'
+        return f'CatalogItem {self.pk}: {self.name}'
 
 
-class CatalogueItemDigitalSong(BaseAuditable):
+class CatalogItemDigitalSong(BaseAuditable):
     """Digital songs, unlike Music albums, can be distributed individually absent of other medium.
     Even if a song is released as a "Single", that "Single" still requires a medium for physical distribution, which
     makes it a "Single Album"
     """
-    catalogueitem = OneToOneField(CatalogueItem, on_delete=CASCADE, primary_key=True)
-    catalogueitem_id: int
+    catalogitem = OneToOneField(CatalogItem, on_delete=CASCADE, primary_key=True)
+    catalogitem_id: int
 
 
-class CatalogueItemMusicAlbum(BaseAuditable):
+class CatalogItemMusicAlbum(BaseAuditable):
     """A produced Music Album distributed in a particular format."""
-    catalogueitem = OneToOneField(CatalogueItem, on_delete=CASCADE, primary_key=True)
-    catalogueitem_id: int
+    catalogitem = OneToOneField(CatalogItem, on_delete=CASCADE, primary_key=True)
+    catalogitem_id: int
     mediaformat = ForeignKey('MediaFormat', on_delete=SET_DEFAULT, default=get_default_media_format_audio)
     mediaformat_id: int
 
 
-class CatalogueItemToInvoiceLineItem(BaseAuditable):
-    """Relates a CatalogueItem record to an InvoiceLineItem record."""
+class CatalogItemToInvoiceLineItem(BaseAuditable):
+    """Relates a CatalogItem record to an InvoiceLineItem record."""
     invoicelineitem = OneToOneField('InvoiceLineItem', on_delete=CASCADE, primary_key=True)
     invoicelineitem_id: int
-    catalogueitem = ForeignKey(CatalogueItem, on_delete=PROTECT)
-    catalogueitem_id: int
+    catalogitem = ForeignKey(CatalogItem, on_delete=PROTECT)
+    catalogitem_id: int
     unit_price = DecimalField(max_digits=19, decimal_places=10)
     # seller?
     quantity = IntegerField()
 
     def __str__(self):
-        return f'CatalogueItemToInvoiceLineItem {self.pk}: {self.catalogueitem_id}'
+        return f'CatalogItemToInvoiceLineItem {self.pk}: {self.catalogitem_id}'
 
 
-class CatalogueItemToOrderLineItem(BaseAuditable):
-    """Relates a CatalogueItem record to an OrderLineItem record."""
+class CatalogItemToOrderLineItem(BaseAuditable):
+    """Relates a CatalogItem record to an OrderLineItem record."""
     orderlineitem = OneToOneField('OrderLineItem', on_delete=CASCADE, primary_key=True)
     orderlineitem_id: int
-    catalogueitem = ForeignKey(CatalogueItem, on_delete=PROTECT)
-    catalogueitem_id: int
+    catalogitem = ForeignKey(CatalogItem, on_delete=PROTECT)
+    catalogitem_id: int
 
     def __str__(self):
-        return f'CatalogueItemToOrderLineItem {self.pk}: {self.catalogueitem_id}'
+        return f'CatalogItemToOrderLineItem {self.pk}: {self.catalogitem_id}'
 
 
-class CatalogueItemToPointOfSaleLineItem(BaseAuditable):
-    """Relates a CatalogueItem record to a PointOfSaleLineItem record"""
+class CatalogItemToPointOfSaleLineItem(BaseAuditable):
+    """Relates a CatalogItem record to a PointOfSaleLineItem record"""
     pointofsalelineitem = OneToOneField('PointOfSaleLineItem', on_delete=CASCADE, primary_key=True)
     pointofsalelineitem_id: int
-    catalogueitem = ForeignKey(CatalogueItem, on_delete=PROTECT)
-    catalogueitem_id: int
+    catalogitem = ForeignKey(CatalogItem, on_delete=PROTECT)
+    catalogitem_id: int
     quantity = DecimalField(max_digits=19, decimal_places=10, default=1)
     unit_price = DecimalField(max_digits=19, decimal_places=10)
     unit = ForeignKey('Unit', on_delete=SET_NULL, null=True, blank=True)
     unit_id: int
 
     def __str__(self):
-        return f'CatalogueItemToPointOfSaleLineItem {self.pk}: {self.catalogueitem_id}'
+        return f'CatalogItemToPointOfSaleLineItem {self.pk}: {self.catalogitem_id}'
 
     @property
     def price(self):
@@ -380,16 +394,16 @@ class InvoiceLineItem(BaseAuditable):
         return f'InvoiceLineItem {self.pk}: {self.invoice_id}'
 
 
-class InvoiceLineItemToNonCatalogueItem(BaseAuditable):
-    """Relates a NonCatalogueItem record to an InvoiceLineItem record
+class InvoiceLineItemToNonCatalogItem(BaseAuditable):
+    """Relates a NonCatalogItem record to an InvoiceLineItem record
     """
     invoicelineitem = OneToOneField(InvoiceLineItem, on_delete=CASCADE, primary_key=True)
     invoicelineitem_id: int
-    noncatalogueitem = ForeignKey('NonCatalogueItem', on_delete=CASCADE)
-    noncatalogueitem_id: int
+    noncatalogitem = ForeignKey('NonCatalogItem', on_delete=CASCADE)
+    noncatalogitem_id: int
 
     def __str__(self):
-        return f'InvoiceLineItemToNonCatalogueItem {self.invoicelineitem_id}: {self.noncatalogueitem_id}'
+        return f'InvoiceLineItemToNonCatalogItem {self.invoicelineitem_id}: {self.noncatalogitem_id}'
 
 
 # class InvoiceLineItemToTxnLineItem(BaseAuditable):
@@ -657,7 +671,7 @@ class MusicArtistToSongRecording(BaseAuditable):
         return f'MusicArtistToSongRecording {self.pk}: {self.musicartist_id}-{self.songrecording_id}'
 
 
-class NonCatalogueItem(BaseAuditable):
+class NonCatalogItem(BaseAuditable):
     """A non-tangible or generic item, such as a tax levied."""
     name = CharField(max_length=255, unique=True)
 
@@ -810,8 +824,8 @@ class PointOfSale(BaseAuditable):
             self.line_items.all()
             .aggregate(
                 total=Sum(
-                    F('catalogueitemtopointofsalelineitem__quantity') *
-                    F('catalogueitemtopointofsalelineitem__unit_price')
+                    F('catalogitemtopointofsalelineitem__quantity') *
+                    F('catalogitemtopointofsalelineitem__unit_price')
                 )
             )
         )

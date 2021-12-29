@@ -438,18 +438,18 @@ def assetdiscrete_detail(request, assetdiscrete_pk: int):
     return render(request, 'pyamgmt/models/assetdiscrete_detail.html', context)
 
 
-def assetdiscretecatalogueitem_list(request):
+def assetdiscretecatalogitem_list(request):
     context = {}
-    return render(request, 'pyamgmt/models/assetdiscretecatalogueitem_list.html', context)
+    return render(request, 'pyamgmt/models/assetdiscretecatalogitem_list.html', context)
 
 
-def assetdiscretecatalogueitem_detail(request, assetdiscretecatalogueitem_pk: int):
+def assetdiscretecatalogitem_detail(request, assetdiscretecatalogitem_pk: int):
     context = {}
-    assetdiscretecatalogueitem = AssetDiscreteCatalogueItem.objects.get(pk=assetdiscretecatalogueitem_pk)
+    assetdiscretecatalogitem = AssetDiscreteCatalogItem.objects.get(pk=assetdiscretecatalogitem_pk)
     context.update({
-        'assetdiscretecatalogueitem': assetdiscretecatalogueitem
+        'assetdiscretecatalogitem': assetdiscretecatalogitem
     })
-    return render(request, 'pyamgmt/models/assetdiscretecatalogueitem_detail.html', context)
+    return render(request, 'pyamgmt/models/assetdiscretecatalogitem_detail.html', context)
 
 
 def assetdiscretevehicle_list(request):
@@ -547,144 +547,144 @@ def assetinventory_detail(request, assetinventory_pk: int):
     return render(request, 'pyamgmt/models/assetinventory_detail.html', context)
 
 
-def catalogueitem_list(request):
-    """List all records from CatalogueItem."""
+def catalogitem_list(request):
+    """List all records from CatalogItem."""
     context = {}
-    qs_catalogueitem = CatalogueItem.objects.all()
-    context.update({'qs_catalogueitem': qs_catalogueitem})
-    return render(request, 'pyamgmt/models/catalogueitem_list.html', context)
+    qs_catalogitem = CatalogItem.objects.all()
+    context.update({'qs_catalogitem': qs_catalogitem})
+    return render(request, 'pyamgmt/models/catalogitem_list.html', context)
 
 
-def catalogueitem_detail(request, catalogueitem_pk: int):
+def catalogitem_detail(request, catalogitem_pk: int):
     context = {}
-    catalogueitem = CatalogueItem.objects.get(pk=catalogueitem_pk)
+    catalogitem = CatalogItem.objects.get(pk=catalogitem_pk)
     context.update({
-        'catalogueitem': catalogueitem
+        'catalogitem': catalogitem
     })
-    return render(request, 'pyamgmt/models/catalogueitem_detail.html', context)
+    return render(request, 'pyamgmt/models/catalogitem_detail.html', context)
 
 
-def catalogueitem_form(request, catalogueitem_pk: int = None):
+def catalogitem_form(request, catalogitem_pk: int = None):
     context = {}
     instance = None
-    if catalogueitem_pk:
-        instance = CatalogueItem.objects.get(pk=catalogueitem_pk)
-    form = CatalogueItemForm(request.POST or None, instance=instance)
+    if catalogitem_pk:
+        instance = CatalogItem.objects.get(pk=catalogitem_pk)
+    form = CatalogItemForm(request.POST or None, instance=instance)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        return redirect('pyamgmt:catalogueitem:list')
+        return redirect('pyamgmt:catalogitem:list')
     context.update({'form': form})
-    return render(request, 'pyamgmt/models/catalogueitem_form.html', context)
+    return render(request, 'pyamgmt/models/catalogitem_form.html', context)
 
 
-def catalogueitemdigitalsong_list(request):
-    """List all records from CatalogueItemDigitalSong."""
+def catalogitemdigitalsong_list(request):
+    """List all records from CatalogItemDigitalSong."""
     context = {}
-    qs_catalogueitemdigitalsong = CatalogueItemDigitalSong.objects.all()
-    context.update({'qs_catalogueitemdigitalsong': qs_catalogueitemdigitalsong})
-    return render(request, 'pyamgmt/models/catalogueitemdigitalsong_list.html', context)
+    qs_catalogitemdigitalsong = CatalogItemDigitalSong.objects.all()
+    context.update({'qs_catalogitemdigitalsong': qs_catalogitemdigitalsong})
+    return render(request, 'pyamgmt/models/catalogitemdigitalsong_list.html', context)
 
 
-def catalogueitemdigitalsong_detail(request, catalogueitemdigitalsong_pk: int):
+def catalogitemdigitalsong_detail(request, catalogitemdigitalsong_pk: int):
     context = {}
-    catalogueitemdigitalsong = CatalogueItemDigitalSong.objects.get(pk=catalogueitemdigitalsong_pk)
+    catalogitemdigitalsong = CatalogItemDigitalSong.objects.get(pk=catalogitemdigitalsong_pk)
     context.update({
-        'catalogueitemdigitalsong': catalogueitemdigitalsong
+        'catalogitemdigitalsong': catalogitemdigitalsong
     })
-    return render(request, 'pyamgmt/models/catalogueitemdigitalsong_detail.html', context)
+    return render(request, 'pyamgmt/models/catalogitemdigitalsong_detail.html', context)
 
 
 @transaction.atomic()
-def catalogueitemdigitalsong_form(request, catalogueitemdigitalsong_pk: int = None):
+def catalogitemdigitalsong_form(request, catalogitemdigitalsong_pk: int = None):
     context = {}
     instance = None
-    if catalogueitemdigitalsong_pk:
-        instance = CatalogueItemDigitalSong.objects.get(pk=catalogueitemdigitalsong_pk)
-    form = CatalogueItemDigitalSongForm(request.POST or None, instance=instance)
+    if catalogitemdigitalsong_pk:
+        instance = CatalogItemDigitalSong.objects.get(pk=catalogitemdigitalsong_pk)
+    form = CatalogItemDigitalSongForm(request.POST or None, instance=instance)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        return redirect('pyamgmt:catalogueitemdigitalsong:list')
+        return redirect('pyamgmt:catalogitemdigitalsong:list')
     context.update({'form': form})
-    return render(request, 'pyamgmt/models/catalogueitemdigitalsong_form.html', context)
+    return render(request, 'pyamgmt/models/catalogitemdigitalsong_form.html', context)
 
 
-def catalogueitemmusicalbum_list(request):
-    """List all records from model CatalogueItemMusicAlbum."""
+def catalogitemmusicalbum_list(request):
+    """List all records from model CatalogItemMusicAlbum."""
     context = {}
-    qs_catalogueitemmusicalbum = CatalogueItemMusicAlbum.objects.all()
-    context.update({'qs_catalogueitemmusicalbum': qs_catalogueitemmusicalbum})
-    return render(request, 'pyamgmt/models/catalogueitemmusicalbum_list.html', context)
+    qs_catalogitemmusicalbum = CatalogItemMusicAlbum.objects.all()
+    context.update({'qs_catalogitemmusicalbum': qs_catalogitemmusicalbum})
+    return render(request, 'pyamgmt/models/catalogitemmusicalbum_list.html', context)
 
 
-def catalogueitemmusicalbum_detail(request, catalogueitemmusicalbum_pk: int):
+def catalogitemmusicalbum_detail(request, catalogitemmusicalbum_pk: int):
     context = {}
-    catalogueitemmusicalbum = CatalogueItemMusicAlbum.objects.get(pk=catalogueitemmusicalbum_pk)
+    catalogitemmusicalbum = CatalogItemMusicAlbum.objects.get(pk=catalogitemmusicalbum_pk)
     context.update({
-        'catalogueitemmusicalbum': catalogueitemmusicalbum
+        'catalogitemmusicalbum': catalogitemmusicalbum
     })
-    return render(request, 'pyamgmt/models/catalogueitemmusicalbum_detail.html', context)
+    return render(request, 'pyamgmt/models/catalogitemmusicalbum_detail.html', context)
 
 
 @transaction.atomic()
-def catalogueitemmusicalbum_form(request, catalogue_item_musicalbum_pk: int = None):
+def catalogitemmusicalbum_form(request, catalog_item_musicalbum_pk: int = None):
     context = {}
     instance = None
-    if catalogue_item_musicalbum_pk:
-        instance = CatalogueItemMusicAlbum.objects.get(pk=catalogue_item_musicalbum_pk)
-    form = CatalogueItemMusicAlbumForm(request.POST or None, instance=instance)
+    if catalog_item_musicalbum_pk:
+        instance = CatalogItemMusicAlbum.objects.get(pk=catalog_item_musicalbum_pk)
+    form = CatalogItemMusicAlbumForm(request.POST or None, instance=instance)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        if catalogue_item_musicalbum_pk:
-            return redirect('pyamgmt:catalogueitemmusicalbum:detail',
-                            catalogue_item_musicalbum_pk=catalogue_item_musicalbum_pk)
-        return redirect('pyamgmt:catalogueitemmusicalbum:list')
+        if catalog_item_musicalbum_pk:
+            return redirect('pyamgmt:catalogitemmusicalbum:detail',
+                            catalog_item_musicalbum_pk=catalog_item_musicalbum_pk)
+        return redirect('pyamgmt:catalogitemmusicalbum:list')
     context.update({'form': form})
-    return render(request, 'pyamgmt/models/catalogueitemmusicalbum_form.html', context)
+    return render(request, 'pyamgmt/models/catalogitemmusicalbum_form.html', context)
 
 
-def catalogueitemtopointofsalelineitem_list(request):
-    """List all records from model CatalogueItemToPointOfSaleLineItem."""
+def catalogitemtopointofsalelineitem_list(request):
+    """List all records from model CatalogItemToPointOfSaleLineItem."""
     context = {}
-    qs_catalogueitemtopointofsalelineitem = CatalogueItemToPointOfSaleLineItem.objects.all()
-    context.update({'qs_catalogueitemtopointofsalelineitem': qs_catalogueitemtopointofsalelineitem})
-    return render(request, 'pyamgmt/models/catalogueitemtopointofsalelineitem_list.html', context)
+    qs_catalogitemtopointofsalelineitem = CatalogItemToPointOfSaleLineItem.objects.all()
+    context.update({'qs_catalogitemtopointofsalelineitem': qs_catalogitemtopointofsalelineitem})
+    return render(request, 'pyamgmt/models/catalogitemtopointofsalelineitem_list.html', context)
 
 
-def catalogueitemtopointofsalelineitem_detail(request, catalogueitemtopointofsalelineitem_pk: int):
+def catalogitemtopointofsalelineitem_detail(request, catalogitemtopointofsalelineitem_pk: int):
     context = {}
-    catalogueitemtopointofsalelineitem = (
-        CatalogueItemToPointOfSaleLineItem.objects
+    catalogitemtopointofsalelineitem = (
+        CatalogItemToPointOfSaleLineItem.objects
         .select_related(
-            'catalogueitem',
+            'catalogitem',
             'pointofsalelineitem',
             'unit'
         )
-        .get(pk=catalogueitemtopointofsalelineitem_pk)
+        .get(pk=catalogitemtopointofsalelineitem_pk)
     )
     context.update({
-        'catalogueitemtopointofsalelineitem': catalogueitemtopointofsalelineitem
+        'catalogitemtopointofsalelineitem': catalogitemtopointofsalelineitem
     })
-    return render(request, 'pyamgmt/models/catalogueitemtopointofsalelineitem_detail.html', context)
+    return render(request, 'pyamgmt/models/catalogitemtopointofsalelineitem_detail.html', context)
 
 
-def catalogueitemtopointofsalelineitem_form(request, catalogueitemtopointofsalelineitem_pk: int = None):
+def catalogitemtopointofsalelineitem_form(request, catalogitemtopointofsalelineitem_pk: int = None):
     context = {}
     instance = None
-    if catalogueitemtopointofsalelineitem_pk:
-        instance = CatalogueItemToPointOfSaleLineItem.objects.get(
-            pk=catalogueitemtopointofsalelineitem_pk
+    if catalogitemtopointofsalelineitem_pk:
+        instance = CatalogItemToPointOfSaleLineItem.objects.get(
+            pk=catalogitemtopointofsalelineitem_pk
         )
-    form = CatalogueItemToPointOfSaleLineItemForm(request.POST or None, instance=instance)
+    form = CatalogItemToPointOfSaleLineItemForm(request.POST or None, instance=instance)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        if catalogueitemtopointofsalelineitem_pk:
+        if catalogitemtopointofsalelineitem_pk:
             return redirect(
-                'pyamgmt:catalogueitemtopointofsalelineitem:detail',
-                catalogueitemtopointofsalelineitem_pk=catalogueitemtopointofsalelineitem_pk
+                'pyamgmt:catalogitemtopointofsalelineitem:detail',
+                catalogitemtopointofsalelineitem_pk=catalogitemtopointofsalelineitem_pk
             )
-        return redirect('pyamgmt:catalogueitemtopointofsalelineitem:list')
+        return redirect('pyamgmt:catalogitemtopointofsalelineitem:list')
     context.update({'form': form})
-    return render(request, 'pyamgmt/models/catalogueitemtopointofsalelineitem_form.html', context)
+    return render(request, 'pyamgmt/models/catalogitemtopointofsalelineitem_form.html', context)
 
 
 def invoice_list(request):
