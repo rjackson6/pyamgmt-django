@@ -8,7 +8,26 @@
 {% block content %}
 
 <div class="model-list">
-
+    <h1>MotionPicture</h1>
+    <a href="{% url 'pyamgmt:motionpicture:add' %}">Add</a>
+    <table class="model-list__table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for motionpicture in qs_motionpicture %}
+            <tr>
+                <td><a></a></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock content %}

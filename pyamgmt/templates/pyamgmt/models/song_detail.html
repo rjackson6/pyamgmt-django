@@ -19,10 +19,6 @@
             <th>Title</th>
             <td>{{ song.title }}</td>
         </tr>
-{#        <tr>#}
-{#            <th>Duration</th>#}
-{#            <td>{{ song.duration }}</td>#}
-{#        </tr>#}
     </table>
 </div>
 
@@ -47,28 +43,52 @@
 </div>
 
 <div class="model-related">
-    <h2>Music Albums which Feature this Song</h2>
-    {% if related_albums %}
-    <table>
+    <h2>Recordings</h2>
+    {% if related_recordings %}
+    <table class="model-related__table">
         <tr>
             <th>ID</th>
-            <th>Title</th>
-            <th>DiscNumber</th>
-            <th>TrackNumber</th>
+            <th>Type</th>
+            <th>Duration</th>
+            <th>Performing Artists</th>
+            <th>Lyrics</th>
         </tr>
-        {% for record in related_albums %}
+        {% for record in related_recordings %}
         <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbum:detail' record.musicalbum.pk %}">{{ record.musicalbum.pk }}</a></td>
-            <td>{{ record.musicalbum.title }}</td>
-            <td>{{ record.disc_number }}</td>
-            <td>{{ record.track_number }}</td>
+            <td><a href="{% url 'pyamgmt:songrecording:detail' record.pk %}">{{ record.pk }}</a></td>
+            <td>{{ record.recording_type }}</td>
+            <td>{{ record.duration }}</td>
+            <td>TODO</td>
+            <td>{{ record.lyrics|truncatewords:3 }}</td>
         </tr>
         {% endfor %}
     </table>
-    {% else %}
-    <p>No records.</p>
     {% endif %}
 </div>
+
+{#<div class="model-related">#}
+{#    <h2>Music Albums which Feature this Song</h2>#}
+{#    {% if related_albums %}#}
+{#    <table>#}
+{#        <tr>#}
+{#            <th>ID</th>#}
+{#            <th>Title</th>#}
+{#            <th>DiscNumber</th>#}
+{#            <th>TrackNumber</th>#}
+{#        </tr>#}
+{#        {% for record in related_albums %}#}
+{#        <tr>#}
+{#            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbum:detail' record.musicalbum.pk %}">{{ record.musicalbum.pk }}</a></td>#}
+{#            <td>{{ record.musicalbum.title }}</td>#}
+{#            <td>{{ record.disc_number }}</td>#}
+{#            <td>{{ record.track_number }}</td>#}
+{#        </tr>#}
+{#        {% endfor %}#}
+{#    </table>#}
+{#    {% else %}#}
+{#    <p>No records.</p>#}
+{#    {% endif %}#}
+{#</div>#}
 
 {% if song.lyrics %}
 <div>

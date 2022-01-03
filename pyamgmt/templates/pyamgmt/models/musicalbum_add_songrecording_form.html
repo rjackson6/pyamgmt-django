@@ -1,0 +1,23 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
+    <li><a href="{% url 'pyamgmt:musicalbum:list' %}">MusicAlbum</a></li>
+    <li><a href="{% url 'pyamgmt:musicalbum:detail' musicalbum.pk %}">{{ musicalbum.title }}</a></li>
+    <li>Add SongRecording</li>
+</ol>
+{% endblock breadcrumbs %}
+
+
+{% block content %}
+
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock content %}

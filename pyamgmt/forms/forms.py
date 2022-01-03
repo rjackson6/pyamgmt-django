@@ -4,10 +4,10 @@ __all__ = [
     'AssetForm', 'AssetFormVehicle', 'AssetDiscreteForm', 'AssetDiscreteVehicleForm',
     'CatalogItemForm', 'CatalogItemDigitalSongForm', 'CatalogItemMusicAlbumForm',
     'CatalogItemToPointOfSaleLineItemForm',
-    'MusicAlbumForm', 'MusicAlbumToMusicArtistForm', 'MusicAlbumToSongForm', 'MusicArtistForm',
+    'MusicAlbumForm', 'MusicAlbumToMusicArtistForm', 'MusicAlbumToSongRecordingForm', 'MusicArtistForm',
     'MusicArtistToPersonForm',
     'PartyForm', 'PayeeForm', 'PersonForm', 'PointOfSaleForm', 'PointOfSaleDocumentForm', 'PointOfSaleLineItemForm',
-    'SongForm',
+    'SongForm', 'SongRecordingForm',
     'TxnForm',
     'UnitForm',
     'VehicleForm', 'VehicleMakeForm', 'VehicleMileageForm', 'VehicleModelForm', 'VehicleTrimForm', 'VehicleYearForm',
@@ -185,6 +185,12 @@ class CatalogItemToPointOfSaleLineItemForm(ModelForm):
         exclude = BASE_AUDITABLE_FIELDS
 
 
+class MotionPictureForm(ModelForm):
+    class Meta:
+        model = MotionPicture
+        exclude = BASE_AUDITABLE_FIELDS
+
+
 class MusicAlbumForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -229,6 +235,25 @@ MusicAlbumToSongFormSet = None
 #     MusicAlbumToSong,
 #     fields='__all__'
 # )
+
+
+class MusicAlbumToSongRecordingForm(ModelForm):
+    """If there's a MusicAlbum instance, scope the form to that album."""
+    # TODO: SongRecording needs to include song.title
+    #  But then there needs to be a way to differentiate the recording
+    field_order = ['musicalbum', 'songrecording', 'disc_number', 'track_number']
+
+    def __init__(self, *args, **kwargs):
+        musicalbum = kwargs.pop('musicalbum')
+        super().__init__(*args, **kwargs)
+        if musicalbum:
+            self.initial['musicalbum'] = musicalbum
+            self.fields['musicalbum'].disabled = True
+            self.fields['musicalbum'].help_text = 'OH HI MARK!!!'
+
+    class Meta:
+        model = MusicAlbumToSongRecording
+        exclude = BASE_AUDITABLE_FIELDS
 
 
 class MusicArtistForm(ModelForm):
@@ -310,6 +335,12 @@ class SongForm(ModelForm):
 
     class Meta:
         model = Song
+        exclude = BASE_AUDITABLE_FIELDS
+
+
+class SongRecordingForm(ModelForm):
+    class Meta:
+        model = SongRecording
         exclude = BASE_AUDITABLE_FIELDS
 
 

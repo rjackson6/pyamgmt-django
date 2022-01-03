@@ -23,6 +23,7 @@ import core.views
 
 urlpatterns = [
     path('', core.views.home, name='home'),
+    path('account/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
     path('pyamgmt/', include('pyamgmt.urls', namespace='pyamgmt'))
 ]

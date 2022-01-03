@@ -5,6 +5,14 @@
 {% block title %}MusicArtist{% endblock title %}
 
 
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
+    <li>MusicArtist</li>
+</ol>
+{% endblock breadcrumbs %}
+
+
 {% block content %}
 
 <div class="model-list">

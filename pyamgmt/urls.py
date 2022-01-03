@@ -146,7 +146,8 @@ _invoice_urls = ([
 ], 'pyamgmt')
 
 _motionpicture_urls = ([
-    path('', pyamgmt.views.models.motionpicture_list, name='list')
+    path('', pyamgmt.views.models.motionpicture_list, name='list'),
+    path('add/', pyamgmt.views.models.motionpicture_form, name='add')
 ], 'pyamgmt')
 
 _musicalbum_urls = ([
@@ -155,8 +156,7 @@ _musicalbum_urls = ([
     path('<int:musicalbum_pk>/', include([
         path('', pyamgmt.views.models.musicalbum_detail, name='detail'),
         path('edit/', pyamgmt.views.models.musicalbum_form, name='edit'),
-        path('add-song/', pyamgmt.views.models.musicalbum_add_song_form, name='add-song'),
-        path('add-songs/', pyamgmt.views.models.musicalbum_addsongs_form, name='add-songs')
+        path('add-song-recording/', pyamgmt.views.models.musicalbum_add_songrecording_form, name='add-songrecording')
     ]))
 ], 'pyamgmt')
 
@@ -171,7 +171,11 @@ _musicalbumtomusicartist_urls = ([
 ], 'pyamgmt')
 
 _musicalbumtosongrecording_urls = ([
-    path('', pyamgmt.views.models.musicalbumtosongrecording_list, name='list')
+    path('', pyamgmt.views.models.musicalbumtosongrecording_list, name='list'),
+    path('add/', pyamgmt.views.models.musicalbumtosongrecording_form, name='add'),
+    path('<int:musicalbumtosongrecording_pk>/', include([
+        path('', pyamgmt.views.models.musicalbumtosongrecording_detail, name='detail')
+    ]))
 ], 'pyamgmt')
 
 _musicartist_urls = ([
@@ -276,6 +280,7 @@ _song_urls = ([
 
 _songrecording_urls = ([
     path('', pyamgmt.views.models.songrecording_list, name='list'),
+    path('add/', pyamgmt.views.models.songrecording_form, name='add'),
     path('<int:songrecording_pk>/', include([
         path('', pyamgmt.views.models.songrecording_detail, name='detail')
     ]))

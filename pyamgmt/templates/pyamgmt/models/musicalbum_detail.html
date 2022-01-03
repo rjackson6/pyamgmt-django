@@ -5,6 +5,15 @@
 {% block title %}MusicAlbum{% endblock title %}
 
 
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
+    <li><a href="{% url 'pyamgmt:musicalbum:list' %}">MusicAlbum</a></li>
+    <li>{{ musicalbum.title }}</li>
+</ol>
+{% endblock breadcrumbs %}
+
+
 {% block content %}
 
 <div class="model-detail">
@@ -63,7 +72,7 @@
 
 <div class="model-related">
     <h2>Tracks</h2>
-    <a href="{% url 'pyamgmt:musicalbum:add-song' musicalbum.pk %}">Add Track</a>
+    <a href="{% url 'pyamgmt:musicalbum:add-songrecording' musicalbum.pk %}">Add Track</a>
     {% if qs_musicalbumtosongrecording %}
     <table class="model-related__table">
         <tr>

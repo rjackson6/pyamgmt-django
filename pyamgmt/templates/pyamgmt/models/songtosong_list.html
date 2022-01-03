@@ -9,13 +9,17 @@
 
 <div class="model-list">
     <h1>SongToSong</h1>
-    <table>
-        <tr>
-            <th>ID</th>
-        </tr>
-        {% for songtosong in qs_songtosong %}
-        <td><a>{{ songtosong.pk }}</a></td>
-        {% endfor %}
+    <table class="model-list__table">
+        <thead>
+            <tr>
+                <th>ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for songtosong in qs_songtosong %}
+            <td><a>{{ songtosong.pk }}</a></td>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
 

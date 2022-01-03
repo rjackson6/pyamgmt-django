@@ -37,6 +37,7 @@ td > a {
 #header {
     background-color: dodgerblue;
     border: 1px solid black;
+    /*display: flex;*/
     grid-area: head;
 }
 

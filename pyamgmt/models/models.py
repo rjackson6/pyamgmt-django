@@ -517,7 +517,7 @@ class MusicAlbumArtwork(BaseAuditable):
 
 class MusicAlbumToMusicArtist(BaseAuditable):
     """Relates a MusicAlbum to a MusicArtist; Album Artist.
-    This is supposing that while most albums are released under one artist, there are cases where there are
+    This is assuming that while most albums are released under one artist, there are cases where there are
     actually two artists that collaborate on a single album, e.g., "Hans Zimmer & James Newton Howard" for the
     Christopher Nolan Batman movies. Both artists are credited on the soundtrack for composition.
     This does not replace individual song artists, as there are "featured" tracks, or compilation albums
@@ -629,7 +629,7 @@ class MusicArtistToPerson(BaseAuditable):
 
 
 class MusicArtistToPersonActivity(BaseAuditable):
-    """Holds records of the when a person was part of a group or act."""
+    """Holds records of when a person was part of a group or act."""
     musicartisttoperson = ForeignKey(MusicArtistToPerson, on_delete=CASCADE)
     musicartisttoperson_id: int
     date_active = DateField(validators=[validate_date_not_future])
@@ -754,7 +754,7 @@ class Payee(BaseAuditable):
 
 class Person(BaseAuditable):
     """A person. Generally self-explanatory as an entity.
-    May be a personal acquaintance, and/or a notable individual with some level of fame.
+    Maybe a personal acquaintance, and/or a notable individual with some level of fame.
     """
     first_name = CharField(max_length=255)
     middle_name = CharField(max_length=255, null=True, blank=True)

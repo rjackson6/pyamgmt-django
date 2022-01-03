@@ -5,35 +5,47 @@
 {% block title %}Song{% endblock title %}
 
 
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+    <li><a>Home</a></li>
+    <li>Song</li>
+</ol>
+{% endblock breadcrumbs %}
+
+
 {% block content %}
 
 <div class="model-list">
     <h1>Song</h1>
     <a href="{% url 'pyamgmt:song:add' %}">Add</a>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Artist(s)</th>
-            <th>Lyrics</th>
-            <th>Recordings</th>
-        </tr>
-        {% for song in qs_song %}
-        <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' song.pk %}">{{ song.pk }}</a></td>
-            <td>{{ song.title }}</td>
-            <td>
-                {% for musicartisttosong in song.musicartisttosong_set.all %}
-                {{ musicartisttosong.musicartist.name }}
-                {% if not forloop.last %}
-                <br>
-                {% endif %}
-                {% endfor %}
-            </td>
-            <td>{{ song.lyrics|truncatewords:3 }}</td>
-            <td>{{ song.songrecording__count }}</td>
-        </tr>
-        {% endfor %}
+    <table class="model-list__table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Artist(s)</th>
+                <th>Lyrics</th>
+                <th>Recordings</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in qs_song %}
+            <tr>
+                <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' song.pk %}">{{ song.pk }}</a></td>
+                <td>{{ song.title }}</td>
+                <td>
+                    {% for musicartisttosong in song.musicartisttosong_set.all %}
+                    {{ musicartisttosong.musicartist.name }}
+                    {% if not forloop.last %}
+                    <br>
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ song.lyrics|truncatewords:3 }}</td>
+                <td>{{ song.songrecording__count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
 

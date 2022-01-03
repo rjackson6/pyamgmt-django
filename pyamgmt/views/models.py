@@ -703,6 +703,11 @@ def motionpicture_list(request):
     return render(request, 'pyamgmt/models/motionpicture_list.html', context)
 
 
+def motionpicture_form(request):
+    context = {}
+    return HttpResponse('uc')
+
+
 def musicalbum_list(request):
     """List all records from model MusicAlbum."""
     context = {}
@@ -752,26 +757,39 @@ def musicalbum_form(request, musicalbum_pk: int = None):
 
 
 def musicalbum_add_song_form(request, musicalbum_pk: int):
-    context = {}
-    musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
-    form = MusicAlbumToSongForm(request.POST or None, musicalbum=musicalbum)
-    if request.method == 'POST' and form.is_valid():
-        return redirect('pyamgmt:musicalbum:detail', musicalbum_pk=musicalbum_pk)
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/musicalbum_add_song_form.html', context)
+    # context = {}
+    # musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
+    # form = MusicAlbumToSongForm(request.POST or None, musicalbum=musicalbum)
+    # if request.method == 'POST' and form.is_valid():
+    #     return redirect('pyamgmt:musicalbum:detail', musicalbum_pk=musicalbum_pk)
+    # context.update({'form': form})
+    # return render(request, 'pyamgmt/models/musicalbum_add_song_form.html', context)
+    return HttpResponse('uc')
 
 
 def musicalbum_addsongs_form(request, musicalbum_pk: int = None):
     """Formset for bulk add. Needs adjustments."""
+    # context = {}
+    # instance = MusicAlbum.objects.get(pk=musicalbum_pk) if musicalbum_pk else None
+    # # formset of M2M model
+    # formset = MusicAlbumToSongFormSet(request.POST or None, instance=instance)
+    # if request.method == 'POST' and formset.is_valid():
+    #     formset.save()
+    #     return redirect('pyamgmt:musicalbum:detail', musicalbum_pk=musicalbum_pk)
+    # context.update({'formset': formset})
+    # return render(request, 'pyamgmt/models/musicalbum_addsongs_form.html', context)
+    return HttpResponse('uc')
+
+
+def musicalbum_add_songrecording_form(request, musicalbum_pk: int):
     context = {}
-    instance = MusicAlbum.objects.get(pk=musicalbum_pk) if musicalbum_pk else None
-    # formset of M2M model
-    formset = MusicAlbumToSongFormSet(request.POST or None, instance=instance)
-    if request.method == 'POST' and formset.is_valid():
-        formset.save()
-        return redirect('pyamgmt:musicalbum:detail', musicalbum_pk=musicalbum_pk)
-    context.update({'formset': formset})
-    return render(request, 'pyamgmt/models/musicalbum_addsongs_form.html', context)
+    musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
+    form = MusicAlbumToSongRecordingForm(request.POST or None, musicalbum=musicalbum)
+    context.update({
+        'form': form,
+        'musicalbum': musicalbum
+    })
+    return render(request, 'pyamgmt/models/musicalbum_add_songrecording_form.html', context)
 
 
 def musicalbumtomusicartist_list(request):
@@ -835,19 +853,23 @@ def musicalbumtosongrecording_detail(request, musicalbumtosongrecording_pk: int)
     return render(request, 'pyamgmt/models/musicalbumtosongrecording_detail.html', context)
 
 
-def musicalbumtosong_form(request, musicalbumtosong_pk: int = None):
-    context = {}
-    instance = None
-    if musicalbumtosong_pk:
-        instance = MusicAlbumToSong.objects.get(pk=musicalbumtosong_pk)
-    form = MusicAlbumToSongForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if musicalbumtosong_pk:
-            return redirect('pyamgmt:musicalbumtosong:detail', musicalbumtosong_pk=musicalbumtosong_pk)
-        return redirect('pyamgmt:musicalbumtosong:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/musicalbumtosong_form.html', context)
+def musicalbumtosongrecording_form(request, musicalbumtosongrecording_pk: int = None):
+    return HttpResponse('uc')
+
+
+# def musicalbumtosong_form(request, musicalbumtosong_pk: int = None):
+#     context = {}
+#     instance = None
+#     if musicalbumtosong_pk:
+#         instance = MusicAlbumToSong.objects.get(pk=musicalbumtosong_pk)
+#     form = MusicAlbumToSongForm(request.POST or None, instance=instance)
+#     if request.method == 'POST' and form.is_valid():
+#         form.save()
+#         if musicalbumtosong_pk:
+#             return redirect('pyamgmt:musicalbumtosong:detail', musicalbumtosong_pk=musicalbumtosong_pk)
+#         return redirect('pyamgmt:musicalbumtosong:list')
+#     context.update({'form': form})
+#     return render(request, 'pyamgmt/models/musicalbumtosong_form.html', context)
 
 
 def musicartist_list(request):
@@ -1016,11 +1038,13 @@ def payee_form(request, payee_pk: int = None):
 
 def person_list(request):
     """List all records from model Person."""
+    logger.info(request.GET)
+    default_order = ['last_name', 'first_name', 'id']
     context = {}
-    qs_person = Person.objects.order_by('last_name', 'first_name', 'id')
+    order = request.GET.getlist('order', default_order)
+    logger.info(Person._meta.get_fields())
+    qs_person = Person.objects.order_by(*order)
     context.update({'qs_person': qs_person})
-    response = render(request, 'pyamgmt/models/person_list.html', context)
-    print(dir(response))
     return render(request, 'pyamgmt/models/person_list.html', context)
 
 
@@ -1183,15 +1207,19 @@ def song_detail(request, song_pk: int):
     song = Song.objects.get(pk=song_pk)
     # related_albums = MusicAlbumToSong.objects.filter(song=song).select_related('musicalbum')
     related_artists = MusicArtistToSong.objects.filter(song=song).select_related('musicartist')
+    related_recordings = SongRecording.objects.filter(song=song)
+    related_songs = SongToSong.objects.filter(song_original=song).select_related('song_derivative')
     context.update({
         'song': song,
         # 'related_albums': related_albums,
-        'related_artists': related_artists
+        'related_artists': related_artists,
+        'related_recordings': related_recordings,
+        'related_songs': related_songs
     })
     return render(request, 'pyamgmt/models/song_detail.html', context)
 
 
-def song_form(request, song_pk:int = None):
+def song_form(request, song_pk: int = None):
     context = {}
     instance = None
     if song_pk:
@@ -1230,6 +1258,18 @@ def songrecording_detail(request, songrecording_pk: int):
         'related_artists': related_artists
     })
     return render(request, 'pyamgmt/models/songrecording_detail.html', context)
+
+
+def songrecording_form(request, songrecording_pk: int = None):
+    context = {}
+    instance = None
+    if songrecording_pk:
+        instance = SongRecording.objects.get(pk=songrecording_pk)
+    form = SongRecordingForm(request.POST or None, instance=instance)
+    context.update({
+        'form': form
+    })
+    return render(request, 'pyamgmt/models/songrecording_form.html', context)
 
 
 def songtosong_list(request):
