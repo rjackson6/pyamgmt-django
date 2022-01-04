@@ -18,7 +18,8 @@
 
 <div class="model-detail">
     <h1>CatalogItem</h1>
-    <table>
+    <a href="{% url 'pyamgmt:catalogitem:edit' catalogitem.pk %}">Edit</a>
+    <table class="model-detail__table">
         <tr>
             <th>ID</th>
             <td>{{ catalogitem.pk }}</td>
@@ -44,8 +45,12 @@
             <td>{{ catalogitem.upc }}</td>
         </tr>
     </table>
-    <div>
-    {{ catalogitem.eav }}
+    <div class="monospace">
+        {% for k, v in catalogitem.eav.items %}
+        <div>
+            <span>{{ k }}</span><span> : </span><span>{{ v }}</span>
+        </div>
+        {% endfor %}
     </div>
 </div>
 

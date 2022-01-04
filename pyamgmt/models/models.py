@@ -45,8 +45,8 @@ from deform.db.models.fields import (
 from pyamgmt.models.base import BaseAuditable
 from pyamgmt.models.managers import MusicArtistToPersonManager
 from pyamgmt.validators import (
-    validate_alphanumeric, validate_date_not_future, validate_digit, validate_isbn, validate_positive_timedelta,
-    validate_year_not_future
+    validate_alphanumeric, validate_date_not_future, validate_digit, validate_isbn, validate_isbn_13_check_digit,
+    validate_positive_timedelta, validate_year_not_future
 )
 
 
@@ -291,20 +291,30 @@ class CatalogItem(BaseAuditable):
         DIGITAL_SONG = 'DIGITAL_SONG', 'DIGITAL_SONG'
         MUSIC_ALBUM = 'MUSIC_ALBUM', 'MUSIC_ALBUM'
     asin = UpperCharField(
-        max_length=10, unique=True, null=True, blank=True, validators=[MinLengthValidator(10), validate_alphanumeric]
+        max_length=10, unique=True, null=True, blank=True,
+        validators=[MinLengthValidator(10), validate_alphanumeric]
+    )
+    ean_13 = CharField(
+        max_length=13, unique=True, null=True, blank=True,
+        validators=[MinLengthValidator(13), validate_digit]
     )
     eav = JSONField(null=True, blank=True)
     isbn = CharField(
-        max_length=10, unique=True, null=True, blank=True, validators=[MinLengthValidator(10), validate_isbn]
+        max_length=10, unique=True, null=True, blank=True,
+        validators=[MinLengthValidator(10), validate_isbn]
     )
     isbn_13 = CharField(
-        max_length=13, unique=True, null=True, blank=True, validators=[MinLengthValidator(13), validate_digit]
+        max_length=13, unique=True, null=True, blank=True,
+        validators=[MinLengthValidator(13), validate_digit, validate_isbn_13_check_digit]
     )
     name = CharField(max_length=255)
     subtype = CharField(max_length=31, choices=Subtype.choices, null=True, blank=True)
-    upc = CharField(
-        max_length=12, unique=True, null=True, blank=True, validators=[MinLengthValidator(12), validate_digit]
+    upc_a = CharField(
+        max_length=12, unique=True, null=True, blank=True,
+        validators=[MinLengthValidator(12), validate_digit]
     )
+
+    # ismn "international standard music number", for printed music
 
     def __str__(self):
         return f'CatalogItem {self.pk}: {self.name}'
