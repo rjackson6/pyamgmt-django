@@ -19,6 +19,12 @@ validate_digit = RegexValidator(
     message=_('Enter a valid digit.'),
     code='invalid'
 )
+isbn_re = re.compile(r'^[0-9xX]+\Z')
+validate_isbn = RegexValidator(
+    regex=isbn_re,
+    message=_('ISBN may only contain digits and "X".'),
+    code='invalid'
+)
 
 
 def validate_date_not_future(value):

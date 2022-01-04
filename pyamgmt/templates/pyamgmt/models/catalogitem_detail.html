@@ -2,13 +2,22 @@
 {% load static %}
 
 
-{% block title %}CatalogueItem{% endblock title %}
+{% block title %}CatalogItem{% endblock title %}
+
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
+    <li><a href="{% url 'pyamgmt:catalogitem:list' %}">CatalogItem</a></li>
+    <li>{{ catalogitem.pk }}</li>
+</ol>
+{% endblock breadcrumbs %}
 
 
 {% block content %}
 
 <div class="model-detail">
-    <h1>CatalogueItem</h1>
+    <h1>CatalogItem</h1>
     <table>
         <tr>
             <th>ID</th>

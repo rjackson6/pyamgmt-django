@@ -45,7 +45,7 @@ from deform.db.models.fields import (
 from pyamgmt.models.base import BaseAuditable
 from pyamgmt.models.managers import MusicArtistToPersonManager
 from pyamgmt.validators import (
-    validate_alphanumeric, validate_date_not_future, validate_digit, validate_positive_timedelta,
+    validate_alphanumeric, validate_date_not_future, validate_digit, validate_isbn, validate_positive_timedelta,
     validate_year_not_future
 )
 
@@ -295,7 +295,7 @@ class CatalogItem(BaseAuditable):
     )
     eav = JSONField(null=True, blank=True)
     isbn = CharField(
-        max_length=10, unique=True, null=True, blank=True, validators=[MinLengthValidator(10), validate_digit]
+        max_length=10, unique=True, null=True, blank=True, validators=[MinLengthValidator(10), validate_isbn]
     )
     isbn_13 = CharField(
         max_length=13, unique=True, null=True, blank=True, validators=[MinLengthValidator(13), validate_digit]

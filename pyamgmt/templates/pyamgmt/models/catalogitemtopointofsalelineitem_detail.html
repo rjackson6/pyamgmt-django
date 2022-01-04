@@ -2,13 +2,13 @@
 {% load static %}
 
 
-{% block title %}CatalogueItemToPointOfSaleLineItem{% endblock title %}
+{% block title %}CatalogItemToPointOfSaleLineItem{% endblock title %}
 
 
 {% block content %}
 
 <div class="model-detail">
-    <h1>CatalogueItemToPointOfSaleLineItem</h1>
+    <h1>CatalogItemToPointOfSaleLineItem</h1>
     <a href="{% url 'pyamgmt:catalogitemtopointofsalelineitem:edit' catalogitemtopointofsalelineitem.pk %}">Edit</a>
     <table>
         <tr>
@@ -16,7 +16,7 @@
             <td class="primary-key">{{ catalogitemtopointofsalelineitem.pk }}</td>
         </tr>
         <tr>
-            <th>CatalogueItem</th>
+            <th>CatalogItem</th>
             <td>{{ catalogitemtopointofsalelineitem.catalogitem }}</td>
         </tr>
         <tr>
@@ -40,7 +40,7 @@
 
 {% with catalogitemtopointofsalelineitem.catalogitem as catalogitem %}
 <div class="model-related">
-    <h2>CatalogueItem</h2>
+    <h2>CatalogItem</h2>
     <table>
         <tr>
             <th>ID</th>

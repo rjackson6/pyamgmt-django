@@ -2,13 +2,21 @@
 {% load static %}
 
 
-{% block title %}CatalogueItem{% endblock title %}
+{% block title %}CatalogItem{% endblock title %}
+
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
+    <li>CatalogItem</li>
+</ol>
+{% endblock breadcrumbs %}
 
 
 {% block content %}
 
 <div class="model-list">
-    <h1>CatalogueItem</h1>
+    <h1>CatalogItem</h1>
     <p class="doc-string">{{ qs_catalogitem.model|doc }}</p>
     <a href="{% url 'pyamgmt:catalogitem:add' %}">Add</a>
     <table class="model-list__table">

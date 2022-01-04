@@ -162,6 +162,8 @@ class AssetDiscreteVehicleForm(ModelForm):
 
 
 class CatalogItemForm(ModelForm):
+    field_order = ['name', 'subtype']
+
     class Meta:
         model = CatalogItem
         exclude = BASE_AUDITABLE_FIELDS
