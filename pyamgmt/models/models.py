@@ -315,6 +315,7 @@ class CatalogItem(BaseAuditable):
     )
 
     # ismn "international standard music number", for printed music
+    # isbn is also part of gsin / gs1 spec now, apparently
 
     def __str__(self):
         return f'CatalogItem {self.pk}: {self.name}'
