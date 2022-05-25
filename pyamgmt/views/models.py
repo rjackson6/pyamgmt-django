@@ -9,35 +9,40 @@ from django.db.models import Case, Count, F, Prefetch, Q, Sum, Value, When
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+from core.views.base import View
 from pyamgmt.forms import *
 from pyamgmt.models import *
 
 logger = logging.getLogger(__name__)
 
 
-def account_list(request):
-    """List all records from model Account."""
-    context = {}
-    q_debits = Sum('txnlineitem__amount', filter=Q(txnlineitem__debit=True))
-    q_credits = Sum('txnlineitem__amount', filter=Q(txnlineitem__debit=False))
-    qs_account = (
-        Account.objects
-        .annotate(debits=q_debits)
-        .annotate(credits=q_credits)
-        .order_by('name')
-    )
-    print(qs_account.query)
-    context.update({'qs_account': qs_account})
-    return render(request, 'pyamgmt/models/account_list.html', context)
+class AccountListView(View):
+    def get(self, request, *args, **kwargs):
+        context = {}
+        q_debits = Sum('txnlineitem__amount', filter=Q(txnlineitem__debit=True))
+        q_credits = Sum('txnlineitem__amount', filter=Q(txnlineitem__debit=False))
+        qs_account = (
+            Account.objects
+            .annotate(debits=q_debits)
+            .annotate(credits=q_credits)
+            .order_by('name')
+        )
+        logger.debug(qs_account.query)
+        context.update({'qs_account': qs_account})
+        return render(request, 'pyamgmt/models/account_list.html', context)
 
 
-def account_detail(request, account_pk: int):
-    context = {}
-    account = Account.objects.prefetch_related('txnlineitem_set__txn__payee').get(pk=account_pk)
-    context.update({
-        'account': account
-    })
-    return render(request, 'pyamgmt/models/account_detail.html', context)
+class AccountDetailView(View):
+    def get(self, request, *args, account_pk: int, **kwargs):
+        context = {}
+        account = (
+            Account.objects.prefetch_related('txnlineitem_set__txn__payee')
+            .get(pk=account_pk)
+        )
+        context.update({
+            'account': account
+        })
+        return render(request, 'pyamgmt/models/account_detail.html', context)
 
 
 def account_form(request, account_pk: int = None):
@@ -55,21 +60,30 @@ def account_form(request, account_pk: int = None):
     return render(request, 'pyamgmt/models/account_form.html', context)
 
 
-def accountasset_list(request):
-    """List all records from model AccountAsset."""
-    context = {}
-    qs_accountasset = AccountAsset.objects.select_related('account')
-    context.update({'qs_accountasset': qs_accountasset})
-    return render(request, 'pyamgmt/models/accountasset_list.html', context)
+class AccountFormView(View):
+    def get(self, request, *args, account_pk: int = None, **kwargs):
+        pass
+
+    def post(self, request, *args, account_pk: int = None, **kwargs):
+        pass
 
 
-def accountasset_detail(request, accountasset_pk: int):
-    context = {}
-    accountasset = AccountAsset.objects.get(pk=accountasset_pk)
-    context.update({
-        'accountasset': accountasset
-    })
-    return render(request, 'pyamgmt/models/accountasset_detail.html', context)
+class AccountAssetListView(View):
+    def get(self, request, *args, **kwargs):
+        context = {}
+        qs_accountasset = AccountAsset.objects.select_related('account')
+        context.update({'qs_accountasset': qs_accountasset})
+        return render(request, 'pyamgmt/models/accountasset_list.html', context)
+
+
+class AccountAssetDetailView(View):
+    def get(self, request, *args, accountasset_pk: int = None, **kwargs):
+        context = {}
+        accountasset = AccountAsset.objects.get(pk=accountasset_pk)
+        context.update({
+            'accountasset': accountasset
+        })
+        return render(request, 'pyamgmt/models/accountasset_detail.html', context)
 
 
 @transaction.atomic()
@@ -1473,24 +1487,28 @@ def vehicle_form(request, vehicle_pk: int = None, vehicleyear_pk: int = None):
 def vehiclemake_list(request):
     """List all records from model VehicleMake."""
     context = {}
-    qs_vehiclemake = (
-        VehicleMake.objects
-        .annotate(vehiclemodel_count=Count('vehiclemodel'))
-        .order_by('name')
-    )
-    context.update({'qs_vehiclemake': qs_vehiclemake})
-    return render(request, 'pyamgmt/models/vehiclemake_list.html', context)
 
 
-def vehiclemake_detail(request, vehiclemake_pk: int):
-    context = {}
-    vehiclemake = VehicleMake.objects.get(pk=vehiclemake_pk)
-    qs_vehiclemodel = VehicleModel.objects.filter(vehiclemake=vehiclemake).order_by('name')
-    context.update({
-        'vehiclemake': vehiclemake,
-        'qs_vehiclemodel': qs_vehiclemodel
-    })
-    return render(request, 'pyamgmt/models/vehiclemake_detail.html', context)
+class VehicleMakeListView(View):
+    def get(self, request, *args, **kwargs):
+        qs_vehiclemake = (
+            VehicleMake.objects
+            .annotate(vehiclemodel_count=Count('vehiclemodel'))
+            .order_by('name')
+        )
+        self.context.update({'qs_vehiclemake': qs_vehiclemake})
+        return render(request, 'pyamgmt/models/vehiclemake_list.html', self.context)
+
+
+class VehicleMakeDetailView(View):
+    def get(self, request, *args, vehiclemake_pk: int, **kwargs):
+        vehiclemake = VehicleMake.objects.get(pk=vehiclemake_pk)
+        qs_vehiclemodel = VehicleModel.objects.filter(vehiclemake=vehiclemake).order_by('name')
+        self.context.update({
+            'vehiclemake': vehiclemake,
+            'qs_vehiclemodel': qs_vehiclemodel
+        })
+        return render(request, 'pyamgmt/models/vehiclemake_detail.html', self.context)
 
 
 def vehiclemake_form(request, vehiclemake_pk: int = None):
@@ -1507,21 +1525,20 @@ def vehiclemake_form(request, vehiclemake_pk: int = None):
     return render(request, 'pyamgmt/models/vehiclemake_form.html', context)
 
 
-def vehiclemileage_list(request):
-    """List all records from model VehicleMileage."""
-    context = {}
-    qs_vehiclemileage = VehicleMileage.objects.all()
-    context.update({'qs_vehiclemileage': qs_vehiclemileage})
-    return render(request, 'pyamgmt/models/vehiclemileage_list.html', context)
+class VehicleMileageListView(View):
+    def get(self, request, *args, **kwargs):
+        qs_vehiclemileage = VehicleMileage.objects.all()
+        self.context.update({'qs_vehiclemileage': qs_vehiclemileage})
+        return render(request, 'pyamgmt/models/vehiclemileage_list.html', self.context)
 
 
-def vehiclemileage_detail(request, vehiclemileage_pk: int):
-    context = {}
-    vehiclemileage = VehicleMileage.objects.get(pk=vehiclemileage_pk)
-    context.update({
-        'vehiclemileage': vehiclemileage
-    })
-    return render(request, 'pyamgmt/models/vehiclemileage_detail.html', context)
+class VehicleMileageDetailView(View):
+    def get(self, request, *args, vehiclemileage_pk: int, **kwargs):
+        vehiclemileage = VehicleMileage.objects.get(pk=vehiclemileage_pk)
+        self.context.update({
+            'vehiclemileage': vehiclemileage
+        })
+        return render(request, 'pyamgmt/models/vehiclemileage_detail.html', self.context)
 
 
 def vehiclemileage_form(request, vehiclemileage_pk: int = None, vehicle_pk: int = None):
@@ -1580,31 +1597,31 @@ def vehiclemodel_form(request, vehiclemodel_pk: int = None, vehiclemake_pk: int 
     return render(request, 'pyamgmt/models/vehiclemodel_form.html', context)
 
 
-def vehicletrim_list(request):
-    """List all records from model VehicleTrim."""
-    context = {}
-    qs_vehicletrim = (
-        VehicleTrim.objects
-        .select_related('vehiclemodel__vehiclemake')
-        .order_by(
-            'vehiclemodel__vehiclemake__name',
-            'vehiclemodel__name',
-            'name'
+class VehicleTrimListView(View):
+    def get(self, request, *args, **kwargs):
+        qs_vehicletrim = (
+            VehicleTrim.objects
+            .select_related('vehiclemodel__vehiclemake')
+            .order_by(
+                'vehiclemodel__vehiclemake__name',
+                'vehiclemodel__name',
+                'name'
+            )
         )
-    )
-    context.update({'qs_vehicletrim': qs_vehicletrim})
-    return render(request, 'pyamgmt/models/vehicletrim_list.html', context)
+        self.context.update({'qs_vehicletrim': qs_vehicletrim})
+        return render(request, 'pyamgmt/models/vehicletrim_list.html', self.context)
 
 
-def vehicletrim_detail(request, vehicletrim_pk: int):
-    context = {}
-    vehicletrim = VehicleTrim.objects.get(pk=vehicletrim_pk)
-    qs_vehicleyear = VehicleYear.objects.filter(vehicletrim=vehicletrim).order_by('year')
-    context.update({
-        'vehicletrim': vehicletrim,
-        'qs_vehicleyear': qs_vehicleyear
-    })
-    return render(request, 'pyamgmt/models/vehicletrim_detail.html', context)
+class VehicleTrimDetailView(View):
+    def get(self, request, *args, vehicletrim_pk: int, **kwargs):
+        context = {}
+        vehicletrim = VehicleTrim.objects.get(pk=vehicletrim_pk)
+        qs_vehicleyear = VehicleYear.objects.filter(vehicletrim=vehicletrim).order_by('year')
+        context.update({
+            'vehicletrim': vehicletrim,
+            'qs_vehicleyear': qs_vehicleyear
+        })
+        return render(request, 'pyamgmt/models/vehicletrim_detail.html', context)
 
 
 def vehicletrim_form(request, vehicletrim_pk: int = None, vehiclemodel_pk: int = None):
@@ -1624,32 +1641,41 @@ def vehicletrim_form(request, vehicletrim_pk: int = None, vehiclemodel_pk: int =
     return render(request, 'pyamgmt/models/vehicletrim_form.html', context)
 
 
-def vehicleyear_list(request):
-    """List all records from model VehicleYear."""
-    context = {}
-    qs_vehicleyear = (
-        VehicleYear.objects
-        .select_related('vehicletrim__vehiclemodel__vehiclemake')
-        .order_by(
-            'vehicletrim__vehiclemodel__vehiclemake__name',
-            'vehicletrim__vehiclemodel__name',
-            'vehicletrim__name',
-            'year'
+class VehicleTrimFormView(View):
+    def get(self, request, *args, **kwargs):
+        pass
+
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+class VehicleYearListView(View):
+    def get(self, request, *args, **kwargs):
+        context = {}
+        qs_vehicleyear = (
+            VehicleYear.objects
+            .select_related('vehicletrim__vehiclemodel__vehiclemake')
+            .order_by(
+                'vehicletrim__vehiclemodel__vehiclemake__name',
+                'vehicletrim__vehiclemodel__name',
+                'vehicletrim__name',
+                'year'
+            )
         )
-    )
-    context.update({'qs_vehicleyear': qs_vehicleyear})
-    return render(request, 'pyamgmt/models/vehicleyear_list.html', context)
+        context.update({'qs_vehicleyear': qs_vehicleyear})
+        return render(request, 'pyamgmt/models/vehicleyear_list.html', context)
 
 
-def vehicleyear_detail(request, vehicleyear_pk: int):
-    context = {}
-    vehicleyear = VehicleYear.objects.get(pk=vehicleyear_pk)
-    qs_vehicle = Vehicle.objects.filter(vehicleyear=vehicleyear).order_by('vin')
-    context.update({
-        'vehicleyear': vehicleyear,
-        'qs_vehicle': qs_vehicle
-    })
-    return render(request, 'pyamgmt/models/vehicleyear_detail.html', context)
+class VehicleYearDetailView(View):
+    def get(self, request, *args, vehicleyear_pk: int, **kwargs):
+        context = {}
+        vehicleyear = VehicleYear.objects.get(pk=vehicleyear_pk)
+        qs_vehicle = Vehicle.objects.filter(vehicleyear=vehicleyear).order_by('vin')
+        context.update({
+            'vehicleyear': vehicleyear,
+            'qs_vehicle': qs_vehicle
+        })
+        return render(request, 'pyamgmt/models/vehicleyear_detail.html', context)
 
 
 def vehicleyear_form(request, vehicleyear_pk: int = None, vehicletrim_pk: int = None):

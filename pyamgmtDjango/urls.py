@@ -18,11 +18,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 import debug_toolbar
-import core.views
+from core.views import core
 
 
 urlpatterns = [
-    path('', core.views.home, name='home'),
+    path('', core.HomeView.as_view(), name='home'),
     path('account/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
     path('pyamgmt/', include('pyamgmt.urls', namespace='pyamgmt'))
