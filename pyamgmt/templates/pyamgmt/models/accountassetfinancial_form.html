@@ -4,11 +4,20 @@
 
 {% block content %}
 
-<form method="post" class="form">
+<form method="post" class="dj-form">
     {% csrf_token %}
-    {{ form_account }}
-    {{ form_accountasset }}
-    {{ form_accountassetfinancial }}
+    <fieldset>
+        <legend>Account</legend>
+        {{ forms.account.as_p }}
+    </fieldset>
+    <fieldset>
+        <legend>AccountAsset</legend>
+        {{ forms.accountasset.as_p }}
+    </fieldset>
+    <fieldset>
+        <legend>AccountAssetFinancial</legend>
+        {{ forms.accountassetfinancial.as_p }}
+    </fieldset>
     <button type="submit">Submit</button>
 </form>
 

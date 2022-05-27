@@ -67,7 +67,7 @@ class Account(BaseAuditable):
         INCOME = 'INCOME', 'INCOME'  # Salary
         EXPENSE = 'EXPENSE', 'EXPENSE'  # Rent, Utilities, Internet, Fees
         OTHER = 'OTHER', 'OTHER'  # Not likely to use
-    name = CharField(max_length=255)
+    name = CharField(max_length=255, unique=True)
     parent_account = ForeignKey('self', on_delete=SET_NULL, related_name='child_accounts', null=True, blank=True)
     parent_account_id: int
     subtype = CharField(max_length=31, choices=Subtype.choices, default=Subtype.OTHER)

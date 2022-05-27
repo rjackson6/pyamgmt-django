@@ -6,10 +6,10 @@ app_name = 'pyamgmt'
 
 _account_urls = ([
     path('', pyamgmt.views.models.AccountListView.as_view(), name='list'),
-    path('add/', pyamgmt.views.models.account_form, name='add'),
+    path('add/', pyamgmt.views.models.AccountFormView.as_view(), name='add'),
     path('<int:account_pk>/', include([
         path('', pyamgmt.views.models.AccountDetailView.as_view(), name='detail'),
-        path('edit/', pyamgmt.views.models.account_form, name='edit')
+        path('edit/', pyamgmt.views.models.AccountFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
@@ -23,11 +23,11 @@ _accountasset_urls = ([
 ], app_name)
 
 _accountassetfinancial_urls = ([
-    path('', pyamgmt.views.models.accountassetfinancial_list, name='list'),
-    path('add/', pyamgmt.views.models.accountassetfinancial_form, name='add'),
+    path('', pyamgmt.views.models.AccountAssetFinancialListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.AccountAssetFinancialFormView.as_view(), name='add'),
     path('<int:accountassetfinancial_pk>/', include([
-        path('', pyamgmt.views.models.accountassetfinancial_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.accountassetfinancial_form, name='edit')
+        path('', pyamgmt.views.models.AccountAssetFinancialDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.AccountAssetFinancialFormView.as_view(), name='edit')
     ]))
 ], app_name)
 

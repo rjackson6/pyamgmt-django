@@ -6,4 +6,5 @@
 /var/
 /venv/
 /db.sqlite3
+___*
 *.pyc

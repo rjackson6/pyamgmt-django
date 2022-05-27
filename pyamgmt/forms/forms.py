@@ -26,13 +26,22 @@ from pyamgmt.models import *
 BASE_AUDITABLE_FIELDS = ('timestamp_created', 'timestamp_modified')
 
 
+class AssetModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f'{obj.description}'
+
+
 class AccountForm(ModelForm):
     prefix = 'account'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self.instance, 'id'):  # hasattr(self, 'instance') and...
-            self.fields['parent_account'].queryset = Account.objects.exclude(id=self.instance.id)
+            self.fields['parent_account'].queryset = (
+                Account.objects
+                .exclude(id=self.instance.id)
+                .order_by('name')
+            )
 
     class Meta:
         model = Account
@@ -55,11 +64,6 @@ class AccountAssetFinancialForm(ModelForm):
     class Meta:
         model = AccountAssetFinancial
         exclude = BASE_AUDITABLE_FIELDS + ('accountasset',)
-
-
-class AssetModelChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return f'{obj.description}'
 
 
 class AccountAssetRealForm(ModelForm):
@@ -125,6 +129,7 @@ class AssetForm(ModelForm):
         exclude = BASE_AUDITABLE_FIELDS
 
 
+# TODO:
 class AssetFormVehicle(ModelForm):
     # Could use keyword arguments instead and re-use the form
     def __init__(self, *args, **kwargs):
