@@ -31,6 +31,7 @@
         <option value="$MODULE_DIR$/templates" />
         <option value="$MODULE_DIR$/pyamgmt/templates" />
         <option value="$MODULE_DIR$/core/templates" />
+        <option value="$MODULE_DIR$/schemaviz/templates" />
       </list>
     </option>
   </component>

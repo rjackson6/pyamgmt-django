@@ -6,6 +6,10 @@ class Div(Element):
     pass
 
 
+class Nav(Element):
+    pass
+
+
 class Table(Element):
     pass
 

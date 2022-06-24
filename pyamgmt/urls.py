@@ -15,10 +15,10 @@ _account_urls = ([
 
 _accountasset_urls = ([
     path('', pyamgmt.views.models.AccountAssetListView.as_view(), name='list'),
-    path('add/', pyamgmt.views.models.accountasset_form, name='add'),
+    path('add/', pyamgmt.views.models.AccountAssetFormView.as_view(), name='add'),
     path('<int:accountasset_pk>/', include([
         path('', pyamgmt.views.models.AccountAssetDetailView.as_view(), name='detail'),
-        path('edit/', pyamgmt.views.models.accountasset_form, name='edit')
+        path('edit/', pyamgmt.views.models.AccountAssetFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
@@ -32,68 +32,68 @@ _accountassetfinancial_urls = ([
 ], app_name)
 
 _accountassetreal_urls = ([
-    path('', pyamgmt.views.models.accountassetreal_list, name='list'),
-    path('add/', pyamgmt.views.models.accountassetreal_form, name='add'),
+    path('', pyamgmt.views.models.AccountAssetRealListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.AccountAssetFormView.as_view(), name='add'),
     path('<int:accountassetreal_pk>/', include([
-        path('', pyamgmt.views.models.accountassetreal_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.accountassetreal_form, name='edit')
+        path('', pyamgmt.views.models.AccountAssetDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.AccountAssetFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _accountexpense_urls = ([
-    path('', pyamgmt.views.models.accountexpense_list, name='list'),
-    path('add/', pyamgmt.views.models.accountexpense_form, name='add'),
+    path('', pyamgmt.views.models.AccountExpenseListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.AccountExpenseFormView.as_view(), name='add'),
     path('<int:accountexpense_pk>/', include([
-        path('', pyamgmt.views.models.accountexpense_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.accountexpense_form, name='edit')
+        path('', pyamgmt.views.models.AccountExpenseDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.AccountExpenseFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _accountincome_urls = ([
-    path('', pyamgmt.views.models.accountincome_list, name='list'),
-    path('add/', pyamgmt.views.models.accountincome_form, name='add'),
+    path('', pyamgmt.views.models.AccountIncomeListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.AccountIncomeFormView.as_view(), name='add'),
     path('<int:accountincome_pk>/', include([
-        path('', pyamgmt.views.models.accountincome_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.accountincome_form, name='edit')
+        path('', pyamgmt.views.models.AccountIncomeDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.AccountIncomeFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _accountliability_urls = ([
-    path('', pyamgmt.views.models.accountliability_list, name='list'),
-    path('add/', pyamgmt.views.models.accountliability_form, name='add'),
+    path('', pyamgmt.views.models.AccountLiabilityListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.AccountLiabilityFormView.as_view(), name='add'),
     path('<int:accountliability_pk>/', include([
-        path('', pyamgmt.views.models.accountliability_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.accountliability_form, name='edit')
+        path('', pyamgmt.views.models.AccountLiabilityDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.AccountLiabilityFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _asset_urls = ([
-    path('', pyamgmt.views.models.asset_list, name='list'),
+    path('', pyamgmt.views.models.AssetListView.as_view(), name='list'),
     # path('add/', pyamgmt.views.models.asset_form, name='add'),
     path('<int:asset_pk>/', include([
-        path('', pyamgmt.views.models.asset_detail, name='detail'),
+        path('', pyamgmt.views.models.AssetDetailView.as_view(), name='detail'),
         # path('edit/', pyamgmt.views.models.asset_form, name='edit')
     ]))
 ], app_name)
 
 _assetdiscrete_urls = ([
-    path('', pyamgmt.views.models.assetdiscrete_list, name='list'),
+    path('', pyamgmt.views.models.AssetDiscreteListView.as_view(), name='list'),
     path('<int:assetdiscrete_pk>/', include([
-        path('', pyamgmt.views.models.assetdiscrete_detail, name='detail')
+        path('', pyamgmt.views.models.AssetDiscreteDetailView.as_view(), name='detail')
     ]))
 ], app_name)
 
 _assetdiscretevehicle_urls = ([
-    path('', pyamgmt.views.models.assetdiscretevehicle_list, name='list'),
-    path('add/', pyamgmt.views.models.assetdiscretevehicle_form, name='add'),
+    path('', pyamgmt.views.models.AssetDiscreteVehicleListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.AssetDiscreteVehicleFormView.as_view(), name='add'),
     path('<int:assetdiscretevehicle_pk>/', include([
-        path('', pyamgmt.views.models.assetdiscretevehicle_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.assetdiscretevehicle_form, name='edit')
+        path('', pyamgmt.views.models.AssetDiscreteVehicleDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.AssetDiscreteVehicleFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _assetinventory_urls = ([
-    path('', pyamgmt.views.models.assetinventory_list, name='list'),
+    path('', pyamgmt.views.models.AssetInventoryListView.as_view(), name='list'),
     # path('add/', pyamgmt.views.models.asset_inventory_form, name='add'),
     path('<int:assetinventory_pk>/', include([
         # path('', pyamgmt.views.models.asset_inventory_detail, name='detail'),
@@ -102,19 +102,19 @@ _assetinventory_urls = ([
 ], app_name)
 
 _catalogitem_urls = ([
-    path('', pyamgmt.views.models.catalogitem_list, name='list'),
-    path('add/', pyamgmt.views.models.catalogitem_form, name='add'),
+    path('', pyamgmt.views.models.CatalogItemListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.CatalogItemFormView.as_view(), name='add'),
     path('<int:catalogitem_pk>/', include([
-        path('', pyamgmt.views.models.catalogitem_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.catalogitem_form, name='edit')
+        path('', pyamgmt.views.models.CatalogItemDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.CatalogItemFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _catalogitemdigitalsong_urls = ([
-    path('', pyamgmt.views.models.catalogitemdigitalsong_list, name='list'),
+    path('', pyamgmt.views.models.CatalogItemDigitalSongListView.as_view(), name='list'),
     path('add/', pyamgmt.views.models.catalogitemdigitalsong_form, name='add'),
     path('<int:catalogitemdigitalsong_pk>/', include([
-        path('', pyamgmt.views.models.catalogitemdigitalsong_detail,
+        path('', pyamgmt.views.models.CatalogItemDigitalSongDetailView.as_view(),
              name='detail'),
         path('edit/', pyamgmt.views.models.catalogitemdigitalsong_form, name='edit')
     ]))
@@ -142,50 +142,51 @@ _catalogitemtopointofsalelineitem_urls = ([
 ], app_name)
 
 _invoice_urls = ([
-    path('', pyamgmt.views.models.invoice_list, name='list')
+    path('', pyamgmt.views.models.InvoiceListView.as_view(), name='list')
 ], app_name)
 
 _motionpicture_urls = ([
-    path('', pyamgmt.views.models.motionpicture_list, name='list'),
-    path('add/', pyamgmt.views.models.motionpicture_form, name='add')
+    path('', pyamgmt.views.models.MotionPictureListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.MotionPictureFormView.as_view(), name='add')
 ], app_name)
 
 _musicalbum_urls = ([
-    path('', pyamgmt.views.models.musicalbum_list, name='list'),
-    path('add/', pyamgmt.views.models.musicalbum_form, name='add'),
+    path('', pyamgmt.views.models.MusicAlbumListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.MusicAlbumFormView.as_view(), name='add'),
     path('<int:musicalbum_pk>/', include([
-        path('', pyamgmt.views.models.musicalbum_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.musicalbum_form, name='edit'),
-        path('add-song-recording/', pyamgmt.views.models.musicalbum_add_songrecording_form, name='add-songrecording')
+        path('', pyamgmt.views.models.MusicAlbumDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.MusicAlbumFormView.as_view(), name='edit'),
+        path('add-song-recording/', pyamgmt.views.models.MusicAlbumAddSongRecordingFormView.as_view(),
+             name='add-songrecording'),
     ]))
 ], app_name)
 
 _musicalbumtomusicartist_urls = ([
-    path('', pyamgmt.views.models.musicalbumtomusicartist_list, name='list'),
-    path('add/', pyamgmt.views.models.musicalbumtomusicartist_form, name='add'),
+    path('', pyamgmt.views.models.MusicAlbumToMusicArtistListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.MusicAlbumToMusicArtistFormView.as_view(), name='add'),
     path('<int:musicalbumtomusicartist_pk>/', include([
-        path('', pyamgmt.views.models.musicalbumtomusicartist_detail,
+        path('', pyamgmt.views.models.MusicAlbumToMusicArtistDetailView.as_view(),
              name='detail'),
-        path('edit/', pyamgmt.views.models.musicalbumtomusicartist_form, name='edit')
+        path('edit/', pyamgmt.views.models.MusicAlbumToMusicArtistFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _musicalbumtosongrecording_urls = ([
-    path('', pyamgmt.views.models.musicalbumtosongrecording_list, name='list'),
-    path('add/', pyamgmt.views.models.musicalbumtosongrecording_form, name='add'),
+    path('', pyamgmt.views.models.MusicAlbumToSongRecordingListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.MusicAlbumToSongRecordingFormView.as_view(), name='add'),
     path('<int:musicalbumtosongrecording_pk>/', include([
-        path('', pyamgmt.views.models.musicalbumtosongrecording_detail, name='detail')
+        path('', pyamgmt.views.models.MusicAlbumToSongRecordingDetailView.as_view(), name='detail')
     ]))
 ], app_name)
 
 _musicartist_urls = ([
-    path('', pyamgmt.views.models.musicartist_list, name='list'),
-    path('add/', pyamgmt.views.models.musicartist_form, name='add'),
+    path('', pyamgmt.views.models.MusicArtistListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.MusicArtistFormView.as_view(), name='add'),
     path('<int:musicartist_pk>/', include([
-        path('', pyamgmt.views.models.musicartist_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.musicartist_form, name='edit'),
-        path('add-music-album/', pyamgmt.views.models.musicalbumtomusicartist_form,
-             name='add'),
+        path('', pyamgmt.views.models.MusicArtistDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.MusicArtistFormView.as_view(), name='edit'),
+        path('add-music-album/', pyamgmt.views.models.MusicAlbumToMusicArtistFormView.as_view(),
+             name='add-musicalbum'),
         path('add-person/', pyamgmt.views.models.musicartisttoperson_form, name='add-person')
     ]))
 ], app_name)
@@ -271,18 +272,18 @@ _pointofsalelineitem_urls = ([
 
 _song_urls = ([
     path('', pyamgmt.views.models.song_list, name='list'),
-    path('add/', pyamgmt.views.models.song_form, name='add'),
+    path('add/', pyamgmt.views.models.SongFormView.as_view(), name='add'),
     path('<int:song_pk>/', include([
         path('', pyamgmt.views.models.song_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.song_form, name='edit')
+        path('edit/', pyamgmt.views.models.SongFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _songrecording_urls = ([
-    path('', pyamgmt.views.models.songrecording_list, name='list'),
-    path('add/', pyamgmt.views.models.songrecording_form, name='add'),
+    path('', pyamgmt.views.models.SongRecordingListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.SongRecordingFormView.as_view(), name='add'),
     path('<int:songrecording_pk>/', include([
-        path('', pyamgmt.views.models.songrecording_detail, name='detail')
+        path('', pyamgmt.views.models.SongRecordingDetailView.as_view(), name='detail')
     ]))
 ], app_name)
 
@@ -291,91 +292,91 @@ _songtosong_urls = ([
 ], app_name)
 
 _txn_urls = ([
-    path('', pyamgmt.views.models.txn_list, name='list'),
+    path('', pyamgmt.views.models.TxnListView.as_view(), name='list'),
     path('add/', pyamgmt.views.models.txn_form, name='add'),
     path('<int:txn_pk>/', include([
-        path('', pyamgmt.views.models.txn_detail, name='detail'),
+        path('', pyamgmt.views.models.TxnDetailView.as_view(), name='detail'),
         path('edit/', pyamgmt.views.models.txn_form, name='edit')
     ]))
 ], app_name)
 
 _txnlineitem_urls = ([
-    path('', pyamgmt.views.models.txnlineitem_list, name='list'),
+    path('', pyamgmt.views.models.TxnLineItemListView.as_view(), name='list'),
     path('<int:txnlineitem_pk>/', include([
-        path('', pyamgmt.views.models.txnlineitem_detail, name='detail')
+        path('', pyamgmt.views.models.TxnLineItemDetailView.as_view(), name='detail')
     ]))
 ], app_name)
 
 _unit_urls = ([
-    path('', pyamgmt.views.models.unit_list, name='list'),
-    path('add/', pyamgmt.views.models.unit_form, name='add'),
+    path('', pyamgmt.views.models.UnitListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.UnitFormView.as_view(), name='add'),
     path('<int:unit_pk>/', include([
-        path('', pyamgmt.views.models.unit_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.unit_form, name='edit')
+        path('', pyamgmt.views.models.UnitDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.UnitFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _vehicle_urls = ([
-    path('', pyamgmt.views.models.vehicle_list, name='list'),
-    path('add/', pyamgmt.views.models.vehicle_form, name='add'),
+    path('', pyamgmt.views.models.VehicleListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.VehicleFormView.as_view(), name='add'),
     path('<int:vehicle_pk>/', include([
-        path('', pyamgmt.views.models.vehicle_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.vehicle_form, name='edit'),
-        path('add-vehicle-mileage/', pyamgmt.views.models.vehiclemileage_form, name='add-vehiclemileage')
+        path('', pyamgmt.views.models.VehicleDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.VehicleFormView.as_view(), name='edit'),
+        path('add-vehicle-mileage/', pyamgmt.views.models.VehicleMileageFormView.as_view(), name='add-vehiclemileage')
     ]))
 ], app_name)
 
 _vehiclemake_urls = ([
-    path('', pyamgmt.views.models.vehiclemake_list, name='list'),
-    path('add/', pyamgmt.views.models.vehiclemake_form, name='add'),
+    path('', pyamgmt.views.models.VehicleMakeListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.VehicleMakeFormView.as_view(), name='add'),
     path('<int:vehiclemake_pk>/', include([
         path('', pyamgmt.views.models.VehicleMakeDetailView.as_view(), name='detail'),
-        path('edit/', pyamgmt.views.models.vehiclemake_form, name='edit'),
-        path('add-vehicle-model/', pyamgmt.views.models.vehiclemodel_form, name='add-vehiclemodel')
+        path('edit/', pyamgmt.views.models.VehicleMakeFormView.as_view(), name='edit'),
+        path('add-vehicle-model/', pyamgmt.views.models.VehicleModelFormView.as_view(), name='add-vehiclemodel')
     ]))
 ], app_name)
 
 _vehiclemileage_urls = ([
     path('', pyamgmt.views.models.VehicleMileageListView.as_view(), name='list'),
-    path('add/', pyamgmt.views.models.vehiclemileage_form, name='add'),
+    path('add/', pyamgmt.views.models.VehicleMileageFormView.as_view(), name='add'),
     path('<int:vehiclemileage_pk>/', include([
         path('', pyamgmt.views.models.VehicleMileageDetailView.as_view(), name='detail'),
-        path('edit/', pyamgmt.views.models.vehiclemileage_form, name='edit')
+        path('edit/', pyamgmt.views.models.VehicleMileageFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _vehiclemodel_urls = ([
-    path('', pyamgmt.views.models.vehiclemodel_list, name='list'),
-    path('add/', pyamgmt.views.models.vehiclemodel_form, name='add'),
+    path('', pyamgmt.views.models.VehicleModelListView.as_view(), name='list'),
+    path('add/', pyamgmt.views.models.VehicleModelFormView.as_view(), name='add'),
     path('<int:vehiclemodel_pk>/', include([
-        path('', pyamgmt.views.models.vehiclemodel_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.vehiclemodel_form, name='edit'),
-        path('add-vehicle-trim/', pyamgmt.views.models.vehicletrim_form, name='add-vehicletrim')
+        path('', pyamgmt.views.models.VehicleModelDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.VehicleModelFormView.as_view(), name='edit'),
+        path('add-vehicle-trim/', pyamgmt.views.models.VehicleTrimFormView.as_view(), name='add-vehicletrim')
     ]))
 ], app_name)
 
 _vehicletrim_urls = ([
     path('', pyamgmt.views.models.VehicleTrimListView.as_view(), name='list'),
-    path('add/', pyamgmt.views.models.vehicletrim_form, name='add'),
+    path('add/', pyamgmt.views.models.VehicleTrimFormView.as_view(), name='add'),
     path('<int:vehicletrim_pk>/', include([
         path('', pyamgmt.views.models.VehicleTrimDetailView.as_view(), name='detail'),
-        path('edit/', pyamgmt.views.models.vehicletrim_form, name='edit'),
-        path('add-vehicle-year/', pyamgmt.views.models.vehicleyear_form, name='add-vehicleyear')
+        path('edit/', pyamgmt.views.models.VehicleTrimFormView.as_view(), name='edit'),
+        path('add-vehicle-year/', pyamgmt.views.models.VehicleYearFormView.as_view(), name='add-vehicleyear')
     ]))
 ], app_name)
 
 _vehicleyear_urls = ([
     path('', pyamgmt.views.models.VehicleYearListView.as_view(), name='list'),
-    path('add/', pyamgmt.views.models.vehicleyear_form, name='add'),
+    path('add/', pyamgmt.views.models.VehicleYearFormView.as_view(), name='add'),
     path('<int:vehicleyear_pk>/', include([
         path('', pyamgmt.views.models.VehicleYearDetailView.as_view(), name='detail'),
-        path('edit/', pyamgmt.views.models.vehicleyear_form, name='edit'),
-        path('add-vehicle/', pyamgmt.views.models.vehicle_form, name='add-vehicle')
+        path('edit/', pyamgmt.views.models.VehicleYearFormView.as_view(), name='edit'),
+        path('add-vehicle/', pyamgmt.views.models.VehicleFormView.as_view(), name='add-vehicle')
     ]))
 ], app_name)
 
 urlpatterns = [
-    path('', pyamgmt.views.general.home, name='home'),
+    path('', pyamgmt.views.main.HomeView.as_view(), name='home'),
     path('account/', include(_account_urls, namespace='account')),
     path('account-asset/', include(_accountasset_urls, namespace='accountasset')),
     path('account-asset-financial/', include(_accountassetfinancial_urls, namespace='accountassetfinancial')),

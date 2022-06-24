@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div>
+    <h1>Testing</h1>
+    {% for app, models in all_models.items %}
+    <div>
+        <div>{{ app }}</div>
+        <div>{{ models }}</div>
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>

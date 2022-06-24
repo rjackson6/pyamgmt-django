@@ -43,7 +43,7 @@ from deform.db.models.fields import (
 )
 
 from pyamgmt.models.base import BaseAuditable
-from pyamgmt.models.managers import MusicArtistToPersonManager
+from pyamgmt.models import managers, querysets
 from pyamgmt.validators import (
     validate_alphanumeric, validate_date_not_future, validate_digit, validate_isbn, validate_isbn_13_check_digit,
     validate_positive_timedelta, validate_year_not_future
@@ -618,7 +618,7 @@ class MusicArtistToPerson(BaseAuditable):
     person_id: int
 
     objects = Manager()
-    with_related = MusicArtistToPersonManager()
+    with_related = managers.MusicArtistToPersonManager()
 
     class Meta:
         constraints = [
@@ -976,6 +976,8 @@ class Txn(BaseAuditable):
         help_text="Total transaction amount reflected on statement."
     )
     txn_date = DateField()
+
+    objects = querysets.TxnQuerySet.as_manager()
 
     @property
     def _is_balanced(self) -> bool:

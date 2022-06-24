@@ -42,9 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'deform.apps.DeformConfig',
     'core.apps.CoreConfig',
-    'pyamgmt.apps.PyamgmtConfig'
+    'deform.apps.DeformConfig',
+    'pyamgmt.apps.PyamgmtConfig',
+    'schemaviz.apps.SchemavizConfig',
 ]
 
 MIDDLEWARE = [
@@ -73,7 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'core.context_processors.static_urls'
+                'core.context_processors.static_urls',
             ],
         },
     },
@@ -140,7 +141,11 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+######################
 # Non-default Settings
+######################
+AUTH_USER_MODEL = 'core.User'
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
@@ -162,13 +167,11 @@ LOGGING = {
     }
 }
 
+LOGIN_REDIRECT_URL = '/'
+
 MEDIA_ROOT = BASE_DIR / 'var' / 'media'
 
 MEDIA_URL = '/media/'
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
 
 STATIC_RESOURCES = {
     'JQUERY_JS': {
@@ -188,5 +191,9 @@ STATIC_RESOURCES = {
         'prod': 'js/select2-v4.0.13/select2.min.js'
     }
 }
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'

@@ -6,9 +6,9 @@
 
 <form method="post" class="form">
     {% csrf_token %}
-    {{ form_asset }}
-    {{ form_assetdiscrete }}
-    {{ form_assetdiscretevehicle }}
+    {{ forms.asset }}
+    {{ forms.assetdiscrete }}
+    {{ forms.assetdiscretevehicle }}
     <button type="submit">Submit</button>
 </form>
 

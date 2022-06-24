@@ -6,10 +6,10 @@ import requests
 from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Case, Count, F, Prefetch, Q, Sum, Value, When
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse  # HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_http_methods
+# from django.utils.decorators import method_decorator
+# from django.views.decorators.http import require_http_methods
 
 from core.views.base import FormView, MultiFormView, View
 from pyamgmt.forms import *
@@ -36,50 +36,36 @@ class AccountListView(View):
 class AccountDetailView(View):
     def get(self, request, account_pk: int, **_kwargs):
         account = (
-            Account.objects.prefetch_related('txnlineitem_set__txn__payee')
+            Account.objects
+            .prefetch_related('txnlineitem_set__txn__payee')
             .get(pk=account_pk)
         )
-        self.context.update({
-            'account': account
-        })
+        self.context.update({'account': account})
         return render(request, 'pyamgmt/models/account_detail.html', self.context)
 
 
-class AccountFormView(View):
-    @method_decorator(require_http_methods(['GET', 'POST']))
-    def handle(self, request, account_pk: int = None, **_kwargs):
-        instance = None
-        if account_pk:
-            instance = Account.objects.get(pk=account_pk)
-        form = AccountForm(request.POST or None, instance=instance)
-        if request.method == 'POST' and form.is_valid():
-            account = form.save()
-            if account.subtype == Account.Subtype.ASSET:
-                account_asset, _ = AccountAsset.objects.get_or_create(account=account)
-            return redirect('pyamgmt:account:list')
-        self.context.update({'form': form})
-        return render(request, 'pyamgmt/models/account_form.html', self.context)
-
-
-class AccountFormViewOne(FormView):
+class AccountFormView(FormView):
     def setup(self, request, account_pk: int = None, **kwargs):
         super().setup(request, **kwargs)
-        instance = None
+        account = None
         if account_pk:
-            instance = Account.objects.get(pk=account_pk)
-        self.form = AccountForm(request.POST or None, instance=instance)
+            account = Account.objects.get(pk=account_pk)
+        self.form = AccountForm(request.POST or None, instance=account)
+
+    def render(self):
         self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/account_form.html', self.context)
 
-    def get(self, request, **_kwargs):
-        return render(request, 'pyamgmt/models/account_form.html', self.context)
+    def get(self, _request, **_kwargs):
+        return self.render()
 
-    def post(self, request, **_kwargs):
+    def post(self, _request, **_kwargs):
         if self.form.is_valid():
             account = self.form.save()
             if account.subtype == Account.Subtype.ASSET:
                 account_asset, _ = AccountAsset.objects.get_or_create(account=account)
             return redirect('pyamgmt:account:list')
-        return render(request, 'pyamgmt/models/account_form.html', self.context)
+        return self.render()
 
 
 class AccountAssetListView(View):
@@ -98,44 +84,23 @@ class AccountAssetDetailView(View):
         return render(request, 'pyamgmt/models/accountasset_detail.html', self.context)
 
 
-@transaction.atomic
-def accountasset_form(request, accountasset_pk: int = None):
-    context = {}
-    instance = None
-    if accountasset_pk:
-        instance = AccountAsset.objects.get(pk=accountasset_pk)
-    form = AccountAssetForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        account_asset = form.save()
-        if account_asset.subtype == AccountAsset.Subtype.FINANCIAL:
-            account_asset_financial, _ = AccountAssetFinancial.objects.get_or_create(account_asset=account_asset)
-        if account_asset.subtype == AccountAsset.Subtype.REAL:
-            account_asset_real, _ = AccountAssetReal.objects.get_or_create(account_asset=account_asset)
-        if accountasset_pk:
-            return redirect('pyamgmt:accountasset:detail', accountasset_pk=accountasset_pk)
-        return redirect('pyamgmt:accountasset:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/accountasset_form.html', context)
-
-
 class AccountAssetFormView(MultiFormView):
     def setup(self, request, accountasset_pk: int = None, **kwargs):
         super().setup(request, **kwargs)
-        instance = None
+        account = None
+        accountasset = None
         if accountasset_pk:
-            instance = AccountAsset.objects.get(pk=accountasset_pk)
-        self.forms.account = AccountForm(request.POST or None)
-        self.forms.accountasset = AccountAssetForm(request.POST or None, instance=instance)
+            accountasset = AccountAsset.objects.get(pk=accountasset_pk)
+            account = accountasset.account
+        self.forms.account = AccountForm(request.POST or None, instance=account)
+        self.forms.accountasset = AccountAssetForm(request.POST or None, instance=accountasset)
 
-    def render_to_response(self):
-        self.context.update({
-            'account_form': self.forms.account,
-            'accountasset_form': self.forms.accountasset
-        })
+    def render(self):
+        self.context.update({'forms': self.forms})
         return render(self.request, 'pyamgmt/models/accountasset_form.html', self.context)
 
     def get(self, _request, **_kwargs):
-        return self.render_to_response()
+        return self.render()
 
     @transaction.atomic
     def post(self, _request, **_kwargs):
@@ -150,7 +115,7 @@ class AccountAssetFormView(MultiFormView):
                 case AccountAsset.Subtype.REAL:
                     accountassetreal, _ = AccountAssetReal.objects.get_or_create(accountasset=accountasset)
             return redirect('pyamgmt:accountasset:list')
-        return self.render_to_response()
+        return self.render()
 
 
 class AccountAssetFinancialListView(View):
@@ -180,54 +145,6 @@ class AccountAssetFinancialDetailView(View):
         return render(request, 'pyamgmt/models/accountassetfinancial_detail.html', self.context)
 
 
-@transaction.atomic
-def accountassetfinancial_form(request, accountassetfinancial_pk: int = None):
-    context = {}
-    instance = None
-    accountasset_instance = None
-    account_instance = None
-    if accountassetfinancial_pk:
-        instance = AccountAssetFinancial.objects.get(pk=accountassetfinancial_pk)
-        accountasset_instance = instance.account_asset
-        account_instance = accountasset_instance.account
-    form_accountassetfinancial = AccountAssetFinancialForm(request.POST or None, instance=instance)
-    form_accountasset = AccountAssetForm(
-        request.POST or None,
-        instance=accountasset_instance,
-        initial={'subtype': AccountAsset.Subtype.FINANCIAL}
-    )
-    form_accountasset.fields['subtype'].disabled = True
-    form_account = AccountForm(
-        request.POST or None,
-        instance=account_instance,
-        initial={'subtype': Account.Subtype.ASSET}
-    )
-    form_account.fields['subtype'].disabled = True
-    form_account.fields['parent_account'].queryset = (
-        form_account.fields['parent_account'].queryset.filter(accountasset__subtype=AccountAsset.Subtype.FINANCIAL)
-    )
-    if request.method == 'POST' and all(
-        [form_account.is_valid(), form_accountasset.is_valid(), form_accountassetfinancial.is_valid()]
-    ):
-        account = form_account.save()
-        accountasset = form_accountasset.save(commit=False)
-        accountasset.account = account
-        accountasset.save()
-        accountassetfinancial = form_accountassetfinancial.save(commit=False)
-        accountassetfinancial.accountasset = accountasset
-        accountassetfinancial.save()
-        if accountassetfinancial_pk:
-            return redirect('pyamgmt:accountassetfinancial:detail',
-                            accountassetfinancial_pk=accountassetfinancial_pk)
-        return redirect('pyamgmt:accountassetfinancial:list')
-    context.update({
-        'form_account': form_account,
-        'form_accountasset': form_accountasset,
-        'form_accountassetfinancial': form_accountassetfinancial
-    })
-    return render(request, 'pyamgmt/models/accountassetfinancial_form.html', context)
-
-
 class AccountAssetFinancialFormView(MultiFormView):
     def setup(self, request, accountassetfinancial_pk: int = None, **kwargs):
         super().setup(request, **kwargs)
@@ -240,24 +157,27 @@ class AccountAssetFinancialFormView(MultiFormView):
             account = accountasset.account
         self.forms.accountassetfinancial = AccountAssetFinancialForm(
             request.POST or None, instance=accountassetfinanancial)
+        # initial={'subtype': AccountAsset.Subtype.FINANCIAL}
         self.forms.accountasset = AccountAssetForm(request.POST or None, instance=accountasset)
+        # initial={'subtype': AccountAsset.Subtype.FINANCIAL}
+        # form_accountasset.fields['subtype'].disabled = True
         self.forms.account = AccountForm(request.POST or None, instance=account)
+        # form_account.fields['subtype'].disabled = True
+        # initial={'subtype': Account.Subtype.ASSET}
+        # form_account.fields['parent_account'].queryset = (
+        #         form_account.fields['parent_account'].queryset.filter(
+        #             accountasset__subtype=AccountAsset.Subtype.FINANCIAL)
+        #     )
 
     def render(self):
-        self.context.update({
-            'forms': {
-                'account': self.forms.account,
-                'accountasset': self.forms.accountasset,
-                'accountassetfinancial': self.forms.accountassetfinancial,
-            }
-        })
+        self.context.update({'forms': self.forms})
         return render(self.request, 'pyamgmt/models/accountassetfinancial_form.html', self.context)
 
-    def get(self, request, **kwargs):
+    def get(self, _request, **_kwargs):
         return self.render()
 
     @transaction.atomic
-    def post(self, request, **kwargs):
+    def post(self, _request, **_kwargs):
         if self.forms.are_valid():
             account = self.forms.account.save()
             accountasset = self.forms.accountasset.save(commit=False)
@@ -270,427 +190,408 @@ class AccountAssetFinancialFormView(MultiFormView):
         return self.render()
 
 
-def accountassetreal_list(request):
-    """List all records from model AccountAssetReal."""
-    context = {}
-    qs_accountassetreal = (
-        AccountAssetReal.objects
-        .select_related('accountasset__account')
-    )
-    context.update({'qs_accountassetreal': qs_accountassetreal})
-    return render(request, 'pyamgmt/models/accountassetreal_list.html', context)
-
-
-def accountassetreal_detail(request, accountassetreal_pk: int):
-    context = {}
-    accountassetreal = AccountAssetReal.objects.get(pk=accountassetreal_pk)
-    context.update({
-        'accountassetreal': accountassetreal
-    })
-    return render(request, 'pyamgmt/models/accountassetreal_detail.html', context)
-
-
-@transaction.atomic
-def accountassetreal_form(request, accountassetreal_pk: int = None):
-    context = {}
-    instance = None
-    accountasset_instance = None
-    account_instance = None
-    if accountassetreal_pk:
-        instance = AccountAssetReal.objects.get(pk=accountassetreal_pk)
-        accountasset_instance = instance.accountasset
-        account_instance = accountasset_instance.account
-    form_accountassetreal = AccountAssetRealForm(request.POST or None, instance=instance)
-    form_accountasset = AccountAssetForm(
-        request.POST or None,
-        instance=accountasset_instance,
-        initial={'subtype': AccountAsset.Subtype.REAL}
-    )
-    form_accountasset.fields['subtype'].disabled = True
-    form_account = AccountForm(
-        request.POST or None,
-        instance=account_instance,
-        initial={'subtype': Account.Subtype.ASSET}
-    )
-    form_account.fields['parent_account'].queryset = (
-        form_account.fields['parent_account'].queryset.filter(accountasset__subtype=AccountAsset.Subtype.REAL)
-    )
-    form_account.fields['subtype'].disabled = True
-    if request.method == 'POST' and all(
-        [form_account.is_valid(), form_accountasset.is_valid(), form_accountassetreal.is_valid()]
-    ):
-        account = form_account.save()
-        accountasset = form_accountasset.save(commit=False)
-        accountasset.account = account
-        accountasset.save()
-        accountassetreal = form_accountassetreal.save(commit=False)
-        accountassetreal.account_asset = accountasset
-        accountassetreal.save()
-        if accountassetreal_pk:
-            return redirect('pyamgmt:accountassetreal:detail', accountassetreal_pk=accountassetreal_pk)
-        return redirect('pyamgmt:accountassetreal:list')
-    context.update({
-        'form_account': form_account,
-        'form_accountasset': form_accountasset,
-        'form_accountassetreal': form_accountassetreal
-    })
-    return render(request, 'pyamgmt/models/accountassetreal_form.html', context)
-
-
-def accountexpense_list(request):
-    """List all records from model AccountExpense."""
-    context = {}
-    qs_accountexpense = AccountExpense.objects.select_related('account').order_by('account__name').all()
-    context.update({'qs_accountexpense': qs_accountexpense})
-    return render(request, 'pyamgmt/models/accountexpense_list.html', context)
-
-
-def accountexpense_detail(request, accountexpense_pk: int):
-    context = {}
-    accountexpense = AccountExpense.objects.get(pk=accountexpense_pk)
-    context.update({
-        'accountexpense': accountexpense
-    })
-    return render(request, 'pyamgmt/models/accountexpense_detail.html', context)
-
-
-@transaction.atomic
-def accountexpense_form(request, accountexpense_pk: int = None):
-    context = {}
-    instance = None
-    account_instance = None
-    if accountexpense_pk:
-        instance = AccountExpense.objects.get(pk=accountexpense_pk)
-        account_instance = instance.account
-    form_accountexpense = AccountExpenseForm(request.POST or None, instance=instance)
-    form_account = AccountForm(
-        request.POST or None,
-        instance=account_instance,
-        initial={'subtype': Account.Subtype.EXPENSE}
-    )
-    form_account.fields['parent_account'].queryset = (
-        form_account.fields['parent_account'].queryset.filter(subtype=Account.Subtype.EXPENSE)
-    )
-    form_account.fields['subtype'].disabled = True
-    if request.method == 'POST' and all(
-        [form_account.is_valid(), form_accountexpense.is_valid()]
-    ):
-        account = form_account.save()
-        account_expense = form_accountexpense.save(commit=False)
-        account_expense.account = account
-        account_expense.save()
-        if accountexpense_pk:
-            return redirect('pyamgmt:accountexpense:detail', accountexpense_pk=accountexpense_pk)
-        return redirect('pyamgmt:accountexpense:list')
-    context.update({'form_account': form_account, 'form_accountexpense': form_accountexpense})
-    return render(request, 'pyamgmt/models/accountexpense_form.html', context)
-
-
-def accountincome_list(request):
-    """List all records from model AccountIncome."""
-    context = {}
-    qs_accountincome = AccountIncome.objects.select_related('account')
-    context.update({'qs_accountincome': qs_accountincome})
-    return render(request, 'pyamgmt/models/accountincome_list.html', context)
-
-
-def accountincome_detail(request, accountincome_pk: int):
-    context = {}
-    accountincome = AccountIncome.objects.select_related('account').get(pk=accountincome_pk)
-    qs_txnlineitem = (
-        TxnLineItem.objects
-        .filter(account_id=accountincome.pk)
-        .select_related('txn')
-        .order_by('-txn__txn_date')
-    )
-    context.update({
-        'accountincome': accountincome,
-        'qs_txnlineitem': qs_txnlineitem
-    })
-    return render(request, 'pyamgmt/models/accountincome_detail.html', context)
-
-
-@transaction.atomic
-def accountincome_form(request, accountincome_pk: int = None):
-    context = {}
-    instance = None
-    account_instance = None
-    if accountincome_pk:
-        instance = AccountIncome.objects.get(pk=accountincome_pk)
-        account_instance = instance.account
-    form_accountincome = AccountIncomeForm(request.POST or None, instance=instance)
-    form_account = AccountForm(
-        request.POST or None, instance=account_instance,
-        initial={'subtype': Account.Subtype.INCOME}
-    )
-    form_account.fields['parent_account'].queryset = (
-        form_account.fields['parent_account'].queryset.filter(subtype=Account.Subtype.INCOME)
-    )
-    form_account.fields['subtype'].disabled = True
-    if request.method == 'POST' and all(
-        [form_account.is_valid(), form_accountincome.is_valid()]
-    ):
-        account = form_account.save()
-        accountincome = form_accountincome.save(commit=False)
-        accountincome.account = account
-        accountincome.save()
-        if accountincome_pk:
-            return redirect('pyamgmt:accountincome:detail', accountincome_pk=accountincome_pk)
-        return redirect('pyamgmt:accountincome:list')
-    context.update({'form_account': form_account, 'form_accountincome': form_accountincome})
-    return render(request, 'pyamgmt/models/accountincome_form.html', context)
-
-
-def accountliability_list(request):
-    """List all records from model AccountLiability."""
-    context = {}
-    qs_accountliability = AccountLiability.objects.select_related('account')
-    context.update({'qs_accountliability': qs_accountliability})
-    return render(request, 'pyamgmt/models/accountliability_list.html', context)
-
-
-def accountliability_detail(request, accountliability_pk: int):
-    context = {}
-    accountliability = AccountLiability.objects.select_related('account').get(pk=accountliability_pk)
-    context.update({
-        'accountliability': accountliability
-    })
-    return render(request, 'pyamgmt/models/accountliability_detail.html', context)
-
-
-@transaction.atomic
-def accountliability_form(request, accountliability_pk: int = None):
-    context = {}
-    instance = None
-    account_instance = None
-    if accountliability_pk:
-        instance = AccountLiability.objects.get(pk=accountliability_pk)
-        account_instance = instance.account
-    form_accountliability = AccountLiabilityForm(request.POST or None, instance=instance)
-    form_account = AccountForm(
-        request.POST or None, instance=account_instance, initial={'subtype': Account.Subtype.LIABILITY}
-    )
-    form_account.fields['subtype'].disabled = True
-    if request.method == 'POST' and all(
-        [form_account.is_valid(), form_accountliability.is_valid()]
-    ):
-        account = form_account.save()
-        accountliability = form_accountliability.save(commit=False)
-        accountliability.account = account
-        accountliability.save()
-        if accountliability_pk:
-            return redirect('pyamgmt:accountliability:detail', accountliability_pk=accountliability_pk)
-        return redirect('pyamgmt:accountliability:list')
-    context.update({'form_account': form_account, 'form_accountliability': form_accountliability})
-    return render(request, 'pyamgmt/models/accountliability_form.html', context)
-
-
-def asset_list(request):
-    """List all records from model Asset."""
-    context = {}
-    qs_asset = Asset.objects.all()
-    context.update({'qs_asset': qs_asset})
-    return render(request, 'pyamgmt/models/asset_list.html', context)
-
-
-def asset_detail(request, asset_pk: int):
-    context = {}
-    asset = Asset.objects.get(pk=asset_pk)
-    context.update({
-        'asset': asset
-    })
-    return render(request, 'pyamgmt/models/asset_detail.html', context)
-
-
-def asset_form(request, asset_pk=None):
-    """Supertype. Probably won't include without JavaScript.
-    Another method is to not allow adding through this form, and force adding through subtype (multiple forms).
-    Another method is JavaScript.
-    """
-    context = {}
-    instance = None
-    if asset_pk:
-        instance = Asset.objects.get(pk=asset_pk)
-    form = AssetForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        # form.save()
-        return redirect('pyamgmt:asset:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/asset_form.html', context)
-
-
-def assetdiscrete_list(request):
-    context = {}
-    qs_assetdiscrete = AssetDiscrete.objects.select_related('asset')
-    context.update({
-        'qs_assetdiscrete': qs_assetdiscrete
-    })
-    return render(request, 'pyamgmt/models/assetdiscrete_list.html', context)
-
-
-def assetdiscrete_detail(request, assetdiscrete_pk: int):
-    context = {}
-    assetdiscrete = AssetDiscrete.objects.get(pk=assetdiscrete_pk)
-    context.update({
-        'assetdiscrete': assetdiscrete
-    })
-    return render(request, 'pyamgmt/models/assetdiscrete_detail.html', context)
-
-
-def assetdiscretecatalogitem_list(request):
-    context = {}
-    return render(request, 'pyamgmt/models/assetdiscretecatalogitem_list.html', context)
-
-
-def assetdiscretecatalogitem_detail(request, assetdiscretecatalogitem_pk: int):
-    context = {}
-    assetdiscretecatalogitem = AssetDiscreteCatalogItem.objects.get(pk=assetdiscretecatalogitem_pk)
-    context.update({
-        'assetdiscretecatalogitem': assetdiscretecatalogitem
-    })
-    return render(request, 'pyamgmt/models/assetdiscretecatalogitem_detail.html', context)
-
-
-def assetdiscretevehicle_list(request):
-    """List all records from model AssetVehicle."""
-    context = {}
-    qs_assetdiscretevehicle = (
-        AssetDiscreteVehicle.objects
-        .select_related('assetdiscrete__asset', 'vehicle')
-        .order_by('assetdiscrete__date_withdrawn', '-vehicle__vehicleyear__year')
-    )
-    context.update({'qs_assetdiscretevehicle': qs_assetdiscretevehicle})
-    return render(request, 'pyamgmt/models/assetdiscretevehicle_list.html', context)
-
-
-def assetdiscretevehicle_detail(request, assetdiscretevehicle_pk: int):
-    context = {}
-    assetdiscretevehicle = (
-        AssetDiscreteVehicle.objects
-        .select_related(
-            'assetdiscrete',
-            'vehicle__vehicleyear__vehicletrim__vehiclemodel__vehiclemake'
+class AccountAssetRealListView(View):
+    def get(self, request, **_kwargs):
+        qs_accountassetreal = (
+            AccountAssetReal.objects
+            .select_related('accountasset__account')
         )
-        .get(pk=assetdiscretevehicle_pk)
-    )
-    context.update({
-        'assetdiscretevehicle': assetdiscretevehicle
-    })
-    return render(request, 'pyamgmt/models/assetdiscretevehicle_detail.html', context)
+        self.context.update({'qs_accountassetreal': qs_accountassetreal})
+        return render(request, 'pyamgmt/models/accountassetreal_list.html', self.context)
 
 
-@transaction.atomic
-def assetdiscretevehicle_form(request, assetdiscretevehicle_pk=None):
-    """Form to add/edit vehicle assets that cascades upwards through the supertypes."""
-    context = {}
-    assetdiscretevehicle_instance = None
-    assetdiscrete_instance = None
-    asset_instance = None
-    if assetdiscretevehicle_pk:
-        assetdiscretevehicle_instance = (
+class AccountAssetRealDetailView(View):
+    def get(self, request, accountassetreal_pk: int, **_kwargs):
+        accountassetreal = AccountAssetReal.objects.get(pk=accountassetreal_pk)
+        self.context.update({
+            'accountassetreal': accountassetreal
+        })
+        return render(request, 'pyamgmt/models/accountassetreal_detail.html', self.context)
+
+
+class AccountAssetRealFormView(MultiFormView):
+    def setup(self, request, accountassetreal_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        account = None
+        accountasset = None
+        accountassetreal = None
+        if accountassetreal_pk:
+            accountassetreal = AccountAssetReal.objects.get(pk=accountassetreal_pk)
+            accountasset = accountassetreal.accountasset
+            account = accountasset.account
+        self.forms.account = AccountForm(request.POST or None, instance=account)
+        self.forms.accountasset = AccountAssetForm(request.POST or None, instance=accountasset)
+        self.forms.accountassetreal = AccountAssetRealForm(request.POST or None, instance=accountassetreal)
+        # form_account.fields['parent_account'].queryset = (
+        #         form_account.fields['parent_account'].queryset.filter(accountasset__subtype=AccountAsset.Subtype.REAL)
+        #     )
+        # initial={'subtype': Account.Subtype.ASSET}
+        # initial={'subtype': AccountAsset.Subtype.REAL}
+        # form_accountasset.fields['subtype'].disabled = True
+
+    def render(self):
+        self.context.update({'forms': self.forms})
+        return render(self.request, 'pyamgmt/models/accountassetreal_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    @transaction.atomic
+    def post(self, _request, **_kwargs):
+        if self.forms.are_valid():
+            account = self.forms.account.save()
+            accountasset = self.forms.accountasset.save(commit=False)
+            accountasset.account = account
+            accountasset.save()
+            accountassetreal = self.forms.accountassetreal.save(commit=False)
+            accountassetreal.accountasset = accountasset
+            accountassetreal.save()
+            return redirect('pyamgmt:accountassetreal:list')
+        return self.render()
+
+
+class AccountExpenseListView(View):
+    def get(self, request, **_kwargs):
+        qs_accountexpense = AccountExpense.objects.select_related('account').order_by('account__name').all()
+        self.context.update({'qs_accountexpense': qs_accountexpense})
+        return render(request, 'pyamgmt/models/accountexpense_list.html', self.context)
+
+
+class AccountExpenseDetailView(View):
+    def get(self, request, accountexpense_pk: int, **_kwargs):
+        accountexpense = AccountExpense.objects.get(pk=accountexpense_pk)
+        self.context.update({
+            'accountexpense': accountexpense
+        })
+        return render(request, 'pyamgmt/models/accountexpense_detail.html', self.context)
+
+
+class AccountExpenseFormView(MultiFormView):
+    def setup(self, request, accountexpense_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        account = None
+        accountexpense = None
+        if accountexpense_pk:
+            accountexpense = AccountExpense.objects.get(pk=accountexpense_pk)
+            account = accountexpense.account
+        self.forms.account = AccountForm(request.POST or None, instance=account)
+        self.forms.accountexpense = AccountExpenseForm(request.POST or None, instance=accountexpense)
+
+    def render(self):
+        self.context.update({'forms': self.forms})
+        return
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    @transaction.atomic
+    def post(self, _request, **_kwargs):
+        if self.forms.are_valid():
+            account = self.forms.account.save()
+            accountexpense = self.forms.accountexpense.save(commit=False)
+            accountexpense.account = account
+            accountexpense.save()
+            return redirect('pyamgmt:accountexpense:detail', accountexpense=accountexpense.pk)
+        return self.render()
+
+
+class AccountIncomeListView(View):
+    def get(self, request, **_kwargs):
+        qs_accountincome = AccountIncome.objects.select_related('account')
+        self.context.update({'qs_accountincome': qs_accountincome})
+        return render(request, 'pyamgmt/models/accountincome_list.html', self.context)
+
+
+class AccountIncomeDetailView(View):
+    def get(self, request, accountincome_pk: int, **_kwargs):
+        accountincome = AccountIncome.objects.select_related('account').get(pk=accountincome_pk)
+        qs_txnlineitem = (
+            TxnLineItem.objects
+            .filter(account_id=accountincome.pk)
+            .select_related('txn')
+            .order_by('-txn__txn_date')
+        )
+        self.context.update({
+            'accountincome': accountincome,
+            'qs_txnlineitem': qs_txnlineitem
+        })
+        return render(request, 'pyamgmt/models/accountincome_detail.html', self.context)
+
+
+class AccountIncomeFormView(MultiFormView):
+    def setup(self, request, accountincome_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        account = None
+        accountincome = None
+        if accountincome_pk:
+            accountincome = AccountIncome.objects.get(pk=accountincome_pk)
+            account = accountincome.account
+        self.forms.account = AccountForm(request.POST or None, instance=account)
+        self.forms.accountincome = AccountIncomeForm(request.POST or None, instance=accountincome)
+
+    def render(self):
+        self.context.update({'forms': self.forms})
+        return render(self.request, '', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    @transaction.atomic
+    def post(self, _request, **_kwargs):
+        if self.forms.are_valid():
+            account = self.forms.account.save()
+            accountincome = self.forms.accountincome.save(commit=False)
+            accountincome.account = account
+            accountincome.save()
+            return redirect()
+        return self.render()
+
+
+class AccountLiabilityListView(View):
+    def get(self, request, **_kwargs):
+        qs_accountliability = AccountLiability.objects.select_related('account')
+        self.context.update({'qs_accountliability': qs_accountliability})
+        return render(request, 'pyamgmt/models/accountliability_list.html', self.context)
+
+
+class AccountLiabilityDetailView(View):
+    def get(self, request, accountliability_pk: int, **_kwargs):
+        accountliability = AccountLiability.objects.select_related('account').get(pk=accountliability_pk)
+        self.context.update({
+            'accountliability': accountliability
+        })
+        return render(request, 'pyamgmt/models/accountliability_detail.html', self.context)
+
+
+class AccountLiabilityFormView(MultiFormView):
+    def setup(self, request, accountliability_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        account = None
+        accountliability = None
+        if accountliability_pk:
+            accountliability = AccountLiability.objects.get(pk=accountliability_pk)
+            account = accountliability.account
+        self.forms.account = AccountForm(request.POST or None, instance=account)
+        self.forms.accountliability = AccountLiabilityForm(request.POST or None, instance=accountliability)
+
+    def render(self):
+        self.context.update({'forms': forms})
+        return render(self.request, '', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    @transaction.atomic
+    def post(self, _request, **_kwargs):
+        if self.forms.are_valid():
+            account = self.forms.account.save()
+            accountliability = self.forms.accountliability.save(commit=False)
+            accountliability.account = account
+            accountliability.save()
+            return redirect()
+        return self.render()
+
+
+class AssetListView(View):
+    def get(self, request, **_kwargs):
+        qs_asset = Asset.objects.all()
+        self.context.update({'qs_asset': qs_asset})
+        return render(request, 'pyamgmt/models/asset_list.html', self.context)
+
+
+class AssetDetailView(View):
+    def get(self, request, asset_pk: int, **_kwargs):
+        asset = Asset.objects.get(pk=asset_pk)
+        self.context.update({
+            'asset': asset
+        })
+        return render(request, 'pyamgmt/models/asset_detail.html', self.context)
+
+
+class AssetFormView(FormView):
+    def setup(self, request, asset_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        asset = None
+        if asset_pk:
+            asset = Asset.objects.get(pk=asset_pk)
+        self.form = AssetForm(request.POST or None, instance=asset)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/asset_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    def post(self, _request, **_kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            return redirect()
+        return self.render()
+
+
+class AssetDiscreteListView(View):
+    def get(self, request, **_kwargs):
+        qs_assetdiscrete = AssetDiscrete.objects.select_related('asset')
+        self.context.update({
+            'qs_assetdiscrete': qs_assetdiscrete
+        })
+        return render(request, 'pyamgmt/models/assetdiscrete_list.html', self.context)
+
+
+class AssetDiscreteDetailView(View):
+    def get(self, request, assetdiscrete_pk: int, **_kwargs):
+        assetdiscrete = AssetDiscrete.objects.get(pk=assetdiscrete_pk)
+        self.context.update({
+            'assetdiscrete': assetdiscrete
+        })
+        return render(request, 'pyamgmt/models/assetdiscrete_detail.html', self.context)
+
+
+class AssetDiscreteCatalogItemListView(View):
+    pass
+
+
+class AssetDiscreteCatalogItemDetailView(View):
+    def get(self, request, assetdiscretecatalogitem_pk: int, **_kwargs):
+        assetdiscretecatalogitem = AssetDiscreteCatalogItem.objects.get(pk=assetdiscretecatalogitem_pk)
+        self.context.update({
+            'assetdiscretecatalogitem': assetdiscretecatalogitem
+        })
+        return render(request, 'pyamgmt/models/assetdiscretecatalogitem_detail.html', self.context)
+
+
+class AssetDiscreteVehicleListView(View):
+    def get(self, request, **_kwargs):
+        qs_assetdiscretevehicle = (
             AssetDiscreteVehicle.objects
-            .select_related('assetdiscrete__asset')
+            .select_related('assetdiscrete__asset', 'vehicle')
+            .order_by('assetdiscrete__date_withdrawn', '-vehicle__vehicleyear__year')
+        )
+        self.context.update({'qs_assetdiscretevehicle': qs_assetdiscretevehicle})
+        return render(request, 'pyamgmt/models/assetdiscretevehicle_list.html', self.context)
+
+
+class AssetDiscreteVehicleDetailView(View):
+    def get(self, request, assetdiscretevehicle_pk: int, **_kwargs):
+        assetdiscretevehicle = (
+            AssetDiscreteVehicle.objects
+            .select_related(
+                'assetdiscrete',
+                'vehicle__vehicleyear__vehicletrim__vehiclemodel__vehiclemake')
             .get(pk=assetdiscretevehicle_pk)
         )
-        assetdiscrete_instance = assetdiscretevehicle_instance.assetdiscrete
-        asset_instance = assetdiscrete_instance.asset
-    form_assetdiscretevehicle = AssetDiscreteVehicleForm(
-        request.POST or None, instance=assetdiscretevehicle_instance
-    )
-    form_assetdiscrete = AssetDiscreteForm(
-        request.POST or None, instance=assetdiscrete_instance,
-        initial={'subtype': AssetDiscrete.Subtype.VEHICLE}
-    )
-    form_assetdiscrete.fields['subtype'].disabled = True
-    form_asset = AssetForm(
-        request.POST or None, instance=asset_instance,
-        initial={'subtype': Asset.Subtype.DISCRETE}
-    )
-    form_asset.fields['subtype'].disabled = True
-    if request.method == 'POST' and all(
-        [form_assetdiscretevehicle.is_valid(), form_assetdiscrete.is_valid(), form_asset.is_valid()]
-    ):
-        asset = form_asset.save()
-        assetdiscrete = form_assetdiscrete.save(commit=False)
-        assetdiscrete.asset = asset
-        assetdiscrete.save()
-        assetdiscretevehicle = form_assetdiscretevehicle.save(commit=False)
-        assetdiscretevehicle.assetdiscrete = assetdiscrete
-        assetdiscretevehicle.save()
+        self.context.update({
+            'assetdiscretevehicle': assetdiscretevehicle
+        })
+        return render(request, 'pyamgmt/models/assetdiscretevehicle_detail.html', self.context)
+
+
+class AssetDiscreteVehicleFormView(MultiFormView):
+    def setup(self, request, assetdiscretevehicle_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        asset = None
+        assetdiscrete = None
+        assetdiscretevehicle = None
         if assetdiscretevehicle_pk:
-            return redirect('pyamgmt:assetdiscretevehicle:detail',
-                            assetdiscretevehicle_pk=assetdiscretevehicle_pk)
-        return redirect('pyamgmt:asset-discrete-vehicle:list')
-    context.update({
-        'form_asset': form_asset,
-        'form_assetdiscrete': form_assetdiscrete,
-        'form_assetdiscretevehicle': form_assetdiscretevehicle
-    })
-    return render(request, 'pyamgmt/models/assetdiscretevehicle_form.html', context)
+            assetdiscretevehicle = AssetDiscreteVehicle.objects.get(pk=assetdiscretevehicle_pk)
+            assetdiscrete = assetdiscretevehicle.assetdiscrete
+            asset = assetdiscrete.asset
+        self.forms.asset = AssetForm(request.POST or None, instance=asset)
+        self.forms.assetdiscrete = AssetDiscreteForm(request.POST or None, instance=assetdiscrete)
+        self.forms.assetdiscretevehicle = AssetDiscreteVehicleForm(request.POST or None, instance=assetdiscretevehicle)
+
+    def render(self):
+        self.context.update({'forms': self.forms})
+        return render(self.request, 'pyamgmt/models/assetdiscretevehicle_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    @transaction.atomic
+    def post(self, _request, **_kwargs):
+        if self.forms.are_valid():
+            asset = self.forms.asset.save()
+            assetdiscrete = self.forms.assetdiscrete.save(commit=False)
+            assetdiscrete.asset = asset
+            assetdiscrete.save()
+            assetdiscretevehicle = self.forms.assetdiscretevehicle.save(commit=False)
+            assetdiscretevehicle.assetdiscrete = assetdiscrete
+            assetdiscretevehicle.save()
+            return redirect('pyamgmt:assetdiscretevehicle:detail', assetdiscretevehicle_pk=assetdiscretevehicle.pk)
+        return self.render()
 
 
-def assetinventory_list(request):
-    """List all records from model AssetInventory."""
-    context = {}
-    qs_assetinventory = AssetInventory.objects.select_related('asset')
-    context.update({'qs_assetinventory': qs_assetinventory})
-    return render(request, 'pyamgmt/models/assetinventory_list.html', context)
+class AssetInventoryListView(View):
+    def get(self, request, **_kwargs):
+        qs_assetinventory = AssetInventory.objects.select_related('asset')
+        self.context.update({'qs_assetinventory': qs_assetinventory})
+        return render(request, 'pyamgmt/models/assetinventory_list.html', self.context)
 
 
-def assetinventory_detail(request, assetinventory_pk: int):
-    context = {}
-    assetinventory = AssetInventory.objects.get(pk=assetinventory_pk)
-    context.update({
-        'assetinventory': assetinventory
-    })
-    return render(request, 'pyamgmt/models/assetinventory_detail.html', context)
+class AssetInventoryDetailView(View):
+    def get(self, request, assetinventory_pk: int, **kwargs):
+        assetinventory = AssetInventory.objects.get(pk=assetinventory_pk)
+        self.context.update({
+            'assetinventory': assetinventory
+        })
+        return render(request, 'pyamgmt/models/assetinventory_detail.html', self.context)
 
 
-def catalogitem_list(request):
-    """List all records from CatalogItem."""
-    context = {}
-    qs_catalogitem = CatalogItem.objects.all()
-    context.update({'qs_catalogitem': qs_catalogitem})
-    return render(request, 'pyamgmt/models/catalogitem_list.html', context)
+class CatalogItemListView(View):
+    def get(self, request, **_kwargs):
+        qs_catalogitem = CatalogItem.objects.all()
+        self.context.update({'qs_catalogitem': qs_catalogitem})
+        return render(request, 'pyamgmt/models/catalogitem_list.html', self.context)
 
 
-def catalogitem_detail(request, catalogitem_pk: int):
-    context = {}
-    catalogitem = CatalogItem.objects.get(pk=catalogitem_pk)
-    context.update({
-        'catalogitem': catalogitem
-    })
-    return render(request, 'pyamgmt/models/catalogitem_detail.html', context)
+class CatalogItemDetailView(View):
+    def get(self, request, catalogitem_pk: int, **kwargs):
+        catalogitem = CatalogItem.objects.get(pk=catalogitem_pk)
+        self.context.update({
+            'catalogitem': catalogitem
+        })
+        return render(request, 'pyamgmt/models/catalogitem_detail.html', self.context)
 
 
-def catalogitem_form(request, catalogitem_pk: int = None):
-    context = {}
-    instance = None
-    if catalogitem_pk:
-        instance = CatalogItem.objects.get(pk=catalogitem_pk)
-    form = CatalogItemForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        return redirect('pyamgmt:catalogitem:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/catalogitem_form.html', context)
+class CatalogItemFormView(FormView):
+    def setup(self, request, catalogitem_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        catalogitem = None
+        if catalogitem_pk:
+            catalogitem = CatalogItem.objects.get(pk=catalogitem_pk)
+        self.form = CatalogItemForm(request.POST or None, instance=catalogitem)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/catalogitem_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    def post(self, _request, **_kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            return redirect('pyamgmt:catalogitem:list')
+        return self.render()
 
 
-def catalogitemdigitalsong_list(request):
-    """List all records from CatalogItemDigitalSong."""
-    context = {}
-    qs_catalogitemdigitalsong = CatalogItemDigitalSong.objects.all()
-    context.update({'qs_catalogitemdigitalsong': qs_catalogitemdigitalsong})
-    return render(request, 'pyamgmt/models/catalogitemdigitalsong_list.html', context)
+class CatalogItemDigitalSongListView(View):
+    def get(self, request, **_kwargs):
+        qs_catalogitemdigitalsong = CatalogItemDigitalSong.objects.all()
+        self.context.update({'qs_catalogitemdigitalsong': qs_catalogitemdigitalsong})
+        return render(request, 'pyamgmt/models/catalogitemdigitalsong_list.html', self.context)
 
 
-def catalogitemdigitalsong_detail(request, catalogitemdigitalsong_pk: int):
-    context = {}
-    catalogitemdigitalsong = CatalogItemDigitalSong.objects.get(pk=catalogitemdigitalsong_pk)
-    context.update({
-        'catalogitemdigitalsong': catalogitemdigitalsong
-    })
-    return render(request, 'pyamgmt/models/catalogitemdigitalsong_detail.html', context)
+class CatalogItemDigitalSongDetailView(View):
+    def get(self, request, catalogitemdigitalsong_pk: int, **_kwargs):
+        catalogitemdigitalsong = CatalogItemDigitalSong.objects.get(pk=catalogitemdigitalsong_pk)
+        self.context.update({'catalogitemdigitalsong': catalogitemdigitalsong})
+        return render(request, 'pyamgmt/models/catalogitemdigitalsong_detail.html', self.context)
+
+
+class CatalogItemDigitalSongFormView(FormView):
+    pass
 
 
 @transaction.atomic
@@ -786,73 +687,77 @@ def catalogitemtopointofsalelineitem_form(request, catalogitemtopointofsalelinei
     return render(request, 'pyamgmt/models/catalogitemtopointofsalelineitem_form.html', context)
 
 
-def invoice_list(request):
-    context = {}
-    qs_invoice = (
-        Invoice.objects.all()
-    )
-    context.update({'qs_invoice': qs_invoice})
-    return render(request, 'pyamgmt/models/invoice_list.html', context)
-
-
-def motionpicture_list(request):
-    context = {}
-    qs_motionpicture = MotionPicture.objects.all()
-    context.update({'qs_motionpicture': qs_motionpicture})
-    return render(request, 'pyamgmt/models/motionpicture_list.html', context)
-
-
-def motionpicture_form(request):
-    context = {}
-    return HttpResponse('uc')
-
-
-def musicalbum_list(request):
-    """List all records from model MusicAlbum."""
-    context = {}
-    qs_musicalbum = (
-        MusicAlbum.objects
-        .prefetch_related(
-            Prefetch('musicartists', queryset=MusicArtist.objects.order_by('name'))
+class InvoiceListView(View):
+    def get(self, request, **_kwargs):
+        qs_invoice = (
+            Invoice.objects.all()
         )
-        .order_by('title')
-    )
-    print(qs_musicalbum.query)
-    context.update({'qs_musicalbum': qs_musicalbum})
-    return render(request, 'pyamgmt/models/musicalbum_list.html', context)
+        self.context.update({'qs_invoice': qs_invoice})
+        return render(request, 'pyamgmt/models/invoice_list.html', self.context)
 
 
-def musicalbum_detail(request, musicalbum_pk: int):
-    context = {}
-    musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
-    qs_musicalbumtosongrecording = (
-        MusicAlbumToSongRecording.objects
-        .filter(musicalbum=musicalbum)
-        .select_related('songrecording__song')
-        .order_by('disc_number', 'track_number')
-    )
-    context.update({
-        'musicalbum': musicalbum,
-        'qs_musicalbumtosongrecording': qs_musicalbumtosongrecording
-    })
-    return render(request, 'pyamgmt/models/musicalbum_detail.html', context)
+class MotionPictureListView(View):
+    def get(self, request, **_kwargs):
+        qs_motionpicture = MotionPicture.objects.all()
+        self.context.update({'qs_motionpicture': qs_motionpicture})
+        return render(request, 'pyamgmt/models/motionpicture_list.html', self.context)
 
 
-def musicalbum_form(request, musicalbum_pk: int = None):
-    context = {}
-    instance = None
-    if musicalbum_pk:
-        instance = MusicAlbum.objects.get(pk=musicalbum_pk)
-    form = MusicAlbumForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        print(request.POST)
-        form.save()
+class MotionPictureFormView(FormView):
+    def get(self, _request, **_kwargs):
+        return HttpResponse('', status=404)
+
+
+class MusicAlbumListView(View):
+    def get(self, request, **_kwargs):
+        qs_musicalbum = (
+            MusicAlbum.objects
+            .prefetch_related(
+                Prefetch('musicartists', queryset=MusicArtist.objects.order_by('name')))
+            .order_by('title')
+        )
+        print(qs_musicalbum.query)
+        self.context.update({'qs_musicalbum': qs_musicalbum})
+        return render(request, 'pyamgmt/models/musicalbum_list.html', self.context)
+
+
+class MusicAlbumDetailView(View):
+    def get(self, request, musicalbum_pk: int, **kwargs):
+        musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
+        qs_musicalbumtosongrecording = (
+            MusicAlbumToSongRecording.objects
+            .filter(musicalbum=musicalbum)
+            .select_related('songrecording__song')
+            .order_by('disc_number', 'track_number')
+        )
+        self.context.update({
+            'musicalbum': musicalbum,
+            'qs_musicalbumtosongrecording': qs_musicalbumtosongrecording
+        })
+        return render(request, 'pyamgmt/models/musicalbum_detail.html', self.context)
+
+
+class MusicAlbumFormView(FormView):
+    def setup(self, request, musicalbum_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        musicalbum = None
         if musicalbum_pk:
-            return redirect('pyamgmt:musicalbum:detail', musicalbum_pk=musicalbum_pk)
-        return redirect('pyamgmt:musicalbum:list')
-    context.update({'form': form})
-    context.update({'deform': form.as_dict()})
-    return render(request, 'pyamgmt/models/musicalbum_form.html', context)
+            musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
+        self.form = MusicAlbumForm(request.POST or None, instance=musicalbum)
+
+    def render(self):
+        self.context.update({'form': self.form, 'deform': self.form.as_dict()})
+        return render(self.request, 'pyamgmt/models/musicalbum_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    def post(self, request, **_kwargs):
+        if self.form.is_valid():
+            print(request.POST)
+            self.form.save()
+            return redirect()
+        return self.render()
 
 
 def musicalbum_add_song_form(request, musicalbum_pk: int):
@@ -880,80 +785,85 @@ def musicalbum_addsongs_form(request, musicalbum_pk: int = None):
     return HttpResponse('uc')
 
 
-def musicalbum_add_songrecording_form(request, musicalbum_pk: int):
-    context = {}
-    musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
-    form = MusicAlbumToSongRecordingForm(request.POST or None, musicalbum=musicalbum)
-    context.update({
-        'form': form,
-        'musicalbum': musicalbum
-    })
-    return render(request, 'pyamgmt/models/musicalbum_add_songrecording_form.html', context)
+class MusicAlbumAddSongRecordingFormView(FormView):
+    # noinspection PyMethodOverriding
+    def setup(self, request, musicalbum_pk: int, **kwargs):
+        super().setup(request, **kwargs)
+        musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
+        self.form = MusicAlbumToSongRecordingForm(request.POST or None, musicalbum=musicalbum)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/musicalbum_add_songrecording_form.html', self.context)
+
+    def get(self, request, **kwargs):
+        return
+
+    def post(self, request, **kwargs):
+        return
 
 
-def musicalbumtomusicartist_list(request):
-    """List all records from model MusicAlbumToMusicArtist."""
-    context = {}
-    qs_musicalbumtomusicartist = MusicAlbumToMusicArtist.objects.select_related('musicalbum', 'musicartist')
-    context.update({'qs_musicalbumtomusicartist': qs_musicalbumtomusicartist})
-    return render(request, 'pyamgmt/models/musicalbumtomusicartist_list.html', context)
+class MusicAlbumToMusicArtistListView(View):
+    def get(self, request, **kwargs):
+        qs_musicalbumtomusicartist = MusicAlbumToMusicArtist.objects.select_related('musicalbum', 'musicartist')
+        self.context.update({'qs_musicalbumtomusicartist': qs_musicalbumtomusicartist})
+        return render(request, 'pyamgmt/models/musicalbumtomusicartist_list.html', self.context)
 
 
-def musicalbumtomusicartist_detail(request, musicalbumtomusicartist_pk: int):
-    context = {}
-    musicalbumtomusicartist = MusicAlbumToMusicArtist.objects.get(pk=musicalbumtomusicartist_pk)
-    context.update({
-        'musicalbumtomusicartist': musicalbumtomusicartist
-    })
-    return render(request, 'pyamgmt/models/musicalbumtomusicartist_detail.html', context)
+class MusicAlbumToMusicArtistDetailView(View):
+    def get(self, request, musicalbumtomusicartist_pk: int, **kwargs):
+        musicalbumtomusicartist = MusicAlbumToMusicArtist.objects.get(pk=musicalbumtomusicartist_pk)
+        self.context.update({
+            'musicalbumtomusicartist': musicalbumtomusicartist
+        })
+        return render(request, 'pyamgmt/models/musicalbumtomusicartist_detail.html', self.context)
 
 
-def musicalbumtomusicartist_form(request, musicalbumtomusicartist_pk: int = None, musicartist_pk: int = None):
-    context = {}
-    instance = None
-    initial = None
-    if musicalbumtomusicartist_pk:
-        instance = MusicAlbumToMusicArtist.objects.get(pk=musicalbumtomusicartist_pk)
-    if musicartist_pk:
-        music_artist = MusicArtist.objects.get(pk=musicartist_pk)
-        initial = {'music_artist': music_artist}
-    form = MusicAlbumToMusicArtistForm(request.POST or None, instance=instance, initial=initial)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if musicalbumtomusicartist_pk:
-            return redirect('pyamgmt:musicalbumtomusicartist:detail',
-                            musicalbumtomusicartist_pk=musicalbumtomusicartist_pk)
-        if musicartist_pk:
-            return redirect('pyamgmt:musicartist:detail', musicartist_pk=musicartist_pk)
-        return redirect('pyamgmt:music-album-to-music-artist:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/musicalbumtomusicartist_form.html', context)
+class MusicAlbumToMusicArtistFormView(FormView):
+    def setup(self, request, musicalbumtomusicartist_pk: int = None, musicartist_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        musicalbumtomusicartist = None
+        musicartist = None
+        self.form = MusicAlbumToMusicArtistForm(request.POST or None, instance=musicalbumtomusicartist)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/musicalbumtomusicartist_form.html', self.context)
+
+    def get(self, request, **kwargs):
+        return self.render()
+
+    def post(self, request, **kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            return redirect()
+        return self.render()
 
 
-def musicalbumtosongrecording_list(request):
-    """"""
-    context = {}
-    qs_musicalbumtosongrecording = (
-        MusicAlbumToSongRecording.objects
-        .select_related('musicalbum', 'songrecording__song')
-    )
-    context.update({'qs_musicalbumtosongrecording': qs_musicalbumtosongrecording})
-    return render(request, 'pyamgmt/models/musicalbumtosongrecording_list.html', context)
+class MusicAlbumToSongRecordingListView(View):
+    def get(self, request, **kwargs):
+        qs_musicalbumtosongrecording = (
+            MusicAlbumToSongRecording.objects
+            .select_related('musicalbum', 'songrecording__song')
+        )
+        self.context.update({'qs_musicalbumtosongrecording': qs_musicalbumtosongrecording})
+        return render(request, 'pyamgmt/models/musicalbumtosongrecording_list.html', self.context)
 
 
-def musicalbumtosongrecording_detail(request, musicalbumtosongrecording_pk: int):
-    context = {}
-    musicalbumtosongrecording = (
-        MusicAlbumToSongRecording.objects
-        .select_related('musicalbum', 'songrecording__song')
-        .get(pk=musicalbumtosongrecording_pk)
-    )
-    context.update({'musicalbumtosongrecording': musicalbumtosongrecording})
-    return render(request, 'pyamgmt/models/musicalbumtosongrecording_detail.html', context)
+class MusicAlbumToSongRecordingDetailView(View):
+    def get(self, request, musicalbumtosongrecording_pk: int, **kwargs):
+        musicalbumtosongrecording = (
+            MusicAlbumToSongRecording.objects
+            .select_related('musicalbum', 'songrecording__song')
+            .get(pk=musicalbumtosongrecording_pk)
+        )
+        self.context.update({'musicalbumtosongrecording': musicalbumtosongrecording})
+        return render(request, 'pyamgmt/models/musicalbumtosongrecording_detail.html', self.context)
 
 
-def musicalbumtosongrecording_form(request, musicalbumtosongrecording_pk: int = None):
-    return HttpResponse('uc')
+class MusicAlbumToSongRecordingFormView(FormView):
+    def musicalbumtosongrecording_form(self, request, musicalbumtosongrecording_pk: int = None):
+        return HttpResponse('uc')
 
 
 # def musicalbumtosong_form(request, musicalbumtosong_pk: int = None):
@@ -971,56 +881,62 @@ def musicalbumtosongrecording_form(request, musicalbumtosongrecording_pk: int = 
 #     return render(request, 'pyamgmt/models/musicalbumtosong_form.html', context)
 
 
-def musicartist_list(request):
-    """List all records from model MusicArtist."""
-    context = {}
-    qs_musicartist = MusicArtist.objects.order_by('name')
-    context.update({'qs_musicartist': qs_musicartist})
-    return render(request, 'pyamgmt/models/musicartist_list.html', context)
+class MusicArtistListView(View):
+    def get(self, request, **_kwargs):
+        qs_musicartist = MusicArtist.objects.order_by('name')
+        self.context.update({'qs_musicartist': qs_musicartist})
+        return render(request, 'pyamgmt/models/musicartist_list.html', self.context)
 
 
-def musicartist_detail(request, musicartist_pk: int):
-    context = {}
-    musicartist = MusicArtist.objects.get(pk=musicartist_pk)
-    qs_musicalbumtomusicartist = (
-        MusicAlbumToMusicArtist.objects
-        .filter(musicartist=musicartist)
-        .select_related('musicalbum')
-        .order_by('musicalbum__year_produced')
-    )
-    qs_musicartisttoperson = (
-        MusicArtistToPerson.objects
-        .filter(musicartist=musicartist)
-        .select_related('musicartist', 'person')
-    )
-    qs_musicartisttosong = (
-        MusicArtistToSong.objects
-        .filter(musicartist=musicartist)
-        .select_related('musicartist', 'song')
-        .order_by('song__title')
-    )
-    context.update({
-        'musicartist': musicartist,
-        'qs_musicalbumtomusicartist': qs_musicalbumtomusicartist,
-        'qs_musicartisttoperson': qs_musicartisttoperson,
-        'qs_musicartisttosong': qs_musicartisttosong
-    })
-    return render(request, 'pyamgmt/models/musicartist_detail.html', context)
+class MusicArtistDetailView(View):
+    def get(self, request, musicartist_pk: int, **_kwargs):
+        musicartist = MusicArtist.objects.get(pk=musicartist_pk)
+        qs_musicalbumtomusicartist = (
+            MusicAlbumToMusicArtist.objects
+            .filter(musicartist=musicartist)
+            .select_related('musicalbum')
+            .order_by('musicalbum__year_produced')
+        )
+        qs_musicartisttoperson = (
+            MusicArtistToPerson.objects
+            .filter(musicartist=musicartist)
+            .select_related('musicartist', 'person')
+        )
+        qs_musicartisttosong = (
+            MusicArtistToSong.objects
+            .filter(musicartist=musicartist)
+            .select_related('musicartist', 'song')
+            .order_by('song__title')
+        )
+        self.context.update({
+            'musicartist': musicartist,
+            'qs_musicalbumtomusicartist': qs_musicalbumtomusicartist,
+            'qs_musicartisttoperson': qs_musicartisttoperson,
+            'qs_musicartisttosong': qs_musicartisttosong
+        })
+        return render(request, 'pyamgmt/models/musicartist_detail.html', self.context)
 
 
-def musicartist_form(request, musicartist_pk=None):
-    context = {}
-    instance = None
-    if musicartist_pk:
-        instance = MusicArtist.objects.get(pk=musicartist_pk)
-    form = MusicArtistForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
+class MusicArtistFormView(FormView):
+    def setup(self, request, musicartist_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        musicartist = None
         if musicartist_pk:
-            return redirect('pyamgmt:musicartist:detail', musicartist_pk)
-        return redirect('pyamgmt:musicartist:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/musicartist_form.html', context)
+            musicartist = MusicArtist.objects.get(pk=musicartist)
+        self.form = MusicArtistForm(request.POST or None, instance=musicartist)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/musicartist_form.html', self.context)
+
+    def get(self):
+        return self.render()
+
+    def post(self):
+        if self.form.is_valid():
+            self.form.save()
+            return redirect()
+        return self.render()
 
 
 def musicartisttoperson_list(request):
@@ -1318,96 +1234,110 @@ def song_detail(request, song_pk: int):
     return render(request, 'pyamgmt/models/song_detail.html', context)
 
 
-def song_form(request, song_pk: int = None):
-    context = {}
-    instance = None
-    if song_pk:
-        instance = Song.objects.get(pk=song_pk)
-    form = SongForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if request.POST.get('_addanother'):
-            return redirect('pyamgmt:song:add')
+class SongFormView(FormView):
+    def setup(self, request, song_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        song = None
         if song_pk:
-            return redirect('pyamgmt:song:detail', song_pk=song_pk)
-        return redirect('pyamgmt:song:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/song_form.html', context)
+            song = Song.objects.get(pk=song_pk)
+        self.form = SongForm(request.POST or None, instance=song)
+
+    def render(self):
+        self.context.update({'form': self.form})
+
+    def get(self, _request, **_kwargs):
+        return render(self.request, 'pyamgmt/models/song_form.html', self.context)
+
+    def post(self, request, **_kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            if request.POST.get('_addanother'):
+                return redirect('pyamgmt:song:add')
+            return redirect('pyamgmt:song:list')  # TODO: Back to list OR detail
+        return self.render()
 
 
-def songrecording_list(request):
-    context = {}
-    qs_songrecording = (
-        SongRecording.objects
-        .select_related('song')
-        .prefetch_related('song__musicartisttosong_set__musicartist')  # original artist
-    )
-    context.update({'qs_songrecording': qs_songrecording})
-    return render(request, 'pyamgmt/models/songrecording_list.html', context)
+class SongRecordingListView(View):
+    def get(self, request, **kwargs):
+        qs_songrecording = (
+            SongRecording.objects
+            .select_related('song')
+            .prefetch_related('song__musicartisttosong_set__musicartist')  # original artist
+        )
+        self.context.update({'qs_songrecording': qs_songrecording})
+        return render(request, 'pyamgmt/models/songrecording_list.html', self.context)
 
 
-def songrecording_detail(request, songrecording_pk: int):
-    context = {}
-    songrecording = SongRecording.objects.select_related('song').get(pk=songrecording_pk)
-    related_albums = MusicAlbumToSongRecording.objects.filter(songrecording=songrecording).select_related('musicalbum')
-    related_artists = MusicArtistToSongRecording.objects.filter(songrecording=songrecording).select_related('musicartist')
-    context.update({
-        'songrecording': songrecording,
-        'related_albums': related_albums,
-        'related_artists': related_artists
-    })
-    return render(request, 'pyamgmt/models/songrecording_detail.html', context)
+class SongRecordingDetailView(View):
+    def get(self, request, songrecording_pk: int, **kwargs):
+        songrecording = SongRecording.objects.select_related('song').get(pk=songrecording_pk)
+        related_albums = MusicAlbumToSongRecording.objects.filter(songrecording=songrecording).select_related('musicalbum')
+        related_artists = MusicArtistToSongRecording.objects.filter(songrecording=songrecording).select_related('musicartist')
+        self.context.update({
+            'songrecording': songrecording,
+            'related_albums': related_albums,
+            'related_artists': related_artists
+        })
+        return render(request, 'pyamgmt/models/songrecording_detail.html', self.context)
 
 
-def songrecording_form(request, songrecording_pk: int = None):
-    context = {}
-    instance = None
-    if songrecording_pk:
-        instance = SongRecording.objects.get(pk=songrecording_pk)
-    form = SongRecordingForm(request.POST or None, instance=instance)
-    context.update({
-        'form': form
-    })
-    return render(request, 'pyamgmt/models/songrecording_form.html', context)
+class SongRecordingFormView(FormView):
+    def setup(self, request, songrecording_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        songrecording = None
+        if songrecording_pk:
+            songrecording = SongRecording.objects.get(pk=songrecording_pk)
+        self.form = SongRecordingForm(request.POST or None, instance=songrecording)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/songrecording_form.html', self.context)
+
+    def get(self, request, **kwargs):
+        return self.render()
+
+    def post(self, request, **kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            return redirect()
+        return self.render()
 
 
 def songtosong_list(request):
-    """"""
     context = {}
     qs_songtosong = SongToSong.objects.all()
     context.update({'qs_songtosong': qs_songtosong})
     return render(request, 'pyamgmt/models/songtosong_list.html', context)
 
 
-def txn_list(request):
-    """List all records from model Txn."""
-    context = {}
-    q_debits = Sum('line_items__amount', filter=Q(line_items__debit=True))
-    q_credits = Sum('line_items__amount', filter=Q(line_items__debit=False))
-    qs_txn = (
-        Txn.objects
-        .select_related('payee')
-        .annotate(debits=q_debits)
-        .annotate(credits=q_credits)
-        .annotate(
-            balanced=Case(
-                When(debits=F('credits'), then=Value(True)),
-                default=Value(False)
+class TxnListView(View):
+    def get(self, request, **kwargs):
+        q_debits = Sum('line_items__amount', filter=Q(line_items__debit=True))
+        q_credits = Sum('line_items__amount', filter=Q(line_items__debit=False))
+        qs_txn = (
+            Txn.objects
+            .select_related('payee')
+            .annotate(debits=q_debits)
+            .annotate(credits=q_credits)
+            .annotate(
+                balanced=Case(
+                    When(debits=F('credits'), then=Value(True)),
+                    default=Value(False)
+                )
             )
+            .order_by('-txn_date')
         )
-        .order_by('-txn_date')
-    )
-    context.update({'qs_txn': qs_txn})
-    return render(request, 'pyamgmt/models/txn_list.html', context)
+        self.context.update({'qs_txn': qs_txn})
+        return render(request, 'pyamgmt/models/txn_list.html', self.context)
 
 
-def txn_detail(request, txn_pk: int):
-    context = {}
-    txn = Txn.objects.get(pk=txn_pk)
-    context.update({
-        'txn': txn
-    })
-    return render(request, 'pyamgmt/models/txn_detail.html', context)
+class TxnDetailView(View):
+    def get(self, request, txn_pk: int, **_kwargs):
+        txn = Txn.objects.get(pk=txn_pk)
+        self.context.update({
+            'txn': txn
+        })
+        return render(request, 'pyamgmt/models/txn_detail.html', self.context)
 
 
 @transaction.atomic
@@ -1427,155 +1357,187 @@ def txn_form(request, txn_pk=None):
             return redirect('pyamgmt:txn:detail', txn_pk=txn_pk)
         return redirect('pyamgmt:txn:list')
     context.update({'form': form, 'formset': formset})
-    return render(request, 'pyamgmt/models/txn_form.html', context)
 
 
-def txnlineitem_list(request):
-    return HttpResponse('')
+# Form + formset
+# With default formset behavior, the same multi-form class should work?
+class TxnFormView(MultiFormView):
+    def setup(self, request, txn_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        txn = None
+        if txn_pk:
+            txn = Txn.objects.get(pk=txn_pk)
+        self.forms.txn = TxnForm(request.POST or None, instance=txn)
+        self.forms.txnlineitem = TxnLineItemFormSet()
+
+    def render(self):
+        return render(self.request, 'pyamgmt/models/txn_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    @transaction.atomic
+    def post(self, _request, **_kwargs):
+        if self.forms.are_valid():
+            return redirect()
+        return self.render()
 
 
-def txnlineitem_detail(request, txnlineitem_pk: int):
-    context = {}
-    txnlineitem = (
-        TxnLineItem.objects
-        .select_related('account', 'txn')
-        .get(pk=txnlineitem_pk)
-    )
-    context.update({'txnlineitem': txnlineitem})
-    return render(request, 'pyamgmt/models/txnlineitem_detail.html', context)
+class TxnLineItemListView(View):
+    def get(self, request, **kwargs):
+        return
 
 
-def unit_list(request):
-    """List all records from model Unit."""
-    context = {}
-    qs_unit = Unit.objects.all()
-    context.update({'qs_unit': qs_unit})
-    return render(request, 'pyamgmt/models/unit_list.html', context)
-
-
-def unit_detail(request, unit_pk: int):
-    context = {}
-    unit = Unit.objects.get(pk=unit_pk)
-    context.update({
-        'unit': unit
-    })
-    return render(request, 'pyamgmt/models/unit_detail.html', context)
-
-
-def unit_form(request, unit_pk: int = None):
-    context = {}
-    instance = None
-    if unit_pk:
-        instance = Unit.objects.get(pk=unit_pk)
-    form = UnitForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if unit_pk:
-            return redirect('pyamgmt:unit:detail', unit_pk=unit_pk)
-        return redirect('pyamgmt:unit:list')
-    context.update({'form': form})
-    print(render(request, 'pyamgmt/models/unit_form.html', context).content)
-    return render(request, 'pyamgmt/models/unit_form.html', context)
-
-
-def vehicle_list(request):
-    """List all records from model Vehicle."""
-    context = {}
-    pf_vehiclemileage = Prefetch(
-        'vehiclemileage_set',
-        queryset=VehicleMileage.objects.order_by('-odometer_date', '-odometer_time')
-    )
-    qs_vehicle = (
-        Vehicle.objects
-        .select_related('vehicleyear__vehicletrim__vehiclemodel__vehiclemake')
-        .prefetch_related(pf_vehiclemileage)
-        .order_by(
-            '-vehicleyear__year',
-            'vehicleyear__vehicletrim__vehiclemodel__vehiclemake__name',
-            'vehicleyear__vehicletrim__vehiclemodel__name',
-            'vehicleyear__vehicletrim__name',
-            'vin'
+class TxnLineItemDetailView(View):
+    def get(self, request, txnlineitem_pk: int, **_kwargs):
+        txnlineitem = (
+            TxnLineItem.objects
+            .select_related('account', 'txn')
+            .get(pk=txnlineitem_pk)
         )
-    )
-    context.update({'qs_vehicle': qs_vehicle})
-    return render(request, 'pyamgmt/models/vehicle_list.html', context)
+        self.context.update({'txnlineitem': txnlineitem})
+        return render(request, 'pyamgmt/models/txnlineitem_detail.html', self.context)
 
 
-def vehicle_detail(request, vehicle_pk: int):
-    context = {}
-    vehicle = Vehicle.objects.get(pk=vehicle_pk)
-    vehiclemileage_records = VehicleMileage.objects.filter(vehicle=vehicle).order_by('odometer_date', 'odometer_time')
-    chart_data = list(vehiclemileage_records.values('odometer_date', 'odometer_miles'))
-    last_record = {}
-    average_mileage = []
-    for record in chart_data:
-        if not last_record:
-            last_record = record
-            continue
-        delta_days = record['odometer_date'] - last_record['odometer_date']
-        if delta_days.days == 0:  # TODO: this should be additive
-            delta_days = delta_days + datetime.timedelta(days=1)
-        delta_mileage = record['odometer_miles'] - last_record['odometer_miles']
-        daily_average = delta_mileage / delta_days.days
-        average_mileage.append({
-            'start_date': last_record['odometer_date'],
-            'end_date': record['odometer_date'],
-            'delta_mileage': delta_mileage,
-            'delta_days': delta_days.total_seconds() * 1000,
-            'daily_average': daily_average
+class UnitListView(View):
+    def get(self, request, **_kwargs):
+        qs_unit = Unit.objects.all()
+        self.context.update({'qs_unit': qs_unit})
+        return render(request, 'pyamgmt/models/unit_list.html', self.context)
+
+
+class UnitDetailView(View):
+    def get(self, request, unit_pk: int):
+        unit = Unit.objects.get(pk=unit_pk)
+        self.context.update({
+            'unit': unit
         })
-        last_record = record
-    cache_key = f'Vehicle-{vehicle.vin}-NHTSA'
-    nhtsa_api_data = cache.get(cache_key)
-    if nhtsa_api_data is None:
-        try:
-            logger.info('Fetching from NHTSA...')
-            response = requests.get(
-                f'https://vpic.nhtsa.dot.gov/api/vehicles/decodevinextended/{vehicle.vin}?format=json',
-                timeout=1
-            )
-            nhtsa_api_data = response.json()
-        except Exception as e:
-            logger.warning(e)
-            nhtsa_api_data = {}
-        else:
-            logger.info('Caching NHTSA response...')
-            cache.set(cache_key, nhtsa_api_data, 60 * 60 * 24)
-    context.update({
-        'vehicle': vehicle,
-        'vehiclemileage_records': vehiclemileage_records,
-        'chart_data': chart_data,
-        'average_mileage': average_mileage,
-        'nhtsa_api_data': nhtsa_api_data
-    })
-    return render(request, 'pyamgmt/models/vehicle_detail.html', context)
+        return render(request, 'pyamgmt/models/unit_detail.html', self.context)
 
 
-def vehicle_form(request, vehicle_pk: int = None, vehicleyear_pk: int = None):
-    context = {}
-    instance = None
-    if vehicle_pk:
-        instance = Vehicle.objects.get(pk=vehicle_pk)
-    form = VehicleForm(request.POST or None, instance=instance, vehicleyear_pk=vehicleyear_pk)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if vehicleyear_pk:
-            return redirect('pyamgmt:vehicleyear:detail', vehicleyear_pk=vehicleyear_pk)
+class UnitFormView(FormView):
+    def setup(self, request, unit_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        unit = None
+        if unit_pk:
+            unit = Unit.objects.get(pk=unit_pk)
+        self.form = UnitForm(request.POST or None, instance=unit)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/unit_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    def post(self, _request, **_kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            # if unit_pk:
+            #     return redirect('pyamgmt:unit:detail', unit_pk=unit_pk)
+            return redirect('pyamgmt:unit:list')
+        return self.render()
+
+
+class VehicleListView(View):
+    def get(self, request, **_kwargs):
+        pf_vehiclemileage = Prefetch(
+            'vehiclemileage_set',
+            queryset=VehicleMileage.objects.order_by('-odometer_date', '-odometer_time')
+        )
+        qs_vehicle = (
+            Vehicle.objects
+            .select_related('vehicleyear__vehicletrim__vehiclemodel__vehiclemake')
+            .prefetch_related(pf_vehiclemileage)
+            .order_by(
+                '-vehicleyear__year',
+                'vehicleyear__vehicletrim__vehiclemodel__vehiclemake__name',
+                'vehicleyear__vehicletrim__vehiclemodel__name',
+                'vehicleyear__vehicletrim__name',
+                'vin')
+        )
+        self.context.update({'qs_vehicle': qs_vehicle})
+        return render(request, 'pyamgmt/models/vehicle_list.html', self.context)
+
+
+class VehicleDetailView(View):
+    def get(self, request, vehicle_pk: int, **_kwargs):
+        vehicle = Vehicle.objects.get(pk=vehicle_pk)
+        vehiclemileage_records = VehicleMileage.objects.filter(vehicle=vehicle).order_by('odometer_date', 'odometer_time')
+        chart_data = list(vehiclemileage_records.values('odometer_date', 'odometer_miles'))
+        last_record = {}
+        average_mileage = []
+        for record in chart_data:
+            if not last_record:
+                last_record = record
+                continue
+            delta_days = record['odometer_date'] - last_record['odometer_date']
+            if delta_days.days == 0:  # TODO: this should be additive
+                delta_days = delta_days + datetime.timedelta(days=1)
+            delta_mileage = record['odometer_miles'] - last_record['odometer_miles']
+            daily_average = delta_mileage / delta_days.days
+            average_mileage.append({
+                'start_date': last_record['odometer_date'],
+                'end_date': record['odometer_date'],
+                'delta_mileage': delta_mileage,
+                'delta_days': delta_days.total_seconds() * 1000,
+                'daily_average': daily_average
+            })
+            last_record = record
+        cache_key = f'Vehicle-{vehicle.vin}-NHTSA'
+        nhtsa_api_data = cache.get(cache_key)
+        if nhtsa_api_data is None:
+            try:
+                logger.info('Fetching from NHTSA...')
+                response = requests.get(
+                    f'https://vpic.nhtsa.dot.gov/api/vehicles/decodevinextended/{vehicle.vin}?format=json',
+                    timeout=1
+                )
+                nhtsa_api_data = response.json()
+            except Exception as e:
+                logger.warning(e)
+                nhtsa_api_data = {}
+            else:
+                logger.info('Caching NHTSA response...')
+                cache.set(cache_key, nhtsa_api_data, 60 * 60 * 24 * 7)
+        self.context.update({
+            'vehicle': vehicle,
+            'vehiclemileage_records': vehiclemileage_records,
+            'chart_data': chart_data,
+            'average_mileage': average_mileage,
+            'nhtsa_api_data': nhtsa_api_data
+        })
+        return render(request, 'pyamgmt/models/vehicle_detail.html', self.context)
+
+
+class VehicleFormView(FormView):
+    def setup(self, request, vehicle_pk: int = None, vehicleyear_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        vehicle = None
         if vehicle_pk:
-            return redirect('pyamgmt:vehicle:detail', vehicle_pk=vehicle_pk)
-        return redirect('pyamgmt:vehicle:list')
-    # context.update({'form': form})
-    context.update({'form': form.as_dict()})
-    return render(request, 'pyamgmt/models/vehicle_form.html', context)
+            vehicle = Vehicle.objects.get(pk=vehicle_pk)
+        self.form = VehicleForm(request.POST or None, instance=vehicle, vehicleyear_pk=vehicleyear_pk)
 
+    def render(self):
+        self.context.update({'form': self.form.as_dict()})
+        return render(self.request, 'pyamgmt/models/vehicle_form.html', self.context)
 
-def vehiclemake_list(request):
-    """List all records from model VehicleMake."""
-    context = {}
+    def get(self, request, **_kwargs):
+        return self.render()
+
+    def post(self, _request, **kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            # if vehicleyear_pk:
+            #     return redirect('pyamgmt:vehicleyear:detail', vehicleyear_pk=vehicleyear_pk)
+            # if vehicle_pk:
+            #     return redirect('pyamgmt:vehicle:detail', vehicle_pk=vehicle_pk)
+            return redirect('pyamgmt:vehicle:list')
+        return self.render()
 
 
 class VehicleMakeListView(View):
-    def get(self, request, **kwargs):
+    def get(self, request, **_kwargs):
         qs_vehiclemake = (
             VehicleMake.objects
             .annotate(vehiclemodel_count=Count('vehiclemodel'))
@@ -1586,7 +1548,7 @@ class VehicleMakeListView(View):
 
 
 class VehicleMakeDetailView(View):
-    def get(self, request, vehiclemake_pk: int, **kwargs):
+    def get(self, request, vehiclemake_pk: int, **_kwargs):
         vehiclemake = VehicleMake.objects.get(pk=vehiclemake_pk)
         qs_vehiclemodel = VehicleModel.objects.filter(vehiclemake=vehiclemake).order_by('name')
         self.context.update({
@@ -1596,18 +1558,28 @@ class VehicleMakeDetailView(View):
         return render(request, 'pyamgmt/models/vehiclemake_detail.html', self.context)
 
 
-def vehiclemake_form(request, vehiclemake_pk: int = None):
-    context = {}
-    instance = None
-    if vehiclemake_pk:
-        instance = VehicleMake.objects.get(pk=vehiclemake_pk)
-    form = VehicleMakeForm(request.POST or None, instance=instance)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        return redirect('pyamgmt:vehiclemake:list')
-    context.update({'form': form})
-    context.update({'test': form.as_dict()})
-    return render(request, 'pyamgmt/models/vehiclemake_form.html', context)
+class VehicleMakeFormView(FormView):
+    def setup(self, request, vehiclemake_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        vehiclemake = None
+        if vehiclemake_pk:
+            vehiclemake = VehicleMake.objects.get(pk=vehiclemake_pk)
+        self.form = VehicleMakeForm(request.POST or None, instance=vehiclemake)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        # TODO: 'test' form.as_dict()
+        self.context.update({'test': self.form.as_dict()})
+        return render(self.request, 'pyamgmt/models/vehiclemake_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    def post(self, _request, **_kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            return redirect('pyamgmt:vehiclemake:list')
+        return self.render()
 
 
 class VehicleMileageListView(View):
@@ -1626,60 +1598,74 @@ class VehicleMileageDetailView(View):
         return render(request, 'pyamgmt/models/vehiclemileage_detail.html', self.context)
 
 
-def vehiclemileage_form(request, vehiclemileage_pk: int = None, vehicle_pk: int = None):
-    context = {}
-    instance = None
-    if vehiclemileage_pk:
-        instance = VehicleMileage.objects.get(pk=vehiclemileage_pk)
-    form = VehicleMileageForm(request.POST or None, instance=instance, vehicle_pk=vehicle_pk)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
+class VehicleMileageFormView(FormView):
+    def setup(self, request, vehiclemileage_pk: int = None, vehicle_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        vehiclemileage = None
         if vehiclemileage_pk:
-            return redirect('pyamgmt:vehiclemileage:detail', vehiclemileage_pk=vehiclemileage_pk)
-        if vehicle_pk:
-            return redirect('pyamgmt:vehicle:detail', vehicle_pk=vehicle_pk)
-        return redirect('pyamgmt:vehiclemileage:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/vehiclemileage_form.html', context)
+            vehiclemileage = VehicleMileage.objects.get(pk=vehiclemileage_pk)
+        self.form = VehicleMileageForm(request.POST or None, instance=vehiclemileage, vehicle_pk=vehicle_pk)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/vehiclemileage_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    def post(self, _request, **_kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            # if vehiclemileage_pk:
+            #     return redirect('pyamgmt:vehiclemileage:detail', vehiclemileage_pk=vehiclemileage_pk)
+            # if vehicle_pk:
+            #     return redirect('pyamgmt:vehicle:detail', vehicle_pk=vehicle_pk)
+            return redirect('pyamgmt:vehiclemileage:list')
+        return self.render()
 
 
-def vehiclemodel_list(request):
-    """List all records from model VehicleModel."""
-    context = {}
-    qs_vehiclemodel = (
-        VehicleModel.objects
-        .select_related('vehiclemake')
-        .annotate(vehicletrim_count=Count('vehicletrim'))
-        .order_by('vehiclemake__name', 'name')
-    )
-    context.update({'qs_vehiclemodel': qs_vehiclemodel})
-    return render(request, 'pyamgmt/models/vehiclemodel_list.html', context)
+class VehicleModelListView(View):
+    def get(self, request, **_kwargs):
+        qs_vehiclemodel = (
+            VehicleModel.objects
+            .select_related('vehiclemake')
+            .annotate(vehicletrim_count=Count('vehicletrim'))
+            .order_by('vehiclemake__name', 'name')
+        )
+        self.context.update({'qs_vehiclemodel': qs_vehiclemodel})
+        return render(request, 'pyamgmt/models/vehiclemodel_list.html', self.context)
 
 
-def vehiclemodel_detail(request, vehiclemodel_pk: int):
-    context = {}
-    vehiclemodel = VehicleModel.objects.get(pk=vehiclemodel_pk)
-    qs_vehicletrim = VehicleTrim.objects.filter(vehiclemodel=vehiclemodel).order_by('name')
-    context.update({
-        'vehiclemodel': vehiclemodel,
-        'qs_vehicletrim': qs_vehicletrim
-    })
-    return render(request, 'pyamgmt/models/vehiclemodel_detail.html', context)
+class VehicleModelDetailView(View):
+    def get(self, request, vehiclemodel_pk: int, **_kwargs):
+        vehiclemodel = VehicleModel.objects.get(pk=vehiclemodel_pk)
+        qs_vehicletrim = VehicleTrim.objects.filter(vehiclemodel=vehiclemodel).order_by('name')
+        self.context.update({
+            'vehiclemodel': vehiclemodel,
+            'qs_vehicletrim': qs_vehicletrim
+        })
+        return render(request, 'pyamgmt/models/vehiclemodel_detail.html', self.context)
 
 
-def vehiclemodel_form(request, vehiclemodel_pk: int = None, vehiclemake_pk: int = None):
-    context = {}
-    instance = None
-    if vehiclemodel_pk:
-        instance = VehicleModel.objects.get(pk=vehiclemodel_pk)
-    form = VehicleModelForm(request.POST or None, instance=instance, vehiclemake_pk=vehiclemake_pk)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if vehiclemake_pk:
-            return redirect('pyamgmt:vehiclemake:detail', vehiclemake_pk=vehiclemake_pk)
-        return redirect('pyamgmt:vehiclemodel:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/vehiclemodel_form.html', context)
+class VehicleModelFormView(FormView):
+    def setup(self, request, vehiclemodel_pk: int = None, vehiclemake_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        vehiclemodel = None
+        if vehiclemodel_pk:
+            vehiclemodel = VehicleModel.objects.get(pk=vehiclemodel_pk)
+        self.form = VehicleModelForm(request.POST or None, instance=vehiclemodel)
+
+    def render(self):
+        return render(self.request, 'pyamgmt/models/vehiclemodel_form.html', self.context)
+
+    def get(self):
+        return self.render()
+
+    def post(self, request, **kwargs):
+        if self.form.is_valid():
+            vehiclemodel = self.form.save()
+            return redirect('pyamgmt:vehiclemodel:detail', vehiclemodel_pk=vehiclemodel.pk)
+        return self.render()
 
 
 class VehicleTrimListView(View):
@@ -1690,8 +1676,7 @@ class VehicleTrimListView(View):
             .order_by(
                 'vehiclemodel__vehiclemake__name',
                 'vehiclemodel__name',
-                'name'
-            )
+                'name')
         )
         self.context.update({'qs_vehicletrim': qs_vehicletrim})
         return render(request, 'pyamgmt/models/vehicletrim_list.html', self.context)
@@ -1708,29 +1693,26 @@ class VehicleTrimDetailView(View):
         return render(request, 'pyamgmt/models/vehicletrim_detail.html', self.context)
 
 
-def vehicletrim_form(request, vehicletrim_pk: int = None, vehiclemodel_pk: int = None):
-    context = {}
-    instance = None
-    if vehicletrim_pk:
-        instance = VehicleTrim.objects.get(pk=vehicletrim_pk)
-    form = VehicleTrimForm(request.POST or None, instance=instance, vehiclemodel_pk=vehiclemodel_pk)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if vehiclemodel_pk:
-            return redirect('pyamgmt:vehiclemodel:detail', vehiclemodel_pk=vehiclemodel_pk)
+class VehicleTrimFormView(FormView):
+    def setup(self, request, vehicletrim_pk: int = None, vehiclemodel_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        vehicletrim = None
         if vehicletrim_pk:
-            return redirect('pyamgmt:vehicletrim:detail', vehicletrim_pk=vehicletrim_pk)
-        return redirect('pyamgmt:vehicletrim:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/vehicletrim_form.html', context)
+            vehicletrim = VehicleTrim.objects.get(pk=vehicletrim_pk)
+        self.form = VehicleTrimForm(request.POST or None, instance=vehicletrim, vehiclemodel_pk=vehiclemodel_pk)
 
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/vehicletrim_form.html', self.context)
 
-class VehicleTrimFormView(View):
-    def get(self, request, **kwargs):
-        pass
+    def get(self, _request, **_kwargs):
+        return self.render()
 
-    def post(self, request, **kwargs):
-        pass
+    def post(self, _request, **_kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            return redirect()
+        return self.render()
 
 
 class VehicleYearListView(View):
@@ -1760,16 +1742,23 @@ class VehicleYearDetailView(View):
         return render(request, 'pyamgmt/models/vehicleyear_detail.html', self.context)
 
 
-def vehicleyear_form(request, vehicleyear_pk: int = None, vehicletrim_pk: int = None):
-    context = {}
-    instance = None
-    if vehicleyear_pk:
-        instance = VehicleYear.objects.get(pk=vehicleyear_pk)
-    form = VehicleYearForm(request.POST or None, instance=instance, vehicletrim_pk=vehicletrim_pk)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if vehicletrim_pk:
-            return redirect('pyamgmt:vehicletrim:detail', vehicletrim_pk=vehicletrim_pk)
-        return redirect('pyamgmt:vehicleyear:list')
-    context.update({'form': form})
-    return render(request, 'pyamgmt/models/vehicleyear_form.html', context)
+class VehicleYearFormView(FormView):
+    def setup(self, request, vehicleyear_pk: int = None, vehicletrim_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        vehicleyear = None
+        if vehicleyear_pk:
+            vehicleyear = VehicleYear.objects.get(pk=vehicleyear_pk)
+        self.form = VehicleYearForm(request.POST or None, instance=vehicleyear, vehicletrim_pk=vehicletrim_pk)
+
+    def render(self):
+        self.context.update({'form': self.form})
+        return render(self.request, 'pyamgmt/models/vehicleyear_form.html', self.context)
+
+    def get(self, _request, **_kwargs):
+        return self.render()
+
+    def post(self, _request, **_kwargs):
+        if self.form.is_valid():
+            self.form.save()
+            return redirect('pyamgmt:vehicleyear:list')
+        return self.render()

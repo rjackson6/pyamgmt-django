@@ -23,9 +23,10 @@ from core.views import core
 
 urlpatterns = [
     path('', core.HomeView.as_view(), name='home'),
-    path('account/', include('django.contrib.auth.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-    path('pyamgmt/', include('pyamgmt.urls', namespace='pyamgmt'))
+    path('pyamgmt/', include('pyamgmt.urls', namespace='pyamgmt')),
+    path('schemaviz/', include('schemaviz.urls', namespace='schemaviz')),
 ]
 
 if settings.DEBUG is True:
