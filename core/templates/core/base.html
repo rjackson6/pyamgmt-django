@@ -1,70 +1,41 @@
 <!DOCTYPE html>
 {% load static %}
-{% comment %}
-Blocks:
-- head
-  - css_3p
-  - css_theme
-  - extra_css
-  - extra_css_style
-- body
-  - header
-  - nav
-  - breadcrumbs
-  - content
-  - footer
-- core_javascript
-- csrf_cookie
-- javascript_3p
-- javascript
-
-{% endcomment %}
 <html lang="en">
 <head>
-    {% block head %}
     <meta charset="UTF-8">
-    <title>{% block title %}Home{% endblock title %}</title>
-    <link type="text/css" rel="stylesheet" href="{% static 'core/css/base.css' %}">
-    {% block css_theme %}
-        <link type="text/css" rel="stylesheet" href="{% static 'core/css/themes/dark.css' %}">
-    {% endblock css_theme %}
+    <title>{% block title %}{% endblock title %}</title>
+    {% block _css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/css/base.css' %}">
+    {% block css_theme %}{% endblock css_theme %}
     {% block css_3p %}{% endblock css_3p %}
     {% block extra_css %}{% endblock extra_css %}
     {% block extra_css_style %}{% endblock extra_css_style %}
-    {% endblock head %}
+    {% endblock _css %}
+    <script>
+        {# Prettify URLS from empty GET form requests. #}
+        if (window.location.href.slice(-1) === '?') {
+            history.replaceState(null, '', window.location.href.slice(0, -1));
+        }
+    </script>
 </head>
 <body>
 {% block body %}
-{# HEADER #}
-<header id="header">{% block header %}{% endblock header %}</header>
-
-{# NAV #}
-<nav id="nav">{% block nav %}{% endblock nav %}</nav>
-
-{# CONTENT #}
-<div id="content">
-    {% block breadcrumbs %}{% endblock breadcrumbs %}
-    {% block content %}
-    <div>No content for block content!</div>
-    {% endblock content %}
+<div class="container">
+    <header class="header">
+        {% block header %}{% endblock header %}
+    </header>
+    <main class="main">
+        {% block main %}{% endblock main %}
+    </main>
+    <footer class="footer">
+        {% block footer %}{% endblock footer %}
+    </footer>
 </div>
-
-{# FOOTER #}
-<footer id="footer">{% block footer %}{% endblock footer %}</footer>
 {% endblock body %}
 
-{% block core_javascript %}
-<script type="text/javascript" src="{% static 'core/js/core.js' %}"></script>
-{% endblock core_javascript %}
-
-{% block csrf_cookie %}
-<script type="text/javascript" src="{% static 'core/js/csrf.js' %}"></script>
-{% endblock csrf_cookie %}
-
-{% block javascript_3p %}
-{% endblock javascript_3p %}
-
-{% block javascript %}
-{% endblock javascript %}
+{% block javascript_3p %}{% endblock javascript_3p %}
+{% block core_javascript %}{% endblock core_javascript %}
+{% block csrf_cookie %}{% endblock csrf_cookie %}
+{% block javascript %}{% endblock javascript %}
 </body>
 </html>
