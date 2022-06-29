@@ -9,6 +9,9 @@ a:link,
 a:visited {
     color: blue;
 }
+a:not(:link) {
+    color: red;
+}
 td > ul {
     list-style-type: none;
     margin: 0;

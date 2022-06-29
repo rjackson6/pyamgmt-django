@@ -29,12 +29,13 @@ from django.db.models import (
     TextChoices,
     UniqueConstraint,
     CASCADE, PROTECT, SET_DEFAULT, SET_NULL,
+    Manager,
     F, Sum,
-    Manager
 )
 from django.utils import timezone
 from django.utils.functional import cached_property
 
+from core.models.base import BaseAuditable
 from core.models.fields import UpperCharField
 from deform.db.models.fields import (
     BooleanField, CharField, DateField, DecimalField, DurationField, FileField, ForeignKey, ImageField, IntegerField,
@@ -42,7 +43,6 @@ from deform.db.models.fields import (
     URLField
 )
 
-from pyamgmt.models.base import BaseAuditable
 from pyamgmt.models import managers, querysets
 from pyamgmt.validators import (
     validate_alphanumeric, validate_date_not_future, validate_digit, validate_isbn, validate_isbn_13_check_digit,
@@ -51,7 +51,7 @@ from pyamgmt.validators import (
 
 
 # Callbacks for defaults
-def get_default_media_format_audio():
+def get_default_mediaformat_audio():
     return MediaFormat.get_default_audio()
 
 
@@ -71,6 +71,8 @@ class Account(BaseAuditable):
     parent_account = ForeignKey('self', on_delete=SET_NULL, related_name='child_accounts', null=True, blank=True)
     parent_account_id: int
     subtype = CharField(max_length=31, choices=Subtype.choices, default=Subtype.OTHER)
+
+    objects = managers.AccountManager()
 
     def __str__(self):
         return f'{self.name}'
@@ -264,7 +266,7 @@ class BookEdition(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['book', 'edition'], name='unique_bookedition')
+            UniqueConstraint(fields=('book', 'edition'), name='unique_bookedition')
         ]
 
 
@@ -280,6 +282,11 @@ class BookToMotionPicture(BaseAuditable):
     """Film adaptations of books. The edition of the book doesn't really matter."""
     book = ForeignKey(Book, on_delete=CASCADE)
     motionpicture = ForeignKey("MotionPicture", on_delete=CASCADE)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=('book', 'motionpicture'), name='unique_booktomotionpicture')
+        ]
 
 
 class CatalogItem(BaseAuditable):
@@ -334,7 +341,7 @@ class CatalogItemMusicAlbum(BaseAuditable):
     """A produced Music Album distributed in a particular format."""
     catalogitem = OneToOneField(CatalogItem, on_delete=CASCADE, primary_key=True)
     catalogitem_id: int
-    mediaformat = ForeignKey('MediaFormat', on_delete=SET_DEFAULT, default=get_default_media_format_audio)
+    mediaformat = ForeignKey('MediaFormat', on_delete=SET_DEFAULT, default=get_default_mediaformat_audio)
     mediaformat_id: int
 
 
@@ -435,10 +442,10 @@ class MediaFormat(BaseAuditable):
     def __str__(self):
         return f'MediaFormat {self.pk}: {self.name}'
 
-    @staticmethod
-    def get_default_audio():
-        obj, _ = MediaFormat.objects.get_or_create(name='Audio')
-        return obj.id
+    @classmethod
+    def get_default_audio(cls):
+        obj, _ = cls.objects.get_or_create(name='Audio')
+        return obj.pk
 
 
 class MotionPicture(BaseAuditable):
@@ -488,7 +495,7 @@ class MusicAlbum(BaseAuditable):
         default=False,
         help_text="Album is a compilation of other songs, such as a Greatest Hits album."
     )
-    mediaformat = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_media_format_audio)
+    mediaformat = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_mediaformat_audio)
     mediaformat_id: int
     title = CharField(max_length=255, unique=True)  # Temporary unique constraint
     total_discs = PositiveSmallIntegerField(default=1)
@@ -540,7 +547,7 @@ class MusicAlbumToMusicArtist(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['musicalbum', 'musicartist'], name='unique_musicalbumtomusicartist')
+            UniqueConstraint(fields=('musicalbum', 'musicartist'), name='unique_musicalbumtomusicartist')
         ]
 
     def __str__(self):
@@ -558,11 +565,11 @@ class MusicAlbumToSongRecording(BaseAuditable):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['musicalbum', 'songrecording'],
+                fields=('musicalbum', 'songrecording'),
                 name='unique_musicalbumtosongrecording'
             ),
             UniqueConstraint(
-                fields=['musicalbum', 'disc_number', 'track_number'],
+                fields=('musicalbum', 'disc_number', 'track_number'),
                 name='unique_musicalbumtosongrecording_disc_track'
             )
         ]
@@ -602,7 +609,7 @@ class MusicArtistActivity(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['musicartist', 'year_active'], name='unique_musicartistactivity')
+            UniqueConstraint(fields=('musicartist', 'year_active'), name='unique_musicartistactivity')
         ]
 
 
@@ -622,7 +629,7 @@ class MusicArtistToPerson(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['musicartist', 'person'], name='unique_musicartisttoperson')
+            UniqueConstraint(fields=('musicartist', 'person'), name='unique_musicartisttoperson')
         ]
 
     def __str__(self):
@@ -657,7 +664,7 @@ class MusicArtistToSong(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['musicartist', 'song'], name='unique_musicartisttosong')
+            UniqueConstraint(fields=('musicartist', 'song'), name='unique_musicartisttosong')
         ]
 
     def __str__(self):
@@ -673,7 +680,7 @@ class MusicArtistToSongRecording(BaseAuditable):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['musicartist', 'songrecording'],
+                fields=('musicartist', 'songrecording'),
                 name='unique_musicartisttosongrecording'
             )
         ]
@@ -942,7 +949,7 @@ class SongToSong(BaseAuditable):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['song_derivative', 'song_original'],
+                fields=('song_derivative', 'song_original'),
                 name='unique_songtosong'
             )
         ]
@@ -1059,14 +1066,6 @@ class Vehicle(BaseAuditable):
     def __str__(self):
         return f'Vehicle {self.pk}: {self.vin}'
 
-    @classmethod
-    def lookups(cls):
-        lookups = super().lookups()
-        lookups.update({
-            'vehiclemake_name': 'vehicleyear__vehicletrim__vehiclemodel__vehiclemake__name'
-        })
-        return lookups
-
 
 class VehicleMake(BaseAuditable):
     """The make/brand/marque of a vehicle."""
@@ -1090,7 +1089,7 @@ class VehicleMileage(BaseAuditable):
     class Meta:
         constraints = [
             # Sanity date/time constraint
-            UniqueConstraint(fields=['vehicle', 'odometer_date', 'odometer_time'], name='unique_vehiclemileage')
+            UniqueConstraint(fields=('vehicle', 'odometer_date', 'odometer_time'), name='unique_vehiclemileage')
         ]
 
     @property
@@ -1106,7 +1105,7 @@ class VehicleModel(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['name', 'vehiclemake'], name='unique_vehiclemodel')
+            UniqueConstraint(fields=('name', 'vehiclemake'), name='unique_vehiclemodel')
         ]
 
     def __str__(self):
@@ -1140,19 +1139,11 @@ class VehicleTrim(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['name', 'vehiclemodel'], name='unique_vehicletrim')
+            UniqueConstraint(fields=('name', 'vehiclemodel'), name='unique_vehicletrim')
         ]
 
     def __str__(self):
         return f'VehicleTrim {self.pk}: {self.vehiclemodel_id}-{self.name}'
-
-    @classmethod
-    def lookups(cls):
-        lookups = super().lookups()
-        lookups.update({
-            'vehiclemake_name': 'vehiclemodel__vehiclemake__name'
-        })
-        return lookups
 
 
 class VehicleYear(BaseAuditable):
@@ -1166,7 +1157,7 @@ class VehicleYear(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['vehicletrim', 'year'], name='unique_vehicleyear')
+            UniqueConstraint(fields=('vehicletrim', 'year'), name='unique_vehicleyear')
         ]
 
     def __str__(self):

@@ -409,11 +409,11 @@ class VehicleMileageForm(ModelForm):  # forms.ModelForm
 
 
 class VehicleModelForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        vehiclemake_pk = kwargs.pop('vehiclemake_pk')
+    def __init__(self, *args, vehiclemake_pk: int = None, **kwargs):
+        # vehiclemake_pk = kwargs.pop('vehiclemake_pk', None)
         super().__init__(*args, **kwargs)
         if vehiclemake_pk:
-            vehiclemake = VehicleMake.objects.get(id=vehiclemake_pk)
+            vehiclemake = VehicleMake.objects.get(pk=vehiclemake_pk)
             self.initial['vehiclemake'] = vehiclemake
             self.fields['vehiclemake'].disabled = True
 

@@ -232,15 +232,15 @@ _payee_urls = ([
 
 _person_urls = ([
     path('', pyamgmt.views.models.person_list, name='list'),
-    path('add/', pyamgmt.views.models.person_form, name='add'),
+    path('add/', pyamgmt.views.models.PersonFormView.as_view(), name='add'),
     path('<int:person_pk>/', include([
         path('', pyamgmt.views.models.person_detail, name='detail'),
-        path('edit/', pyamgmt.views.models.person_form, name='edit')
+        path('edit/', pyamgmt.views.models.PersonFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
 _pointofsale_urls = ([
-    path('', pyamgmt.views.models.pointofsale_list, name='list'),
+    path('', pyamgmt.views.models.PointOfSaleListView.as_view(), name='list'),
     path('add/', pyamgmt.views.models.pointofsale_form, name='add'),
     path('<int:pointofsale_pk>/', include([
         path('', pyamgmt.views.models.pointofsale_detail, name='detail'),
@@ -424,5 +424,5 @@ urlpatterns = [
     path('vehicle-year/', include(_vehicleyear_urls, namespace='vehicleyear')),
     # Specialized URLs
     path('experimental/', pyamgmt.views.experimental.current, name='experimental'),
-    path('txn-register/', pyamgmt.views.txn_register.txn_register, name='txn-register')
+    path('txn-register/', pyamgmt.views.txn_register.TxnRegister.as_view(), name='txn-register')
 ]

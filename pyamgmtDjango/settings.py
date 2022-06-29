@@ -42,10 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'core.apps.CoreConfig',
     'deform.apps.DeformConfig',
-    'pyamgmt.apps.PyamgmtConfig',
     'schemaviz.apps.SchemavizConfig',
+    'core.apps.CoreConfig',
+    'pyamgmt.apps.PyamgmtConfig',
 ]
 
 MIDDLEWARE = [

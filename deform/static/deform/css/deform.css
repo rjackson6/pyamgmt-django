@@ -1,0 +1,38 @@
+/*DEFORM App*/
+
+/*
+form.deform {
+    display: flex;
+    flex-direction: column;
+}
+form.deform div.field-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: repeat(3, 1fr);
+}
+form.deform > div + div {
+    border-top: 1px solid dodgerblue;
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+}
+form.deform > div > label {
+    grid-column-start: 1;
+    grid-row-start: 2;
+}
+form.deform > div > ul {
+    grid-column-start: 2;
+    grid-row-start: 1;
+}
+form.deform > div > input,
+form.deform > div > select {
+    grid-column-start: 2;
+    grid-row-start: 2;
+}
+form.deform > div > span {
+    grid-column-start: 2;
+    grid-row-start: 3;
+}
+form.deform .helptext {
+    font-style: italic;
+}
+*/

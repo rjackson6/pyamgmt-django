@@ -151,7 +151,7 @@ class Migration(migrations.Migration):
                 ('total_discs', deform.db.models.fields.fields.PositiveSmallIntegerField(default=1)),
                 ('year_copyright', deform.db.models.fields.fields.PositiveSmallIntegerField(blank=True, null=True, validators=[pyamgmt.validators.validate_year_not_future])),
                 ('year_produced', deform.db.models.fields.fields.PositiveSmallIntegerField(blank=True, null=True, validators=[pyamgmt.validators.validate_year_not_future])),
-                ('mediaformat', deform.db.models.fields.related.ForeignKey(default=pyamgmt.models.models.get_default_media_format_audio, on_delete=django.db.models.deletion.SET_DEFAULT, to='pyamgmt.mediaformat')),
+                ('mediaformat', deform.db.models.fields.related.ForeignKey(default=pyamgmt.models.models.get_default_mediaformat_audio, on_delete=django.db.models.deletion.SET_DEFAULT, to='pyamgmt.mediaformat')),
             ],
             options={
                 'abstract': False,
@@ -1025,7 +1025,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='catalogitemmusicalbum',
             name='mediaformat',
-            field=deform.db.models.fields.related.ForeignKey(default=pyamgmt.models.models.get_default_media_format_audio, on_delete=django.db.models.deletion.SET_DEFAULT, to='pyamgmt.mediaformat'),
+            field=deform.db.models.fields.related.ForeignKey(default=pyamgmt.models.models.get_default_mediaformat_audio, on_delete=django.db.models.deletion.SET_DEFAULT, to='pyamgmt.mediaformat'),
         ),
         migrations.AddConstraint(
             model_name='bookedition',

@@ -7,8 +7,8 @@
 
 {% block extra_css %}
 
-<link type="text/css" rel="stylesheet" href="{% static 'pyamgmt/css/base.css' %}">
-<link type="text/css" rel="stylesheet" href="{% static 'pyamgmt/css/bem.css' %}">
+{#<link type="text/css" rel="stylesheet" href="{% static 'pyamgmt/css/base.css' %}">#}
+{#<link type="text/css" rel="stylesheet" href="{% static 'pyamgmt/css/bem.css' %}">#}
 
 {% endblock extra_css %}
 
@@ -26,7 +26,8 @@
 
 <ul>
     <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
-    <li><a href="{% url 'pyamgmt:txn-register' %}">Register</a></li>
+    <li><a href="{% url 'admin:index' %}">Admin</a></li>
+    <li><a href="{% url 'pyamgmt:txn-register' %}">Txn Register</a></li>
 </ul>
 {% include 'pyamgmt/snippets/models_ul.htm' %}
 

@@ -52,20 +52,20 @@ class AccountFormView(FormView):
             account = Account.objects.get(pk=account_pk)
         self.form = AccountForm(request.POST or None, instance=account)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'form': self.form})
-        return render(self.request, 'pyamgmt/models/account_form.html', self.context)
+        return render(request, 'pyamgmt/models/account_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.form.is_valid():
             account = self.form.save()
             if account.subtype == Account.Subtype.ASSET:
                 account_asset, _ = AccountAsset.objects.get_or_create(account=account)
             return redirect('pyamgmt:account:list')
-        return self.render()
+        return self.render(request)
 
 
 class AccountAssetListView(View):
@@ -95,15 +95,15 @@ class AccountAssetFormView(MultiFormView):
         self.forms.account = AccountForm(request.POST or None, instance=account)
         self.forms.accountasset = AccountAssetForm(request.POST or None, instance=accountasset)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'forms': self.forms})
-        return render(self.request, 'pyamgmt/models/accountasset_form.html', self.context)
+        return render(request, 'pyamgmt/models/accountasset_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
     @transaction.atomic
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.forms.are_valid():
             account = self.forms.account.save()
             accountasset = self.forms.accountasset.save(commit=False)
@@ -115,7 +115,7 @@ class AccountAssetFormView(MultiFormView):
                 case AccountAsset.Subtype.REAL:
                     accountassetreal, _ = AccountAssetReal.objects.get_or_create(accountasset=accountasset)
             return redirect('pyamgmt:accountasset:list')
-        return self.render()
+        return self.render(request)
 
 
 class AccountAssetFinancialListView(View):
@@ -169,15 +169,15 @@ class AccountAssetFinancialFormView(MultiFormView):
         #             accountasset__subtype=AccountAsset.Subtype.FINANCIAL)
         #     )
 
-    def render(self):
+    def render(self, request):
         self.context.update({'forms': self.forms})
-        return render(self.request, 'pyamgmt/models/accountassetfinancial_form.html', self.context)
+        return render(request, 'pyamgmt/models/accountassetfinancial_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
     @transaction.atomic
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.forms.are_valid():
             account = self.forms.account.save()
             accountasset = self.forms.accountasset.save(commit=False)
@@ -187,7 +187,7 @@ class AccountAssetFinancialFormView(MultiFormView):
             accountassetfinancial.accountasset = accountasset
             accountassetfinancial.save()
             return redirect('pyamgmt:home')
-        return self.render()
+        return self.render(request)
 
 
 class AccountAssetRealListView(View):
@@ -229,15 +229,15 @@ class AccountAssetRealFormView(MultiFormView):
         # initial={'subtype': AccountAsset.Subtype.REAL}
         # form_accountasset.fields['subtype'].disabled = True
 
-    def render(self):
+    def render(self, request):
         self.context.update({'forms': self.forms})
-        return render(self.request, 'pyamgmt/models/accountassetreal_form.html', self.context)
+        return render(request, 'pyamgmt/models/accountassetreal_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
     @transaction.atomic
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.forms.are_valid():
             account = self.forms.account.save()
             accountasset = self.forms.accountasset.save(commit=False)
@@ -247,7 +247,7 @@ class AccountAssetRealFormView(MultiFormView):
             accountassetreal.accountasset = accountasset
             accountassetreal.save()
             return redirect('pyamgmt:accountassetreal:list')
-        return self.render()
+        return self.render(request)
 
 
 class AccountExpenseListView(View):
@@ -277,22 +277,22 @@ class AccountExpenseFormView(MultiFormView):
         self.forms.account = AccountForm(request.POST or None, instance=account)
         self.forms.accountexpense = AccountExpenseForm(request.POST or None, instance=accountexpense)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'forms': self.forms})
-        return
+        return render(request, 'pyamgmt/models/accountexpense_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
     @transaction.atomic
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.forms.are_valid():
             account = self.forms.account.save()
             accountexpense = self.forms.accountexpense.save(commit=False)
             accountexpense.account = account
             accountexpense.save()
             return redirect('pyamgmt:accountexpense:detail', accountexpense=accountexpense.pk)
-        return self.render()
+        return self.render(request)
 
 
 class AccountIncomeListView(View):
@@ -329,22 +329,22 @@ class AccountIncomeFormView(MultiFormView):
         self.forms.account = AccountForm(request.POST or None, instance=account)
         self.forms.accountincome = AccountIncomeForm(request.POST or None, instance=accountincome)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'forms': self.forms})
-        return render(self.request, '', self.context)
+        return render(request, '', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
     @transaction.atomic
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.forms.are_valid():
             account = self.forms.account.save()
             accountincome = self.forms.accountincome.save(commit=False)
             accountincome.account = account
             accountincome.save()
-            return redirect()
-        return self.render()
+            return redirect('pyamgmt:pyamgmt:list')
+        return self.render(request)
 
 
 class AccountLiabilityListView(View):
@@ -374,22 +374,22 @@ class AccountLiabilityFormView(MultiFormView):
         self.forms.account = AccountForm(request.POST or None, instance=account)
         self.forms.accountliability = AccountLiabilityForm(request.POST or None, instance=accountliability)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'forms': forms})
-        return render(self.request, '', self.context)
+        return render(request, '', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
     @transaction.atomic
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.forms.are_valid():
             account = self.forms.account.save()
             accountliability = self.forms.accountliability.save(commit=False)
             accountliability.account = account
             accountliability.save()
-            return redirect()
-        return self.render()
+            return redirect('pyamgmt:pyamgmt:list')
+        return self.render(request)
 
 
 class AssetListView(View):
@@ -416,18 +416,18 @@ class AssetFormView(FormView):
             asset = Asset.objects.get(pk=asset_pk)
         self.form = AssetForm(request.POST or None, instance=asset)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'form': self.form})
-        return render(self.request, 'pyamgmt/models/asset_form.html', self.context)
+        return render(request, 'pyamgmt/models/asset_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.form.is_valid():
             self.form.save()
-            return redirect()
-        return self.render()
+            return redirect('pyamgmt:pyamgmt:list')
+        return self.render(request)
 
 
 class AssetDiscreteListView(View):
@@ -501,15 +501,15 @@ class AssetDiscreteVehicleFormView(MultiFormView):
         self.forms.assetdiscrete = AssetDiscreteForm(request.POST or None, instance=assetdiscrete)
         self.forms.assetdiscretevehicle = AssetDiscreteVehicleForm(request.POST or None, instance=assetdiscretevehicle)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'forms': self.forms})
-        return render(self.request, 'pyamgmt/models/assetdiscretevehicle_form.html', self.context)
+        return render(request, 'pyamgmt/models/assetdiscretevehicle_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
     @transaction.atomic
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.forms.are_valid():
             asset = self.forms.asset.save()
             assetdiscrete = self.forms.assetdiscrete.save(commit=False)
@@ -519,7 +519,7 @@ class AssetDiscreteVehicleFormView(MultiFormView):
             assetdiscretevehicle.assetdiscrete = assetdiscrete
             assetdiscretevehicle.save()
             return redirect('pyamgmt:assetdiscretevehicle:detail', assetdiscretevehicle_pk=assetdiscretevehicle.pk)
-        return self.render()
+        return self.render(request)
 
 
 class AssetInventoryListView(View):
@@ -562,18 +562,18 @@ class CatalogItemFormView(FormView):
             catalogitem = CatalogItem.objects.get(pk=catalogitem_pk)
         self.form = CatalogItemForm(request.POST or None, instance=catalogitem)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'form': self.form})
-        return render(self.request, 'pyamgmt/models/catalogitem_form.html', self.context)
+        return render(request, 'pyamgmt/models/catalogitem_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.form.is_valid():
             self.form.save()
             return redirect('pyamgmt:catalogitem:list')
-        return self.render()
+        return self.render(request)
 
 
 class CatalogItemDigitalSongListView(View):
@@ -745,19 +745,19 @@ class MusicAlbumFormView(FormView):
             musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
         self.form = MusicAlbumForm(request.POST or None, instance=musicalbum)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'form': self.form, 'deform': self.form.as_dict()})
-        return render(self.request, 'pyamgmt/models/musicalbum_form.html', self.context)
+        return render(request, 'pyamgmt/models/musicalbum_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
     def post(self, request, **_kwargs):
         if self.form.is_valid():
             print(request.POST)
             self.form.save()
-            return redirect()
-        return self.render()
+            return redirect('pyamgmt:pyamgmt:list')
+        return self.render(request)
 
 
 def musicalbum_add_song_form(request, musicalbum_pk: int):
@@ -792,9 +792,9 @@ class MusicAlbumAddSongRecordingFormView(FormView):
         musicalbum = MusicAlbum.objects.get(pk=musicalbum_pk)
         self.form = MusicAlbumToSongRecordingForm(request.POST or None, musicalbum=musicalbum)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'form': self.form})
-        return render(self.request, 'pyamgmt/models/musicalbum_add_songrecording_form.html', self.context)
+        return render(request, 'pyamgmt/models/musicalbum_add_songrecording_form.html', self.context)
 
     def get(self, request, **kwargs):
         return
@@ -826,18 +826,18 @@ class MusicAlbumToMusicArtistFormView(FormView):
         musicartist = None
         self.form = MusicAlbumToMusicArtistForm(request.POST or None, instance=musicalbumtomusicartist)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'form': self.form})
-        return render(self.request, 'pyamgmt/models/musicalbumtomusicartist_form.html', self.context)
+        return render(request, 'pyamgmt/models/musicalbumtomusicartist_form.html', self.context)
 
     def get(self, request, **kwargs):
-        return self.render()
+        return self.render(request)
 
     def post(self, request, **kwargs):
         if self.form.is_valid():
             self.form.save()
-            return redirect()
-        return self.render()
+            return redirect('pyamgmt:pyamgmt:list')
+        return self.render(request)
 
 
 class MusicAlbumToSongRecordingListView(View):
@@ -1027,6 +1027,10 @@ def payee_list(request):
     return render(request, 'pyamgmt/models/payee_list.html', context)
 
 
+class PayeeListView(View):
+    pass
+
+
 def payee_detail(request, payee_pk: int):
     context = {}
     payee = Payee.objects.get(pk=payee_pk)
@@ -1034,6 +1038,10 @@ def payee_detail(request, payee_pk: int):
         'payee': payee
     })
     return render(request, 'pyamgmt/models/payee_detail.html', context)
+
+
+class PayeeDetailView(View):
+    pass
 
 
 def payee_form(request, payee_pk: int = None):
@@ -1051,6 +1059,10 @@ def payee_form(request, payee_pk: int = None):
     return render(request, 'pyamgmt/models/payee_form.html', context)
 
 
+class PayeeFormView(FormView):
+    pass
+
+
 def person_list(request):
     """List all records from model Person."""
     logger.info(request.GET)
@@ -1063,6 +1075,10 @@ def person_list(request):
     return render(request, 'pyamgmt/models/person_list.html', context)
 
 
+class PersonListView(View):
+    pass
+
+
 def person_detail(request, person_pk: int):
     context = {}
     person = Person.objects.get(pk=person_pk)
@@ -1070,6 +1086,10 @@ def person_detail(request, person_pk: int):
         'person': person
     })
     return render(request, 'pyamgmt/models/person_detail.html', context)
+
+
+class PersonDetailView(View):
+    pass
 
 
 def person_form(request, person_pk: int = None):
@@ -1087,12 +1107,33 @@ def person_form(request, person_pk: int = None):
     return render(request, 'pyamgmt/models/person_form.html', context)
 
 
-def pointofsale_list(request):
-    """List all records from model PointOfSale."""
-    context = {}
-    qs_pointofsale = PointOfSale.objects.all()
-    context.update({'qs_pointofsale': qs_pointofsale})
-    return render(request, 'pyamgmt/models/pointofsale_list.html', context)
+class PersonFormView(FormView):
+    def setup(self, request, person_pk: int = None, **kwargs):
+        super().setup(request, **kwargs)
+        person = None
+        if person_pk:
+            person = Person.objects.get(pk=person_pk)
+        self.form = PersonForm(request.POST or None, instance=person)
+
+    def render(self, request):
+        self.context.update({'form': self.form})
+        return render(request, 'pyamgmt/models/person_form.html', self.context)
+
+    def get(self, request, **_kwargs):
+        return self.render(request)
+
+    def post(self, request, **_kwargs):
+        if self.form.is_valid():
+            _person = self.form.save()
+            return redirect('pyamgmt:person:list')
+        return self.render(request)
+
+
+class PointOfSaleListView(View):
+    def get(self, request, **_kwargs):
+        qs_pointofsale = PointOfSale.objects.all()
+        self.context.update({'qs_pointofsale': qs_pointofsale})
+        return render(request, 'pyamgmt/models/pointofsale_list.html', self.context)
 
 
 def pointofsale_detail(request, pointofsale_pk: int):
@@ -1106,6 +1147,12 @@ def pointofsale_detail(request, pointofsale_pk: int):
         'related_lineitems': related_lineitems
     })
     return render(request, 'pyamgmt/models/pointofsale_detail.html', context)
+
+
+class PointOfSaleDetailView(View):
+    def get(self, request, **_kwargs):
+
+        return render(request, 'pyamgmt/models/pointofsale_detail.html', self.context)
 
 
 def pointofsale_form(request, pointofsale_pk: int = None):
@@ -1653,19 +1700,22 @@ class VehicleModelFormView(FormView):
         vehiclemodel = None
         if vehiclemodel_pk:
             vehiclemodel = VehicleModel.objects.get(pk=vehiclemodel_pk)
-        self.form = VehicleModelForm(request.POST or None, instance=vehiclemodel)
+        self.form = VehicleModelForm(
+            request.POST or None, instance=vehiclemodel, vehiclemake_pk=vehiclemake_pk
+        )
 
-    def render(self):
-        return render(self.request, 'pyamgmt/models/vehiclemodel_form.html', self.context)
+    def render(self, request):
+        self.context.update({'form': self.form})
+        return render(request, 'pyamgmt/models/vehiclemodel_form.html', self.context)
 
-    def get(self):
-        return self.render()
+    def get(self, request, **kwargs):
+        return self.render(request)
 
     def post(self, request, **kwargs):
         if self.form.is_valid():
             vehiclemodel = self.form.save()
             return redirect('pyamgmt:vehiclemodel:detail', vehiclemodel_pk=vehiclemodel.pk)
-        return self.render()
+        return self.render(request)
 
 
 class VehicleTrimListView(View):
@@ -1711,7 +1761,7 @@ class VehicleTrimFormView(FormView):
     def post(self, _request, **_kwargs):
         if self.form.is_valid():
             self.form.save()
-            return redirect()
+            return redirect('pyamgmt:pyamgmt:list')
         return self.render()
 
 
@@ -1750,15 +1800,15 @@ class VehicleYearFormView(FormView):
             vehicleyear = VehicleYear.objects.get(pk=vehicleyear_pk)
         self.form = VehicleYearForm(request.POST or None, instance=vehicleyear, vehicletrim_pk=vehicletrim_pk)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'form': self.form})
         return render(self.request, 'pyamgmt/models/vehicleyear_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request, **_kwargs):
+        return self.render(request)
 
-    def post(self, _request, **_kwargs):
+    def post(self, request, **_kwargs):
         if self.form.is_valid():
             self.form.save()
             return redirect('pyamgmt:vehicleyear:list')
-        return self.render()
+        return self.render(request)
