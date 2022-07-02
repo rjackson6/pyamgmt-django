@@ -1584,7 +1584,7 @@ class VehicleFormView(FormView):
 
 
 class VehicleMakeListView(View):
-    def get(self, request, **_kwargs):
+    def get(self, request):
         qs_vehiclemake = (
             VehicleMake.objects
             .annotate(vehiclemodel_count=Count('vehiclemodel'))
@@ -1613,20 +1613,20 @@ class VehicleMakeFormView(FormView):
             vehiclemake = VehicleMake.objects.get(pk=vehiclemake_pk)
         self.form = VehicleMakeForm(request.POST or None, instance=vehiclemake)
 
-    def render(self):
+    def render(self, request):
         self.context.update({'form': self.form})
         # TODO: 'test' form.as_dict()
         self.context.update({'test': self.form.as_dict()})
-        return render(self.request, 'pyamgmt/models/vehiclemake_form.html', self.context)
+        return render(request, 'pyamgmt/models/vehiclemake_form.html', self.context)
 
-    def get(self, _request, **_kwargs):
-        return self.render()
+    def get(self, request):
+        return self.render(request)
 
-    def post(self, _request, **_kwargs):
+    def post(self, request):
         if self.form.is_valid():
             self.form.save()
             return redirect('pyamgmt:vehiclemake:list')
-        return self.render()
+        return self.render(request)
 
 
 class VehicleMileageListView(View):

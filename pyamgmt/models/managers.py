@@ -38,8 +38,44 @@ class AccountManager(Manager):
                 continue
             memo.add(id_)
             account['level'] = level
-        return {}
+            if child_accounts := account.get('child_accounts', []):
+                queue += ((id(x), x, level + 1) for x in child_accounts)
+        return root
 
+
+class AccountManagerAsset(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.ASSET)
+
+
+class AccountManagerLiability(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.LIABILITY)
+
+
+class AccountManagerEquity(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.EQUITY)
+
+
+class AccountManagerIncome(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.INCOME)
+
+
+class AccountManagerExpense(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.EXPENSE)
+
+
+class AccountAssetManagerFinancial(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.FINANCIAL)
+
+
+class AccountAssetManagerReal(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.REAL)
 
 
 class MusicArtistToPersonManager(Manager):

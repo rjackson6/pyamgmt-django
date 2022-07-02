@@ -73,6 +73,11 @@ class Account(BaseAuditable):
     subtype = CharField(max_length=31, choices=Subtype.choices, default=Subtype.OTHER)
 
     objects = managers.AccountManager()
+    assets = managers.AccountManagerAsset()
+    liabilities = managers.AccountManagerLiability()
+    equities = managers.AccountManagerEquity()
+    incomes = managers.AccountManagerIncome()
+    expenses = managers.AccountManagerExpense()
 
     def __str__(self):
         return f'{self.name}'
@@ -113,6 +118,10 @@ class AccountAsset(BaseAuditable):
     account = OneToOneField(Account, on_delete=CASCADE, primary_key=True)
     account_id: int
     subtype = CharField(max_length=31, choices=Subtype.choices, default=Subtype.OTHER)
+
+    objects = Manager()
+    financials = managers.AccountAssetManagerFinancial()
+    real = managers.AccountAssetManagerReal()
 
 
 class AccountAssetFinancial(BaseAuditable):
