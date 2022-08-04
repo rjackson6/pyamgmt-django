@@ -1,7 +1,9 @@
 __all__ = [
     'AccountForm', 'AccountAssetForm', 'AccountAssetFinancialForm', 'AccountAssetRealForm', 'AccountExpenseForm',
     'AccountIncomeForm', 'AccountLiabilityForm',
-    'AssetForm', 'AssetFormVehicle', 'AssetDiscreteForm', 'AssetDiscreteVehicleForm',
+    'AssetForm',
+    # 'AssetFormVehicle',
+    'AssetDiscreteForm', 'AssetDiscreteVehicleForm',
     'CatalogItemForm', 'CatalogItemDigitalSongForm', 'CatalogItemMusicAlbumForm',
     'CatalogItemToPointOfSaleLineItemForm',
     'MusicAlbumForm', 'MusicAlbumToMusicArtistForm', 'MusicAlbumToSongRecordingForm', 'MusicArtistForm',
@@ -124,18 +126,11 @@ class AccountLiabilityForm(ModelForm):
 class AssetForm(ModelForm):
     prefix = 'asset'
 
-    class Meta:
-        model = Asset
-        exclude = BASE_AUDITABLE_FIELDS
-
-
-# TODO:
-class AssetFormVehicle(ModelForm):
-    # Could use keyword arguments instead and re-use the form
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, subtype=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.initial['subtype'] = Asset.Subtype.VEHICLE
-        self.fields['subtype'].disabled = True
+        if subtype:
+            self.fields['subtype'].initial = subtype
+            self.fields['subtype'].disabled = True
 
     class Meta:
         model = Asset
@@ -144,6 +139,12 @@ class AssetFormVehicle(ModelForm):
 
 class AssetDiscreteForm(ModelForm):
     prefix = 'asset-discrete'
+
+    def __init__(self, *args, subtype=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if subtype:
+            self.fields['subtype'].initial = subtype
+            self.fields['subtype'].disabled = True
 
     class Meta:
         model = AssetDiscrete

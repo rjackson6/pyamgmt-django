@@ -7,11 +7,15 @@
 
 {% block content %}
 
-<div class="model-list">
+<div class="model-heading">
     <h1>AccountAsset</h1>
     {#<a href="{% url 'pyamgmt:account-asset:add' %}">Add</a>#}
     <p>{{ qs_accountasset.model|doc }}</p>
-    <table>
+</div>
+
+<div class="model-list">
+
+    <table class="model-list__table">
         <tr>
             <th colspan="4">Account</th>
             <th colspan="1">AccountAsset</th>

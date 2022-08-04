@@ -1,0 +1,17 @@
+{% extends 'pyamgmt/base.html' %}
+{% load static %}
+
+
+{% block title %}{{ model_class|name }}{% endblock title %}
+
+
+{% block breadcrumbs %}
+{{ block.super }}
+{% if listview %}
+<li class="breadcrumbs__item">{{ model_class|name }}</li>
+{% endif %}
+{% if detailview %}
+<li class="breadcrumbs__item"><a class="breadcrumbs__link" href="{% url 'pyamgmt:pyamgmt:list' %}">{{ model_class|name }}</a></li>
+<li class="breadcrumbs__item">{{ instance }}</li>
+{% endif %}
+{% endblock breadcrumbs %}

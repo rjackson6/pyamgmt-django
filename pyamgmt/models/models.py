@@ -59,6 +59,10 @@ def get_default_mediaformat_audio():
 class Account(BaseAuditable):
     """Double-entry style account. If money goes into it or comes out of it, literally or figuratively, it may be
      tracked as an account.
+    Assets, Expenses, Dividends, Losses:
+        increased by debit; decreased by credit
+    Liabilities, Income, Capital, Revenue, Gains, Equity:
+        decreased by debit; increased by credit
     """
     class Subtype(TextChoices):
         ASSET = 'ASSET', 'ASSET'  # Checking, Savings, Real, Discrete, Inventory
@@ -88,9 +92,9 @@ class Account(BaseAuditable):
 
     @property
     def debit_increase(self) -> bool:
-        if self.subtype in (self.Subtype.ASSET, self.Subtype.INCOME):
+        if self.subtype in (self.Subtype.ASSET, self.Subtype.EXPENSE):
             return True
-        elif self.subtype in (self.Subtype.LIABILITY, self.Subtype.EQUITY, self.Subtype.EXPENSE):
+        elif self.subtype in (self.Subtype.INCOME, self.Subtype.LIABILITY, self.Subtype.EQUITY):
             return False
 
     @property

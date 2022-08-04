@@ -6,47 +6,55 @@
 
 
 {% block breadcrumbs %}
-<ol class="breadcrumbs">
-    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
-    <li>MusicAlbum</li>
-</ol>
+{{ block.super }}
+<li class="breadcrumbs__item">MusicAlbum</li>
 {% endblock breadcrumbs %}
 
 
 {% block content %}
-
 <div class="model-list">
-    <h1>MusicAlbum ({{ qs_musicalbum.count }})</h1>
-    <p class="doc-string">{{ qs_musicalbum.model|doc }}</p>
-    <a href="{% url 'pyamgmt:musicalbum:add' %}">Add</a>
-    <table class="model-list__table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Year Produced</th>
-                <th>Compilation</th>
-                <th>Album Artist(s)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for musicalbum in qs_musicalbum %}
-            <tr>
-                <td class="primary-key"><a href="{% url 'pyamgmt:musicalbum:detail' musicalbum.pk %}">{{ musicalbum.pk }}</a></td>
-                <td>{{ musicalbum.title }}</td>
-                <td>{{ musicalbum.year_produced }}</td>
-                <td>{% if musicalbum.is_compilation %}{{ musicalbum.is_compilation }}{% endif %}</td>
-                <td>
-                    <ul>
-                    {% for musicartist in musicalbum.musicartists.all %}
-                        <li>{{ musicartist.name }}</li>
-                    {% endfor %}
-                    </ul>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+    <div class="model-heading">
+        <h1>MusicAlbum ({{ qs_musicalbum.count }})</h1>
+        <div class="model-list__actions">
+            <a href="{% url 'pyamgmt:musicalbum:add' %}">Add</a>
+        </div>
+        <p class="doc-string">{{ qs_musicalbum.model|doc }}</p>
+    </div>
 
+    <div class="model-list__content">
+        <div class="model-list__page-control">{% include 'core/page_control.html' %}</div>
+        <div class="model-list__table-wrapper">
+            <table class="model-list__table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Year Produced</th>
+                        <th>Compilation</th>
+                        <th>Album Artist(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for musicalbum in page_obj %}
+                    <tr>
+                        <td class="primary-key">
+                            <a href="{% url 'pyamgmt:musicalbum:detail' musicalbum.pk %}">{{ musicalbum.pk }}</a>
+                        </td>
+                        <td>{{ musicalbum.title }}</td>
+                        <td>{{ musicalbum.year_produced }}</td>
+                        <td>{% if musicalbum.is_compilation %}{{ musicalbum.is_compilation }}{% endif %}</td>
+                        <td>
+                            <ul>
+                            {% for musicartist in musicalbum.musicartists.all %}
+                                <li>{{ musicartist.name }}</li>
+                            {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> <!-- model-list__table-wrapper -->
+    </div> <!-- model-list -->
+</div> <!-- model-listview -->
 {% endblock content %}

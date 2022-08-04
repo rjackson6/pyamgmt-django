@@ -5,32 +5,42 @@
 {% block title %}Assets{% endblock title %}
 
 
+{% block breadcrumbs %}
+<ol class="breadcrumbs__list">
+    <li class="breadcrumbs__item"><a class="breadcrumbs__link" href="{% url 'pyamgmt:home' %}">Home</a></li>
+    <li class="breadcrumbs__item">Asset</li>
+</ol>
+{% endblock breadcrumbs %}
+
+
 {% block content %}
-
-<div class="model-list">
-    <h1>Asset</h1>
-    <p class="doc-string">{{ qs_asset.model|doc }}</p>
-    {#<a href="{% url 'pyamgmt:asset:add' %}">Add Asset</a>#}
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Subtype</th>
-            <th>Description</th>
-        </tr>
-        {% for asset in qs_asset %}
-        <tr>
-            <td class="primary-key">
-                {% if asset.subtype == asset.Subtype.VEHICLE %}
-                <a href="{% url 'pyamgmt:assetvehicle:detail' asset.pk %}">{{ asset.pk }}</a>
-                {% else %}
-                <a href="{% url 'pyamgmt:asset:detail' asset.pk %}">{{ asset.pk }}</a>
-                {% endif %}
-            </td>
-            <td>{{ asset.subtype }}</td>
-            <td>{{ asset.description }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<div class="model-listview">
+    <div class="model-heading">
+        <h1>Asset</h1>
+        <p class="doc-string">{{ qs_asset.model|doc }}</p>
+        {#<a href="{% url 'pyamgmt:asset:add' %}">Add Asset</a>#}
+    </div>
+    <div class="model-list__table-wrapper">
+        <table class="model-list__table">
+            <tr>
+                <th>ID</th>
+                <th>Subtype</th>
+                <th>Description</th>
+            </tr>
+            {% for asset in qs_asset %}
+            <tr>
+                <td class="primary-key">
+                    {% if asset.subtype == asset.Subtype.VEHICLE %}
+                    <a href="{% url 'pyamgmt:assetvehicle:detail' asset.pk %}">{{ asset.pk }}</a>
+                    {% else %}
+                    <a href="{% url 'pyamgmt:asset:detail' asset.pk %}">{{ asset.pk }}</a>
+                    {% endif %}
+                </td>
+                <td>{{ asset.subtype }}</td>
+                <td>{{ asset.description }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div> <!-- model-list__table-wrapper -->
 </div>
-
 {% endblock content %}

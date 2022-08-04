@@ -14,33 +14,33 @@
 
 
 {% block content %}
-
-<div class="model-list">
-    <h1>CatalogItem</h1>
-    <p class="doc-string">{{ qs_catalogitem.model|doc }}</p>
-    <a href="{% url 'pyamgmt:catalogitem:add' %}">Add</a>
-    <table class="model-list__table">
-        <tr>
-            <th>ID</th>
-            <th>Subtype</th>
-            <th>Name</th>
-            <th>ASIN</th>
-            <th>ISBN</th>
-            <th>ISBN13</th>
-            <th>UPC</th>
-        </tr>
-        {% for catalogitem in qs_catalogitem %}
-        <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:catalogitem:detail' catalogitem.pk %}">{{ catalogitem.pk }}</a></td>
-            <td>{{ catalogitem.subtype }}</td>
-            <td>{{ catalogitem.name }}</td>
-            <td>{{ catalogitem.asin }}</td>
-            <td>{{ catalogitem.isbn }}</td>
-            <td>{{ catalogitem.isbn_13 }}</td>
-            <td>{{ catalogitem.upc }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<div class="model-listview">
+    <div class="model-list">
+        <h1>CatalogItem</h1>
+        <p class="doc-string">{{ qs_catalogitem.model|doc }}</p>
+        <a href="{% url 'pyamgmt:catalogitem:add' %}">Add</a>
+        <table class="model-list__table">
+            <tr>
+                <th>ID</th>
+                <th>Subtype</th>
+                <th>Name</th>
+                <th>ASIN</th>
+                <th>ISBN</th>
+                <th>ISBN13</th>
+                <th>UPC</th>
+            </tr>
+            {% for catalogitem in qs_catalogitem %}
+            <tr>
+                <td class="primary-key"><a href="{% url 'pyamgmt:catalogitem:detail' catalogitem.pk %}">{{ catalogitem.pk }}</a></td>
+                <td>{{ catalogitem.subtype }}</td>
+                <td>{{ catalogitem.name }}</td>
+                <td>{{ catalogitem.asin }}</td>
+                <td>{{ catalogitem.isbn }}</td>
+                <td>{{ catalogitem.isbn_13 }}</td>
+                <td>{{ catalogitem.upc }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
-
 {% endblock content %}

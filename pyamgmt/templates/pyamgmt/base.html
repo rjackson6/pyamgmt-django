@@ -7,28 +7,47 @@
 
 {% block extra_css %}
 
-{#<link type="text/css" rel="stylesheet" href="{% static 'pyamgmt/css/base.css' %}">#}
-{#<link type="text/css" rel="stylesheet" href="{% static 'pyamgmt/css/bem.css' %}">#}
+<link type="text/css" rel="stylesheet" href="{% static 'pyamgmt/css/base.css' %}">
 
 {% endblock extra_css %}
 
 
 {% block header %}
-
-<span>PyAMgmt</span>
-<span> -- </span>
-<span>U: {{ user }}</span>
-
+<div>
+    <span>PyAMgmt</span>
+    <span> -- </span>
+    <span>U: {{ user }}</span>
+</div>
 {% endblock header %}
 
 
+{% block _main %}
 {% block nav %}
-
-<ul>
-    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
-    <li><a href="{% url 'admin:index' %}">Admin</a></li>
-    <li><a href="{% url 'pyamgmt:txn-register' %}">Txn Register</a></li>
-</ul>
-{% include 'pyamgmt/snippets/models_ul.htm' %}
-
+<nav class="nav">
+    <ul>
+        <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
+        <li><a href="{% url 'admin:index' %}">Admin</a></li>
+        <li><a href="{% url 'pyamgmt:txn-register' %}">Txn Register</a></li>
+    </ul>
+    {% include 'pyamgmt/snippets/models_ul.htm' %}
+</nav>
 {% endblock nav %}
+{{ block.super }}
+{% endblock _main %}
+
+{% block main %}
+
+{% block _breadcrumbs %}
+<nav class="breadcrumbs">
+    <ol class="breadcrumbs__list">
+        {% block breadcrumbs %}
+        <li class="breadcrumbs__item"><a class="breadcrumbs__link" href="{% url 'pyamgmt:home' %}">Home</a></li>
+        {% endblock breadcrumbs %}
+    </ol>
+</nav>
+{% endblock _breadcrumbs %}
+{% block content %}{% endblock content %}
+
+{% endblock main %}
+
+{% block footer %}<div>!</div>{% endblock footer %}

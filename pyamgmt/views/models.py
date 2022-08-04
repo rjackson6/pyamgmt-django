@@ -4,6 +4,7 @@ import logging
 import requests
 
 from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Case, Count, F, Prefetch, Q, Sum, Value, When
 from django.http import HttpResponse  # HttpResponseRedirect
@@ -18,6 +19,14 @@ from pyamgmt.models import *
 logger = logging.getLogger(__name__)
 
 
+# V2 notes
+# paginate lists as a rule; never as a full result list
+#  returning thousands of rows is not sane.
+#  search, filter, and paginate is what needs to be built by default
+# breadcrumbs
+#  defaults can be simplified with includes and attributes, so long as the
+#  conventions match. Home -> List -> Detail -> Edit...
+
 class AccountListView(View):
     def get(self, request, **_kwargs):
         q_debits = Sum('txnlineitem__amount', filter=Q(txnlineitem__debit=True))
@@ -26,10 +35,11 @@ class AccountListView(View):
             Account.objects
             .annotate(debits=q_debits)
             .annotate(credits=q_credits)
-            .order_by('name')
-        )
-        logger.debug(qs_account.query)
-        self.context.update({'qs_account': qs_account})
+            .order_by('name'))
+        paginator = Paginator(qs_account, 50)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        self.context.update({'qs_account': qs_account, 'page_obj': page_obj})
         return render(request, 'pyamgmt/models/account_list.html', self.context)
 
 
@@ -497,8 +507,10 @@ class AssetDiscreteVehicleFormView(MultiFormView):
             assetdiscretevehicle = AssetDiscreteVehicle.objects.get(pk=assetdiscretevehicle_pk)
             assetdiscrete = assetdiscretevehicle.assetdiscrete
             asset = assetdiscrete.asset
-        self.forms.asset = AssetForm(request.POST or None, instance=asset)
-        self.forms.assetdiscrete = AssetDiscreteForm(request.POST or None, instance=assetdiscrete)
+        self.forms.asset = AssetForm(request.POST or None, instance=asset, subtype=Asset.Subtype.DISCRETE)
+        self.forms.assetdiscrete = AssetDiscreteForm(
+            request.POST or None, instance=assetdiscrete, subtype=AssetDiscrete.Subtype.VEHICLE
+        )
         self.forms.assetdiscretevehicle = AssetDiscreteVehicleForm(request.POST or None, instance=assetdiscretevehicle)
 
     def render(self, request):
@@ -714,10 +726,12 @@ class MusicAlbumListView(View):
             MusicAlbum.objects
             .prefetch_related(
                 Prefetch('musicartists', queryset=MusicArtist.objects.order_by('name')))
-            .order_by('title')
-        )
+            .order_by('title'))
+        paginator = Paginator(qs_musicalbum, 50)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
         print(qs_musicalbum.query)
-        self.context.update({'qs_musicalbum': qs_musicalbum})
+        self.context.update({'qs_musicalbum': qs_musicalbum, 'page_obj': page_obj})
         return render(request, 'pyamgmt/models/musicalbum_list.html', self.context)
 
 
@@ -1076,7 +1090,17 @@ def person_list(request):
 
 
 class PersonListView(View):
-    pass
+    def get(self, request, **_kwargs):
+        default_order = ['last_name', 'first_name', 'id']
+        order = request.GET.getlist('order', default_order)
+        qs_person = Person.objects.order_by(*order)
+        paginator = Paginator(qs_person, 50)
+        page_obj = paginator.get_page(request.GET.get('page'))
+        self.context.update({
+            'qs_person': qs_person,
+            'page_obj': page_obj
+        })
+        return render(request, 'pyamgmt/models/person_list.html', self.context)
 
 
 def person_detail(request, person_pk: int):
@@ -1432,7 +1456,12 @@ class TxnFormView(MultiFormView):
 
 class TxnLineItemListView(View):
     def get(self, request, **kwargs):
-        return
+        qs_txnlineitem = (
+            TxnLineItem.objects
+            .select_related('account', 'txn')
+        )
+        self.context.update({'qs_txnlineitem': qs_txnlineitem})
+        return render(request, 'pyamgmt/models/txnlineitem_list.html', self.context)
 
 
 class TxnLineItemDetailView(View):
@@ -1510,7 +1539,11 @@ class VehicleListView(View):
 class VehicleDetailView(View):
     def get(self, request, vehicle_pk: int, **_kwargs):
         vehicle = Vehicle.objects.get(pk=vehicle_pk)
-        vehiclemileage_records = VehicleMileage.objects.filter(vehicle=vehicle).order_by('odometer_date', 'odometer_time')
+        vehiclemileage_records = (
+            VehicleMileage.objects
+            .filter(vehicle=vehicle)
+            .order_by('odometer_date', 'odometer_time')
+        )
         chart_data = list(vehiclemileage_records.values('odometer_date', 'odometer_miles'))
         last_record = {}
         average_mileage = []

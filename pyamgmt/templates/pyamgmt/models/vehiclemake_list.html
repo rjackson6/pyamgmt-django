@@ -6,11 +6,13 @@
 
 
 {% block content %}
-
-<div class="model-list">
+<div>
     <h1>VehicleMake</h1>
     <a href="{% url 'pyamgmt:vehiclemake:add' %}">Add</a>
-    <table class="model-list__detail">
+</div>
+
+<div class="model-list">
+    <table class="model-list__table">
         <tr>
             <th>ID</th>
             <th>Name</th>

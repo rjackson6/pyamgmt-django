@@ -6,15 +6,17 @@
 
 
 {% block breadcrumbs %}
-<a>Home</a>
-<span> &rarr; </span>
-<a>SongRecording</a>
+<ol class="breadcrumbs__list">
+    <li class="breadcrumbs__item"><a class="breadcrumbs__link" href="{% url 'pyamgmt:home' %}">Home</a></li>
+    <li class="breadcrumbs__item"><a class="breadcrumbs__link" href="{% url 'pyamgmt:pyamgmt:list' %}">SongRecording</a></li>
+    <li class="breadcrumbs__item">{{ songrecording }}</li>
+</ol>
 {% endblock breadcrumbs %}
 
 
 {% block content %}
 
-<div class="model-detail">
+<div class="model-detailview">
     <h1>SongRecording</h1>
 {#    <a href="{% url 'pyamgmt:song:edit' song.pk %}">Edit</a>#}
     <table>
@@ -31,57 +33,59 @@
             <td>{{ songrecording.duration }}</td>
         </tr>
     </table>
-</div>
 
-<div class="model-related">
-    <h2>Music Artists</h2>
-    {% if related_artists %}
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-        </tr>
-        {% for related_artist in related_artists %}
-        <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:musicartist:detail' related_artist.musicartist.pk %}">{{ related_artist.musicartist.pk }}</a></td>
-            <td>{{ related_artist.musicartist.name }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p>No records.</p>
+    <div class="model-related">
+        <h2>Music Artists</h2>
+        {% if related_artists %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+            {% for related_artist in related_artists %}
+            <tr>
+                <td class="primary-key"><a href="{% url 'pyamgmt:musicartist:detail' related_artist.musicartist.pk %}">{{ related_artist.musicartist.pk }}</a></td>
+                <td>{{ related_artist.musicartist.name }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No records.</p>
+        {% endif %}
+    </div>
+
+    <div class="model-related">
+        <h2>Music Albums which Feature this Song</h2>
+        {% if related_albums %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>DiscNumber</th>
+                <th>TrackNumber</th>
+            </tr>
+            {% for record in related_albums %}
+            <tr>
+                <td class="primary-key"><a href="{% url 'pyamgmt:musicalbum:detail' record.musicalbum.pk %}">{{ record.musicalbum.pk }}</a></td>
+                <td>{{ record.musicalbum.title }}</td>
+                <td>{{ record.disc_number }}</td>
+                <td>{{ record.track_number }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No records.</p>
+        {% endif %}
+    </div>
+
+    {% if song.lyrics %}
+    <div>
+        <h3>Lyrics</h3>
+        <pre>{{ song.lyrics }}</pre>
+    </div>
     {% endif %}
 </div>
 
-<div class="model-related">
-    <h2>Music Albums which Feature this Song</h2>
-    {% if related_albums %}
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>DiscNumber</th>
-            <th>TrackNumber</th>
-        </tr>
-        {% for record in related_albums %}
-        <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbum:detail' record.musicalbum.pk %}">{{ record.musicalbum.pk }}</a></td>
-            <td>{{ record.musicalbum.title }}</td>
-            <td>{{ record.disc_number }}</td>
-            <td>{{ record.track_number }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p>No records.</p>
-    {% endif %}
-</div>
 
-{% if song.lyrics %}
-<div>
-    <h3>Lyrics</h3>
-    <pre>{{ song.lyrics }}</pre>
-</div>
-{% endif %}
 
 {% endblock content %}

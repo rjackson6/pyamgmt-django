@@ -6,36 +6,49 @@
 
 
 {% block breadcrumbs %}
-<ol class="breadcrumbs">
-    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
-    <li>Person</li>
-</ol>
+{{ block.super }}
+<li class="breadcrumbs__item">Person</li>
 {% endblock breadcrumbs %}
 
 
 {% block content %}
 
-<div class="model-list">
-    <h1>Person</h1>
-    <a href="{% url 'pyamgmt:person:add' %}">Add</a>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Last Name</th>
-            <th>First Name</th>
-            <th>DOB</th>
-            <th>Notes</th>
-        </tr>
-        {% for person in qs_person %}
-        <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:person:detail' person.pk %}">{{ person.pk }}</a></td>
-            <td>{{ person.last_name }}</td>
-            <td>{{ person.first_name }}</td>
-            <td>{{ person.date_of_birth }}</td>
-            <td>{{ person.notes }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
+<div class="model-listview">
+    <div class="model-heading">
+        <h1>Person</h1>
+        <div>
+            <a href="{% url 'pyamgmt:pyamgmt:add' %}">Add</a>
+        </div>
+    </div>
 
+    <div class="model-list">
+        <div class="model-list__page-control">
+            {% include 'core/page_control.html' %}
+        </div>
+        <div class="model-list__table-wrapper">
+            <table class="model-list__table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Last Name</th>
+                        <th>First Name</th>
+                        <th>DOB</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person in page_obj %}
+                    <tr>
+                        <td class="primary-key"><a href="{% url 'pyamgmt:person:detail' person.pk %}">{{ person.pk }}</a></td>
+                        <td>{{ person.last_name }}</td>
+                        <td>{{ person.first_name }}</td>
+                        <td>{{ person.date_of_birth }}</td>
+                        <td>{{ person.notes }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>  <!-- model-list__table-wrapper -->
+    </div>  <!-- model-list -->
+</div>
 {% endblock content %}

@@ -6,25 +6,25 @@
 
 
 {% block breadcrumbs %}
-<ol class="breadcrumbs">
-    <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
-    <li><a href="{% url 'pyamgmt:musicalbum:list' %}">MusicAlbum</a></li>
-    <li>{{ musicalbum }}</li>
-</ol>
+{{ block.super }}
+<li class="breadcrumbs__item"><a class="breadcrumbs__link" href="{% url 'pyamgmt:musicalbum:list' %}">MusicAlbum</a></li>
+<li class="breadcrumbs__item">{{ musicalbum }}</li>
 {% endblock breadcrumbs %}
 
 
 {% block content %}
 
-<div class="model-detail">
-    <h1>MusicAlbum</h1>
-    <ul style="display: none;">
-        {% for field in musicalbum|fields %}
-        <li>{{ field }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'pyamgmt:musicalbum:edit' musicalbum.pk %}">Edit</a>
-    <table>
+<div class="model-detailview">
+    <div class="model-heading">
+        <h1>MusicAlbum</h1>
+        <ul style="display: none;">
+            {% for field in musicalbum|fields %}
+            <li>{{ field }}</li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'pyamgmt:musicalbum:edit' musicalbum.pk %}">Edit</a>
+    </div>
+    <table class="model-detail__table">
         <tr>
             <th>ID</th>
             <td class="primary-key">{{ musicalbum.pk }}</td>
@@ -68,37 +68,36 @@
             <td>{{ musicalbum.year_produced }}</td>
         </tr>
     </table>
-</div>
-
-<div class="model-related">
-    <h2>Tracks</h2>
-    <a href="{% url 'pyamgmt:musicalbum:add-songrecording' musicalbum.pk %}">Add Track</a>
-    {% if qs_musicalbumtosongrecording %}
-    <table class="model-related__table">
-        <tr>
-            <th>M2MID</th>
-            <th>SongRecordingID</th>
-            <th>SongID</th>
-            <th>Title</th>
-            <th>Disc Number</th>
-            <th>Track Number</th>
-            <th>Duration</th>
-        </tr>
-        {% for record in qs_musicalbumtosongrecording %}
-        <tr>
-{#            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbumtosong:detail' record.pk %}">{{ record.pk }}</a></td>#}
-{#            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' record.song.pk %}">{{ record.song.pk }}</a></td>#}
-            <td>{{ record.pk }}</td>
-            <td class="primary-key"><a href="{% url 'pyamgmt:songrecording:detail' record.songrecording.pk %}">{{ record.songrecording.pk }}</a></td>
-            <td class="primary-key"><a>{{ record.songrecording.song.pk }}</a></td>
-            <td>{{ record.songrecording.song.title }}</td>
-            <td>{{ record.disc_number }}</td>
-            <td>{{ record.track_number }}</td>
-            <td>{{ record.songrecording.duration }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% endif %}
+    <div class="model-related">
+        <h2>Tracks</h2>
+        <a href="{% url 'pyamgmt:musicalbum:add-songrecording' musicalbum.pk %}">Add Track</a>
+        {% if qs_musicalbumtosongrecording %}
+        <table class="model-related__table">
+            <tr>
+                <th>M2MID</th>
+                <th>SongRecordingID</th>
+                <th>SongID</th>
+                <th>Title</th>
+                <th>Disc Number</th>
+                <th>Track Number</th>
+                <th>Duration</th>
+            </tr>
+            {% for record in qs_musicalbumtosongrecording %}
+            <tr>
+    {#            <td class="primary-key"><a href="{% url 'pyamgmt:musicalbumtosong:detail' record.pk %}">{{ record.pk }}</a></td>#}
+    {#            <td class="primary-key"><a href="{% url 'pyamgmt:song:detail' record.song.pk %}">{{ record.song.pk }}</a></td>#}
+                <td>{{ record.pk }}</td>
+                <td class="primary-key"><a href="{% url 'pyamgmt:songrecording:detail' record.songrecording.pk %}">{{ record.songrecording.pk }}</a></td>
+                <td class="primary-key"><a>{{ record.songrecording.song.pk }}</a></td>
+                <td>{{ record.songrecording.song.title }}</td>
+                <td>{{ record.disc_number }}</td>
+                <td>{{ record.track_number }}</td>
+                <td>{{ record.songrecording.duration }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
 </div>
 
 {% endblock content %}

@@ -100,7 +100,9 @@ class View(BaseView):
 
     def setup(self, request, **kwargs):
         super().setup(request, **kwargs)
-        self.context = {}
+        self.context = {
+            'model_class': getattr(self, 'model_class', None)
+        }
 
 
 class FormView(View):

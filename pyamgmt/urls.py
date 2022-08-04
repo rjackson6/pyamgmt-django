@@ -33,10 +33,10 @@ _accountassetfinancial_urls = ([
 
 _accountassetreal_urls = ([
     path('', pyamgmt.views.models.AccountAssetRealListView.as_view(), name='list'),
-    path('add/', pyamgmt.views.models.AccountAssetFormView.as_view(), name='add'),
+    path('add/', pyamgmt.views.models.AccountAssetRealFormView.as_view(), name='add'),
     path('<int:accountassetreal_pk>/', include([
-        path('', pyamgmt.views.models.AccountAssetDetailView.as_view(), name='detail'),
-        path('edit/', pyamgmt.views.models.AccountAssetFormView.as_view(), name='edit')
+        path('', pyamgmt.views.models.AccountAssetRealDetailView.as_view(), name='detail'),
+        path('edit/', pyamgmt.views.models.AccountAssetRealFormView.as_view(), name='edit')
     ]))
 ], app_name)
 
@@ -231,7 +231,7 @@ _payee_urls = ([
 ], app_name)
 
 _person_urls = ([
-    path('', pyamgmt.views.models.person_list, name='list'),
+    path('', pyamgmt.views.models.PersonListView.as_view(), name='list'),
     path('add/', pyamgmt.views.models.PersonFormView.as_view(), name='add'),
     path('<int:person_pk>/', include([
         path('', pyamgmt.views.models.person_detail, name='detail'),

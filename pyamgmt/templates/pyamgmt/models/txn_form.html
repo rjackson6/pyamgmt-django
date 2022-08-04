@@ -7,7 +7,7 @@
 <h1>Transaction (TXN)</h1>
 <form method="post" class="form">
     {% csrf_token %}
-    {{ form }}
+    {{ form.as_p }}
     <h2>Line Items:</h2>
     <table>
         {{ formset }}

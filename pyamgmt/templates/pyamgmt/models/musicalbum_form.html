@@ -16,7 +16,7 @@
 {% endif %}
 <!-- form method="post" class="form" style="border: 1px solid red;">
     {% csrf_token %}
-    {{ form }}
+    {{ form.as_p }}
     <button type="submit">Submit</button>
 </form -->
 <form method="post" class="deform" id="my-form">{% csrf_token %}</form>

@@ -16,5 +16,10 @@ def fields(obj: django.db.models.Model) -> ImmutableList:
     return obj._meta.get_fields()
 
 
+def name(obj):
+    return str(getattr(obj, '__name__', ''))
+
+
 register.filter('doc', doc)
 register.filter('fields', fields)
+register.filter('name', name)

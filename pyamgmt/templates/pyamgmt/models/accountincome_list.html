@@ -5,30 +5,38 @@
 {% block title %}AccountIncome{% endblock title %}
 
 
+{% block crumbs %}
+{{ block.super }}
+<li class="breadcrumbs__item">AccountIncome</li>
+{% endblock crumbs %}
+
+
 {% block content %}
-
-<div class="model-list">
-    <h1>AccountIncome</h1>
-    <a href="{% url 'pyamgmt:accountincome:add' %}">Add</a>
-    <table>
-        <tr>
-            <th colspan="4">Account</th>
-        </tr>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Subtype</th>
-            <th>Parent Account</th>
-        </tr>
-        {% for accountincome in qs_accountincome %}
-        <tr>
-            <td class="primary-key"><a href="{% url 'pyamgmt:accountincome:detail' accountincome.pk %}">{{ accountincome.pk }}</a></td>
-            <td>{{ accountincome.account.name }}</td>
-            <td>{{ accountincome.account.subtype }}</td>
-            <td>{{ accountincome.account.parent_account }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<div class="model-listview">
+    <div class="model-heading">
+        <h1>AccountIncome</h1>
+        <a href="{% url 'pyamgmt:accountincome:add' %}">Add</a>
+    </div>
+    <div class="model-list__table-wrapper">
+        <table class="model-list__table">
+            <tr>
+                <th colspan="4">Account</th>
+            </tr>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Subtype</th>
+                <th>Parent Account</th>
+            </tr>
+            {% for accountincome in qs_accountincome %}
+            <tr>
+                <td class="primary-key"><a href="{% url 'pyamgmt:accountincome:detail' accountincome.pk %}">{{ accountincome.pk }}</a></td>
+                <td>{{ accountincome.account.name }}</td>
+                <td>{{ accountincome.account.subtype }}</td>
+                <td>{{ accountincome.account.parent_account }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
-
 {% endblock content %}

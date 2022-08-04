@@ -6,10 +6,10 @@
 
 <form method="post" class="form">
     {% csrf_token %}
-    {{ forms.asset }}
-    {{ forms.assetdiscrete }}
-    {{ forms.assetdiscretevehicle }}
-    <button type="submit">Submit</button>
+    <fieldset>{{ forms.asset.as_p }}</fieldset>
+    <fieldset>{{ forms.assetdiscrete.as_p }}</fieldset>
+    <fieldset>{{ forms.assetdiscretevehicle.as_p }}</fieldset>
+    <fieldset><button type="submit">Save</button></fieldset>
 </form>
 
 {% endblock content %}

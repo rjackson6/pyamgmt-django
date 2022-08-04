@@ -5,14 +5,20 @@
 
 {% block content %}
 <h1>TxnLineItem</h1>
-<a href="{% url 'pyamgmt:txnlineitem:add' %}">Add</a>
+{#<a href="{% url 'pyamgmt:txnlineitem:add' %}">Add</a>#}
 <table>
     <tr>
         <th>ID</th>
+        <th>Account</th>
+        <th>Amount</th>
+        <th>Debit</th>
     </tr>
     {% for txnlineitem in qs_txnlineitem %}
     <tr>
         <td class="primary-key"><a href="{% url 'pyamgmt:txnlineitem:detail' txnlineitem.pk %}">{{ txnlineitem.pk }}</a></td>
+        <td>{{ txnlineitem.account }}</td>
+        <td>{{ txnlineitem.amount }}</td>
+        <td>{{ txnlineitem.debit }}</td>
     </tr>
     {% endfor %}
 </table>
