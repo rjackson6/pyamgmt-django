@@ -13,11 +13,12 @@ from django.http import (
     HttpResponseNotAllowed,
 )
 from django.utils.decorators import classonlymethod
+import django.views
 
 logger = logging.getLogger("django.request")
 
 
-class BaseView:
+class BaseView(django.views.View):
     """Forbids the use of *args from views, which as far as I can tell, are only
     passed from unnamed capturing groups in URLs.
     Also got rid of as_view(**init_kwargs), because I will probably never put
@@ -38,6 +39,10 @@ class BaseView:
         'options',
         'trace',
     ]
+
+    # noinspection PyMissingConstructor
+    def __init__(self):
+        pass
 
     @classonlymethod
     def as_view(cls):
@@ -65,9 +70,7 @@ class BaseView:
         self.kwargs = kwargs
 
     def dispatch(self, request, **kwargs):
-        if hasattr(self, 'handle'):
-            handler = self.handle
-        elif request.method.lower() in self.http_method_names:
+        if request.method.lower() in self.http_method_names:
             handler = getattr(
                 self, request.method.lower(), self.http_method_not_allowed
             )
@@ -98,12 +101,6 @@ class View(BaseView):
     def __init__(self):
         self.context = None
 
-    def setup(self, request, **kwargs):
-        super().setup(request, **kwargs)
-        self.context = {
-            'model_class': getattr(self, 'model_class', None)
-        }
-
 
 class FormView(View):
     def __init__(self):
@@ -128,3 +125,8 @@ class MultiFormView(View):
     def __init__(self):
         super().__init__()
         self.forms = Forms()
+
+
+# TODO: I'm still tempted to make more subclasses like Django.
+class ModelView(View):
+    pass
