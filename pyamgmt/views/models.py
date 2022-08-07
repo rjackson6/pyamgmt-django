@@ -39,7 +39,11 @@ class AccountListView(View):
         paginator = Paginator(qs_account, 50)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        self.context.update({'qs_account': qs_account, 'page_obj': page_obj})
+        self.context.update({
+            'model_class': Account,
+            'qs_account': qs_account,
+            'page_obj': page_obj,
+        })
         return render(request, 'pyamgmt/models/account_list.html', self.context)
 
 
@@ -48,8 +52,7 @@ class AccountDetailView(View):
         account = (
             Account.objects
             .prefetch_related('txnlineitem_set__txn__payee')
-            .get(pk=account_pk)
-        )
+            .get(pk=account_pk))
         self.context.update({'account': account})
         return render(request, 'pyamgmt/models/account_detail.html', self.context)
 

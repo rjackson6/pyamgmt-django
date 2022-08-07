@@ -422,6 +422,18 @@ urlpatterns = [
     path('vehicle-model/', include(_vehiclemodel_urls, namespace='vehiclemodel')),
     path('vehicle-trim/', include(_vehicletrim_urls, namespace='vehicletrim')),
     path('vehicle-year/', include(_vehicleyear_urls, namespace='vehicleyear')),
+    # Alternate Generic URLs
+    path('generic/', include([
+        path('account/', include([
+            path('', pyamgmt.views.generic.AccountListView.as_view()),
+            path('add/', pyamgmt.views.generic.AccountCreateView.as_view()),
+            path('<int:pk>/', include([
+                path('', pyamgmt.views.generic.AccountDetailView.as_view()),
+                path('edit/', pyamgmt.views.generic.AccountUpdateView.as_view()),
+                path('delete/', pyamgmt.views.generic.AccountDeleteView.as_view()),
+            ])),
+        ])),
+    ])),
     # Specialized URLs
     path('experimental/', pyamgmt.views.experimental.current, name='experimental'),
     path('txn-register/', pyamgmt.views.txn_register.TxnRegister.as_view(), name='txn-register')

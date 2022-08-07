@@ -5,30 +5,57 @@
 {% block title %}Account{% endblock title %}
 
 
-{% block content %}
+{% block breadcrumbs %}
+{{ block.super }}
+<li class="breadcrumbs__item">Account</li>
+{% endblock breadcrumbs %}
 
+
+{% block content %}
 <div class="model-list">
-    <h1>Account</h1>
-    {#<a href="{% url 'pyamgmt:account:add' %}">Add</a>#}
-    <p>{{ qs_account.model|doc }}</p>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Subtype</th>
-            <th>Name</th>
-            <th>Debits</th>
-            <th>Credits</th>
-        </tr>
-        {% for account in qs_account %}
-        <tr class="record">
-            <td class="primary-key"><a href="{% url 'pyamgmt:account:detail' account.pk %}">{{ account.pk }}</a></td>
-            <td>{{ account.subtype }}</td>
-            <td>{{ account.name }}</td>
-            <td>{% if account.debits %}${{ account.debits|floatformat:0 }}{% endif %}</td>
-            <td>{% if account.credits %}${{ account.credits|floatformat:0 }}{% endif %}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
+    <header class="model-list__header">
+        <h1 class="model-list__title">Account</h1>
+        <div class="model-list__actions">
+            <ul>
+                <li><a href="{% url 'pyamgmt:pyamgmt:add' %}">Add</a></li>
+            </ul>
+        </div>
+        <div class="model-list__model-info">
+            <p>{{ model_class|doc }}</p>
+        </div>
+    </header>
+
+    <div class="model-list__content">
+        <div class="model-list__page-control">
+            {% include 'core/page_control.html' %}
+        </div>
+        <div class="model-list__table-wrapper">
+            <table class="model-list__table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Subtype</th>
+                        <th>Name</th>
+                        <th>Debits</th>
+                        <th>Credits</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in page_obj %}
+                    <tr class="record">
+                        <td class="primary-key">
+                            <a href="{% url 'pyamgmt:account:detail' account.pk %}">{{ account.pk }}</a>
+                        </td>
+                        <td>{{ account.subtype }}</td>
+                        <td>{{ account.name }}</td>
+                        <td>{% if account.debits %}${{ account.debits|floatformat:0 }}{% endif %}</td>
+                        <td>{% if account.credits %}${{ account.credits|floatformat:0 }}{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> <!-- model-list__table -->
+        </div> <!-- model-list__table-wrapper -->
+    </div> <!-- model-list__content -->
+</div> <!-- model-list -->
 
 {% endblock content %}

@@ -197,3 +197,6 @@ STATICFILES_DIRS = [
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+if DEBUG:
+    TEMPLATES[0]['OPTIONS']['string_if_invalid'] = '[INVALID %s]'
