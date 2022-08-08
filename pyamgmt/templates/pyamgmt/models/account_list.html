@@ -11,19 +11,24 @@
 {% endblock breadcrumbs %}
 
 
+{% block nav %}
+{% include 'pyamgmt/includes/model_list_nav.htm' %}
+{% endblock nav %}
+
+
 {% block content %}
 <div class="model-list">
-    <header class="model-list__header">
-        <h1 class="model-list__title">Account</h1>
-        <div class="model-list__actions">
-            <ul>
-                <li><a href="{% url 'pyamgmt:pyamgmt:add' %}">Add</a></li>
-            </ul>
-        </div>
-        <div class="model-list__model-info">
-            <p>{{ model_class|doc }}</p>
-        </div>
-    </header>
+{#    <header class="model-list__header">#}
+{#        <h1 class="model-list__title">{{ model_class|name }}</h1>#}
+{#        <div class="model-list__actions">#}
+{#            <ul>#}
+{#                <li><a href="{% url 'pyamgmt:pyamgmt:add' %}">Add</a></li>#}
+{#            </ul>#}
+{#        </div>#}
+{#        <div class="model-list__model-info">#}
+{#            <p>{{ model_class|doc }}</p>#}
+{#        </div>#}
+{#    </header>#}
 
     <div class="model-list__content">
         <div class="model-list__page-control">

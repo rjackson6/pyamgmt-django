@@ -3,103 +3,30 @@ __all__ = [
     'FormView', 'MultiFormView',
 ]
 
+import copy
 import logging
 from typing import Callable
 
+from django.core.paginator import Paginator
+from django.db.models.query import QuerySet
 import django.forms
-from django.http import (
-    HttpRequest,
-    HttpResponse,
-    HttpResponseNotAllowed,
-)
+from django.http import HttpRequest
+from django.template.response import TemplateResponse
 from django.utils.decorators import classonlymethod
-import django.views
+
+import ccbv.views
 
 logger = logging.getLogger("django.request")
 
 
-class BaseView(django.views.View):
-    """Forbids the use of *args from views, which as far as I can tell, are only
-    passed from unnamed capturing groups in URLs.
-    Also got rid of as_view(**init_kwargs), because I will probably never put
-    that logic in the URL conf.
-    """
-    get: Callable
-    head: Callable
-    request: HttpRequest
-    kwargs: dict
-
-    http_method_names = [
-        'get',
-        'post',
-        'put',
-        'patch',
-        'delete',
-        'head',
-        'options',
-        'trace',
-    ]
-
-    # noinspection PyMissingConstructor
+# Local Custom Classes
+class View(ccbv.views.View):
     def __init__(self):
-        pass
+        super().__init__()
+        self.context = {}
 
-    @classonlymethod
-    def as_view(cls):
-        def view(request, **kwargs):
-            self = cls()
-            self.setup(request, **kwargs)
-            if not hasattr(self, 'request'):
-                raise AttributeError(
-                    "%s instance has no 'request' attribute. Did you override "
-                    "setup() and forget to call super()?" % cls.__name__
-                )
-            return self.dispatch(request, **kwargs)
-
-        view.view_class = cls
-        view.__doc__ = cls.__doc__
-        view.__module__ = cls.__module__
-        view.__annotations__ = cls.dispatch.__annotations__
-        view.__dict__.update(cls.dispatch.__dict__)
-        return view
-
-    def setup(self, request, **kwargs) -> None:
-        if hasattr(self, 'get') and not hasattr(self, 'head'):
-            self.head = self.get
-        self.request = request
-        self.kwargs = kwargs
-
-    def dispatch(self, request, **kwargs):
-        if request.method.lower() in self.http_method_names:
-            handler = getattr(
-                self, request.method.lower(), self.http_method_not_allowed
-            )
-        else:
-            handler = self.http_method_not_allowed
-        return handler(request, **kwargs)
-
-    def http_method_not_allowed(self, request, **_kwargs):
-        logger.warning(
-            "Method Not Allowed (%s): %s",
-            request.method,
-            request.path,
-            extra={'status_code': 405, 'request': request},
-        )
-        return HttpResponseNotAllowed(self._allowed_methods())
-
-    def options(self, _request, **_kwargs):
-        response = HttpResponse()
-        response.headers['Allow'] = ', '.join(self._allowed_methods())
-        response.headers['Content-Length'] = '0'
-        return response
-
-    def _allowed_methods(self):
-        return [m.upper() for m in self.http_method_names if hasattr(self, m)]
-
-
-class View(BaseView):
-    def __init__(self):
-        self.context = None
+    # def get_context_data(self, **kwargs):
+    #     return kwargs
 
 
 class FormView(View):
@@ -127,6 +54,74 @@ class MultiFormView(View):
         self.forms = Forms()
 
 
-# TODO: I'm still tempted to make more subclasses like Django.
 class ModelView(View):
     pass
+
+
+class ModelDetailView(ModelView):
+    pass
+    # content_type = None
+    # context_object_name = None
+    # extra_context = None
+    # model = None
+    # pk_url_kwarg = 'pk'
+    # query_and_pk_slug = False
+    # queryset = None
+    # response_class = TemplateResponse
+    # slug_field = 'slug'
+    # slug_url_kwarg = 'slug'
+    # template_engine = None
+    # template_name = None
+    # template_name_suffix = '_list'
+
+    # get()
+    # get_context_data = generic.detail.SingleObjectMixin.get_context_data
+    # get_context_object_name = generic.detail.SingleObjectMixin.get_context_object_name
+    # get_queryset = generic.detail.SingleObjectMixin.get_queryset
+    # get_slug_field = generic.detail.SingleObjectMixin.get_slug_field
+    # get_template_names()
+    # render_to_response()
+
+
+class ModelListView(ModelView):
+    pass
+    # allow_empty = True
+    # content_type = None
+    # context_object_name = None
+    # extra_context = None
+    # model = None
+    # ordering = None
+    # page_kwarg = "page"
+    # paginate_by = None  # int
+    # paginate_orphans = 0
+    # paginator_class = Paginator
+    # queryset = None
+    # response_class = TemplateResponse
+    # template_engine = None
+    # template_name = None
+    # template_name_suffix = '_list'
+
+    # get = generic.list.BaseListView.get
+    # get_allow_empty = generic.list.MultipleObjectMixin.get_allow_empty
+    # get_context_data = generic.list.MultipleObjectMixin.get_context_data
+    # get_context_object_name = generic.list.MultipleObjectMixin.get_context_object_name
+    # get_ordering = generic.list.MultipleObjectMixin.get_ordering
+    # get_paginate_by = generic.list.MultipleObjectMixin.get_paginate_by
+    # get_paginate_orphans = generic.list.MultipleObjectMixin.get_paginate_orphans
+    # get_paginator = generic.list.MultipleObjectMixin.get_paginator
+    # get_queryset = generic.list.MultipleObjectMixin.get_queryset
+    # get_template_names = generic.list.MultipleObjectTemplateResponseMixin.get_template_names
+    # paginate_queryset = generic.list.MultipleObjectMixin.paginate_queryset
+    # render_to_response = generic.base.TemplateResponseMixin.render_to_response
+
+
+class ModelFormView(ModelView):
+    def __init__(self):
+        super().__init__()
+        self.form = None
+
+
+class ModelMultiFormView(ModelView):
+    def __init__(self):
+        super().__init__()
+        self.forms = Forms()

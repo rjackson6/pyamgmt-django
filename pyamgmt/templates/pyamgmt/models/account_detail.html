@@ -5,9 +5,18 @@
 {% block title %}{{ model_class|name }}: {{ account }}{% endblock title %}
 
 
+{% block nav %}
+{% include 'pyamgmt/includes/model_detail_nav.htm' with object=account %}
+{% endblock nav %}
+
+
 {% block breadcrumbs %}
 {{ block.super }}
-<li class="breadcrumbs__item"><a class="breadcrumbs__link" href="{% url 'pyamgmt:pyamgmt:list' %}">{{ model_class|name }}</a></li>
+<li class="breadcrumbs__item">
+    <a class="breadcrumbs__link" href="{% url 'pyamgmt:pyamgmt:list' %}">
+       {{ model_class|name }}
+    </a>
+</li>
 <li class="breadcrumbs__item">{{ account }}</li>
 {% endblock breadcrumbs %}
 

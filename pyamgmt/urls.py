@@ -9,7 +9,8 @@ _account_urls = ([
     path('add/', pyamgmt.views.models.AccountFormView.as_view(), name='add'),
     path('<int:account_pk>/', include([
         path('', pyamgmt.views.models.AccountDetailView.as_view(), name='detail'),
-        path('edit/', pyamgmt.views.models.AccountFormView.as_view(), name='edit')
+        path('edit/', pyamgmt.views.models.AccountFormView.as_view(), name='edit'),
+        path('delete/', pyamgmt.views.models.AccountDeleteView.as_view(), name='delete'),
     ]))
 ], app_name)
 

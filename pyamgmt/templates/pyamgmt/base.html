@@ -22,16 +22,25 @@
 
 
 {% block _main %}
-{% block nav %}
+{# Left-side nav #}
+{% block _nav %}
 <nav class="nav">
+    {% block nav %}
+    {% endblock nav %}
+    {% block nav__toplevel %}
+    <h3>Index</h3>
     <ul>
         <li><a href="{% url 'pyamgmt:home' %}">Home</a></li>
         <li><a href="{% url 'admin:index' %}">Admin</a></li>
         <li><a href="{% url 'pyamgmt:txn-register' %}">Txn Register</a></li>
     </ul>
+    {% endblock nav__toplevel %}
+    {% block nav__models %}
+    <h3>Models</h3>
     {% include 'pyamgmt/snippets/models_ul.htm' %}
+    {% endblock nav__models %}
 </nav>
-{% endblock nav %}
+{% endblock _nav %}
 {{ block.super }}
 {% endblock _main %}
 

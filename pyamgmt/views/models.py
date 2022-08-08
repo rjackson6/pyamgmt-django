@@ -53,7 +53,10 @@ class AccountDetailView(View):
             Account.objects
             .prefetch_related('txnlineitem_set__txn__payee')
             .get(pk=account_pk))
-        self.context.update({'account': account})
+        self.context.update({
+            'model_class': Account,
+            'account': account,
+        })
         return render(request, 'pyamgmt/models/account_detail.html', self.context)
 
 
@@ -78,6 +81,15 @@ class AccountFormView(FormView):
             if account.subtype == Account.Subtype.ASSET:
                 account_asset, _ = AccountAsset.objects.get_or_create(account=account)
             return redirect('pyamgmt:account:list')
+        return self.render(request)
+
+
+class AccountDeleteView(FormView):
+    def render(self, request):
+        self.context.update({'form': self.form})
+        return render(request, 'pyamgmt/models/account_form.html', self.context)  # TODO
+
+    def get(self, request, **_kwargs):
         return self.render(request)
 
 

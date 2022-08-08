@@ -4,7 +4,7 @@
         "h h"
         "n m"
         "n f";
-    grid-template-columns: auto 1fr;
+    grid-template-columns: min-content auto;
     grid-template-rows: auto minmax(80vh, 1fr) auto;
     height: 100%;
     border: 4px solid black;
@@ -41,7 +41,8 @@
 
 .nav {
     grid-area: n;
-    overflow-y: auto;
+    margin-left: 1rem;
+    overflow: auto;
     padding-right: 1rem;
 }
 
