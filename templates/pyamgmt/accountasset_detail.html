@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail</title>
+</head>
+<body>
+<div>
+    <h1>object</h1>
+    <h2>{{ object }}</h2>
+    <h1>view</h1>
+    <h2>{{ view }}</h2>
+    <ul>
+        <li>args: {{ view.args }}</li>
+        <li>content_type: {{ view.content_type }}</li>
+        <li>context_object_name: {{ view.context_object_name }}</li>
+        <li>dispatch: {{ view.dispatch }}</li>
+        <li>extra_context: {{ view.extra_context }}</li>
+        <li>get: {{ view.get }}</li>
+        <li>get_context_data: {{ view.get_context_data }}</li>
+        <li>get_context_object_name: {{ view.get_context_object_name }}</li>
+        <li>get_object: {{ view.get_object }}</li>
+        <li>get_queryset: {{ view.get_queryset }}</li>
+        <li>get_slug_field: {{ view.get_slug_field }}</li>
+        <li>get_template_names: {{ view.get_template_names }}</li>
+        <li>kwargs: {{ view.kwargs }}</li>
+        <li>model: {{ view.model }}</li>
+        <li>object: {{ view.object }}</li>
+        <li>pk_url_kwarg: {{ view.pk_url_kwarg }}</li>
+        <li>query_pk_and_slug: {{ view.query_pk_and_slug }}</li>
+        <li>queryset: {{ view.queryset }}</li>
+        <li>render_to_response: {{ view.render_to_response }}</li>
+        <li>request: {{ view.request }}</li>
+        <li>response_class: {{ view.response_class }}</li>
+        <li>setup: {{ view.setup }}</li>
+        <li>slug_field: {{ view.slug_field }}</li>
+        <li>slug_url_kwarg: {{ view.slug_url_kwarg }}</li>
+        <li>template_name: {{ view.template_name }}</li>
+    </ul>
+</div>
+</body>
+</html>

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'schemaviz.apps.SchemavizConfig',
     'core.apps.CoreConfig',
     'pyamgmt.apps.PyamgmtConfig',
+    'sandbox.apps.SandboxConfig',
 ]
 
 MIDDLEWARE = [

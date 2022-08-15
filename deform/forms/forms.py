@@ -9,9 +9,10 @@ from django.utils.translation import gettext as _
 class BaseForm(django.forms.BaseForm):
     """Extends BaseForm methods for JSON-friendly output.
     Based on:
-    - BaseForm._html_output()
+    - BaseForm._html_output(), which is now deprecated
     """
     # TODO: Debug hooks
+    # TODO: Django 4.x has changed. get_context() and render() are available.
     def __init__(self,
                  data: Optional[dict] = None,
                  files: Optional[dict] = None,

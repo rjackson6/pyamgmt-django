@@ -18,12 +18,16 @@ __all__ = [
     'TxnLineItemFormSet'
 ]
 
+import logging
+
 from django import forms
 
 from deform.forms import ModelForm, inlineformset_factory
 
 from pyamgmt.forms.fields import *
 from pyamgmt.models import *
+
+logger = logging.getLogger(__name__)
 
 BASE_AUDITABLE_FIELDS = ('timestamp_created', 'timestamp_modified')
 

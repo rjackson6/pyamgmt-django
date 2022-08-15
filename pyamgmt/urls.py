@@ -434,8 +434,24 @@ urlpatterns = [
                 path('delete/', pyamgmt.views.generic.AccountDeleteView.as_view()),
             ])),
         ])),
+        path('accountasset/', include([
+            path('', pyamgmt.views.generic.AccountAssetListView.as_view()),
+            # path('add/', pyamgmt.views.generic.AccountCreateView.as_view()),
+            path('<int:pk>/', include([
+                path('', pyamgmt.views.generic.AccountAssetDetailView.as_view()),
+                path('edit/', pyamgmt.views.generic.AccountAssetUpdateView.as_view()),
+            #     path('delete/', pyamgmt.views.generic.AccountDeleteView.as_view()),
+            ])),
+        ])),
+    ])),
+    path('custom/', include([
+        path('account-asset/', include([
+            path('add/', pyamgmt.views.experimental.AccountAssetCreateView.as_view()),
+            path('<int:pk>/', include([
+                path('edit/', pyamgmt.views.experimental.AccountAssetUpdateView.as_view()),
+            ])),
+        ])),
     ])),
     # Specialized URLs
-    path('experimental/', pyamgmt.views.experimental.current, name='experimental'),
     path('txn-register/', pyamgmt.views.txn_register.TxnRegister.as_view(), name='txn-register')
 ]

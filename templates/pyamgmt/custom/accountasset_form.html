@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Form</title>
+</head>
+<body>
+<div>
+    <form>{{ forms }}</form>
+    <form>
+        <h2>Account</h2>
+        {{ forms.account.as_p }}
+        <h2>AccountAsset</h2>
+        {{ forms.accountasset.as_p }}
+
+    </form>
+</div>
+</body>
+</html>
