@@ -1,0 +1,13 @@
+{
+  "name": "pyamgmtdjango",
+  "version": "1.0.0",
+  "description": "## Introduction",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
