@@ -32,12 +32,23 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Django bundled
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third-party apps
+    # --
+    # Local Dependencies
+    'ccbv',
+    'schemaviz',
+    # Local Apps
+    'base',
+    'accounts',
+    'core',
+    'sandbox',
 ]
 
 MIDDLEWARE = [
@@ -55,8 +66,7 @@ ROOT_URLCONF = 'pyamgmtDjango.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,3 +133,57 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+##############################
+# Additional Django Settings #
+##############################
+
+INTERNAL_IPS = ['127.0.0.1']
+
+AUTH_USER_MODEL = 'accounts.User'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': BASE_DIR / 'var' / 'tmp' / 'django_cache'
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler'
+        }
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO'
+    }
+}
+
+LOGIN_REDIRECT_URL = '/'
+
+MEDIA_ROOT = BASE_DIR / 'var' / 'media'
+
+MEDIA_URL = '/media/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+##########
+# CUSTOM #
+##########
+
+STATIC_RESOURCES = {}
+
+################
+# CONDITIONALS #
+################
+
+if DEBUG:
+    TEMPLATES[0]['OPTIONS']['string_if_invalid'] = '[INVALID %s]'
