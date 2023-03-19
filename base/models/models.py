@@ -1,9 +1,15 @@
+__all__ = ['Base', 'BaseAuditable']
+
 from django.db import models
 from django.db.models.fields import DateTimeField
 
 
 # Create your models here.
 class Base(models.Model):
+    """Simple Django abstract Model class.
+
+    Prevents Django from instantiating a Model from a template call.
+    """
     do_not_call_in_templates = True
 
     class Meta:
@@ -14,6 +20,7 @@ class Base(models.Model):
 
 
 class BaseAuditable(Base):
+    """Adds auto-timestamps as fields."""
     timestamp_created = DateTimeField(auto_now_add=True)
     timestamp_modified = DateTimeField(auto_now=True)
 
