@@ -28,25 +28,24 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
     # Django bundled
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    # 'django.contrib.admin',
+    # 'django.contrib.auth',
+    # 'django.contrib.contenttypes',
+    # 'django.contrib.sessions',
+    # 'django.contrib.messages',
+    # 'django.contrib.staticfiles',
     # Third-party apps
-    # --
+    # 'debug_toolbar',
     # Local Dependencies
     'ccbv',
     'schemaviz',
     # Local Apps
     'base',
-    'accounts',
+    # 'accounts',
     'core',
     'sandbox',
 ]
@@ -59,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Third-party
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'pyamgmtDjango.urls'
@@ -88,7 +89,7 @@ WSGI_APPLICATION = 'pyamgmtDjango.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'var' / 'db.sqlite3',
     }
 }
 
@@ -138,9 +139,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Additional Django Settings #
 ##############################
 
-INTERNAL_IPS = ['127.0.0.1']
+# AUTH_USER_MODEL = 'accounts.User'
 
-AUTH_USER_MODEL = 'accounts.User'
+INTERNAL_IPS = ['127.0.0.1']
 
 CACHES = {
     'default': {

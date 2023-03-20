@@ -4,3 +4,4 @@ __pycache__
 
 /etc/
 /node_modules/
+/var/
