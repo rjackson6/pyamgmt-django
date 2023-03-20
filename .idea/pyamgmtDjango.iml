@@ -17,7 +17,7 @@
       <excludeFolder url="file://$MODULE_DIR$/var" />
       <excludeFolder url="file://$MODULE_DIR$/etc" />
     </content>
-    <orderEntry type="jdk" jdkName="Poetry (pyamgmtDjango) local-py-3.11.2" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Poetry (pyamgmtDjango)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">

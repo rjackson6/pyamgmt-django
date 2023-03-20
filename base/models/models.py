@@ -1,11 +1,12 @@
 __all__ = ['Base', 'BaseAuditable']
 
-from django.db import models
+from django.db.models import Model
 from django.db.models.fields import DateTimeField
 
+# from base.db.models.base import Model
 
-# Create your models here.
-class Base(models.Model):
+
+class Base(Model):
     """Simple Django abstract Model class.
 
     Prevents Django from instantiating a Model from a template call.
