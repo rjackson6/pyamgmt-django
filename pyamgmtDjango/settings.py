@@ -32,20 +32,20 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # Django bundled
-    # 'django.contrib.admin',
-    # 'django.contrib.auth',
-    # 'django.contrib.contenttypes',
-    # 'django.contrib.sessions',
-    # 'django.contrib.messages',
-    # 'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     # Third-party apps
-    # 'debug_toolbar',
+    'debug_toolbar',
     # Local Dependencies
     'ccbv',
     'schemaviz',
     # Local Apps
     'base',
-    # 'accounts',
+    'accounts',
     'core',
     'sandbox',
 ]
