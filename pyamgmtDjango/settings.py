@@ -10,14 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 with open(BASE_DIR / 'etc' / 'sk.txt') as f:
@@ -139,7 +136,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Additional Django Settings #
 ##############################
 
-# AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 INTERNAL_IPS = ['127.0.0.1']
 
@@ -153,6 +150,12 @@ CACHES = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': "{levelname} {asctime} {message}",
+            'style': '{'
+        }
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler'
@@ -161,6 +164,14 @@ LOGGING = {
     'root': {
         'handlers': ['console'],
         'level': 'INFO'
+    },
+    # From the docs
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'CRITICAL'),
+            'propagate': False,
+        }
     }
 }
 

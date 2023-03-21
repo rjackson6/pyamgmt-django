@@ -55,11 +55,6 @@ from django.db.models import (
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-# from base.db.models.fields.related import (
-#     ForeignKey,
-#     OneToOneField,
-#     ManyToManyField,
-# )
 from base.models import BaseAuditable
 from base.models.fields import UpperCharField
 from base.validators import (
@@ -600,13 +595,13 @@ class MusicAlbum(BaseAuditable):
     def __str__(self):
         return f'{self.title}'
 
-    @cached_property
-    def duration(self):
-        return self.songrecordings.aggregate(Sum('duration'))['duration__sum']
-
-    @cached_property
-    def total_songs(self):
-        return self.songrecordings.count()
+    # @cached_property
+    # def duration(self):
+    #     return self.songrecordings.aggregate(Sum('duration'))['duration__sum']
+    #
+    # @cached_property
+    # def total_songs(self):
+    #     return self.songrecordings.count()
 
 
 class MusicAlbumArtwork(BaseAuditable):

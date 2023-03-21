@@ -3,7 +3,7 @@ __all__ = ['Base', 'BaseAuditable']
 from django.db.models import Model
 from django.db.models.fields import DateTimeField
 
-# from base.db.models.base import Model
+from base.utils import camel_case_to_snake_case
 
 
 class Base(Model):
@@ -18,6 +18,10 @@ class Base(Model):
 
     def __str__(self):
         return f"{self.__class__.__name__} {self.pk}"
+
+    @classmethod
+    def model_name_snake_case(cls) -> str:
+        return camel_case_to_snake_case(cls.__name__)
 
 
 class BaseAuditable(Base):
