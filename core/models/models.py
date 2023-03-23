@@ -179,8 +179,8 @@ class AccountAssetReal(BaseAuditable):
     Examples: a vehicle, or real estate.
     Implies inherent value, and may be subject to depreciation.
     """
-    accountasset = OneToOneField(AccountAsset, on_delete=CASCADE, primary_key=True)
-    accountasset_id: int
+    account_asset = OneToOneField(AccountAsset, on_delete=CASCADE, primary_key=True)
+    account_asset_id: int
     # TODO: Decide if I want `limit_choices_to=` here. If so, needs a callback.
     asset = ForeignKey('Asset', on_delete=SET_NULL, null=True, blank=True)
     asset_id: int
@@ -238,8 +238,8 @@ class AccountLiability(BaseAuditable):
 
 class AccountLiabilitySecured(BaseAuditable):
     """A liability account that is held against an asset."""
-    accountliability = OneToOneField(AccountLiability, on_delete=CASCADE, primary_key=True)
-    accountliability_id: int
+    account_liability = OneToOneField(AccountLiability, on_delete=CASCADE, primary_key=True)
+    account_liability_id: int
     asset = ForeignKey('Asset', on_delete=PROTECT)
     asset_id: int
 
@@ -273,16 +273,16 @@ class AssetDiscrete(BaseAuditable):
 
 class AssetDiscreteCatalogItem(BaseAuditable):
     """A discrete asset that can relate to a CatalogItem."""
-    assetdiscrete = OneToOneField(AssetDiscrete, on_delete=CASCADE, primary_key=True)
-    assetdiscrete_id: int
+    asset_discrete = OneToOneField(AssetDiscrete, on_delete=CASCADE, primary_key=True)
+    asset_discrete_id: int
     catalog_item = ForeignKey('CatalogItem', on_delete=PROTECT)
     catalog_item_id: int
 
 
 class AssetDiscreteVehicle(BaseAuditable):
     """A discrete asset that can be associated with a unique vehicle."""
-    assetdiscrete = OneToOneField(AssetDiscrete, on_delete=CASCADE, primary_key=True)
-    assetdiscrete_id: int
+    asset_discrete = OneToOneField(AssetDiscrete, on_delete=CASCADE, primary_key=True)
+    asset_discrete_id: int
     vehicle = OneToOneField('Vehicle', on_delete=PROTECT)
     vehicle_id: int
 
@@ -298,8 +298,8 @@ class AssetInventory(BaseAuditable):
     asset = OneToOneField(Asset, on_delete=CASCADE, primary_key=True)
     asset_id: int
     # CatalogItem is OneToOne because inventory should accumulate
-    catalogitem = OneToOneField('CatalogItem', on_delete=PROTECT)
-    catalogitem_id: int
+    catalog_item = OneToOneField('CatalogItem', on_delete=PROTECT)
+    catalog_item_id: int
     quantity = IntegerField(default=1)
 
 
@@ -353,7 +353,7 @@ class BookPublication(BaseAuditable):
     - This is where hardcover / paperback would live, I think
         - The ISBN is usually different between the two
     """
-    bookedition = ForeignKey(BookEdition, on_delete=PROTECT)
+    book_edition = ForeignKey(BookEdition, on_delete=PROTECT)
     format = None  # TODO
     publisher = None  # TODO
 
@@ -364,11 +364,11 @@ class BookToMotionPicture(BaseAuditable):
     The edition of the book doesn't really matter.
     """
     book = ForeignKey(Book, on_delete=CASCADE)
-    motionpicture = ForeignKey("MotionPicture", on_delete=CASCADE)
+    motion_picture = ForeignKey("MotionPicture", on_delete=CASCADE)
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=('book', 'motionpicture'), name='unique_booktomotionpicture')
+            UniqueConstraint(fields=('book', 'motion_picture'), name='unique_booktomotionpicture')
         ]
 
 
@@ -427,31 +427,31 @@ class CatalogItemDigitalSong(BaseAuditable):
     - Even if a song is released as a "Single", that "Single" still requires a
       medium for physical distribution, which makes it a "Single Album"
     """
-    catalogitem = OneToOneField(CatalogItem, on_delete=CASCADE, primary_key=True)
-    catalogitem_id: int
+    catalog_item = OneToOneField(CatalogItem, on_delete=CASCADE, primary_key=True)
+    catalog_item_id: int
 
 
 class CatalogItemMusicAlbumProduction(BaseAuditable):
     """A produced Music Album distributed in a particular format."""
-    catalogitem = OneToOneField(CatalogItem, on_delete=CASCADE, primary_key=True)
-    catalogitem_id: int
+    catalog_item = OneToOneField(CatalogItem, on_delete=CASCADE, primary_key=True)
+    catalog_item_id: int
     # Does
-    mediaformat = ForeignKey('MediaFormat', on_delete=SET_DEFAULT, default=get_default_mediaformat_audio)
-    mediaformat_id: int
-    # musicalbumproduction = ForeignKey('MusicAlbumProduction')
+    media_format = ForeignKey('MediaFormat', on_delete=SET_DEFAULT, default=get_default_mediaformat_audio)
+    media_format_id: int
+    # music_album_production = ForeignKey('MusicAlbumProduction')
 
 
 class CatalogItemToCatalogItem(BaseAuditable):
     """Holds relationships between CatalogItems to account for bundles."""
-    catalogitem_a = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
-    catalogitem_b = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
+    catalog_item_a = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
+    catalog_item_b = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
     relationship = None
 
 
 class CatalogItemToInvoiceLineItem(BaseAuditable):
     """Relates a CatalogItem record to an InvoiceLineItem record."""
-    invoicelineitem = OneToOneField('InvoiceLineItem', on_delete=CASCADE, primary_key=True)
-    invoicelineitem_id: int
+    invoice_line_item = OneToOneField('InvoiceLineItem', on_delete=CASCADE, primary_key=True)
+    invoice_line_item_id: int
     catalogitem = ForeignKey(CatalogItem, on_delete=PROTECT)
     catalogitem_id: int
     unit_price = CurrencyField()
@@ -475,8 +475,8 @@ class CatalogItemToOrderLineItem(BaseAuditable):
 
 class CatalogItemToPointOfSaleLineItem(BaseAuditable):
     """Relates a CatalogItem record to a PointOfSaleLineItem record"""
-    pointofsalelineitem = OneToOneField('PointOfSaleLineItem', on_delete=CASCADE, primary_key=True)
-    pointofsalelineitem_id: int
+    point_of_sale_line_item = OneToOneField('PointOfSaleLineItem', on_delete=CASCADE, primary_key=True)
+    point_of_sale_line_item_id: int
     catalogitem = ForeignKey(CatalogItem, on_delete=PROTECT)
     catalogitem_id: int
     quantity = DecimalField(max_digits=19, decimal_places=5, default=1)
@@ -514,13 +514,13 @@ class InvoiceLineItem(BaseAuditable):
 
 class InvoiceLineItemToNonCatalogItem(BaseAuditable):
     """Relates a NonCatalogItem record to an InvoiceLineItem record."""
-    invoicelineitem = OneToOneField(InvoiceLineItem, on_delete=CASCADE, primary_key=True)
-    invoicelineitem_id: int
-    noncatalogitem = ForeignKey('NonCatalogItem', on_delete=CASCADE)
-    noncatalogitem_id: int
+    invoice_line_item = OneToOneField(InvoiceLineItem, on_delete=CASCADE, primary_key=True)
+    invoice_line_item_id: int
+    non_catalog_item = ForeignKey('NonCatalogItem', on_delete=CASCADE)
+    non_catalog_item_id: int
 
     def __str__(self):
-        return f'InvoiceLineItemToNonCatalogItem {self.invoicelineitem_id}: {self.noncatalogitem_id}'
+        return f'InvoiceLineItemToNonCatalogItem {self.invoice_line_item_id}: {self.non_catalog_item_id}'
 
 
 class MediaFormat(BaseAuditable):
@@ -545,15 +545,15 @@ class MotionPictureRecording(BaseAuditable):
     """Released edition of a motion picture.
 
     Takes into account media (digital, DVD, maybe even distributor)"""
-    motionpicture = ForeignKey(MotionPicture, on_delete=PROTECT)
+    motion_picture = ForeignKey(MotionPicture, on_delete=PROTECT)
 
 
 class MotionPictureToMusicAlbum(BaseAuditable):
     """Relates a motion picture to its soundtrack and/or score."""
-    motionpicture = ForeignKey(MotionPicture, on_delete=CASCADE)
-    motionpicture_id: int
-    musicalbum = ForeignKey('MusicAlbum', on_delete=CASCADE)
-    musicalbum_id: int
+    motion_picture = ForeignKey(MotionPicture, on_delete=CASCADE)
+    motion_picture_id: int
+    music_album = ForeignKey('MusicAlbum', on_delete=CASCADE)
+    music_album_id: int
 
 
 class MotionPictureToSong(BaseAuditable):
@@ -561,8 +561,8 @@ class MotionPictureToSong(BaseAuditable):
     There are some conventions here. "Original Soundtrack" and "Music from the Motion Picture" sometimes imply
      different meanings. I don't know if soundtracks or film scores are always published, either.
     """
-    motionpicture = ForeignKey(MotionPicture, on_delete=CASCADE)
-    motionpicture_id: int
+    motion_picture = ForeignKey(MotionPicture, on_delete=CASCADE)
+    motion_picture_id: int
     song = ForeignKey("Song", on_delete=CASCADE)
     song_id: int
 
@@ -583,12 +583,12 @@ class MusicAlbum(BaseAuditable):
     year_copyright = PositiveSmallIntegerField(null=True, blank=True, validators=[validate_year_not_future])
     year_produced = PositiveSmallIntegerField(null=True, blank=True, validators=[validate_year_not_future])
     # Relationships
-    musicartists = ManyToManyField(
+    music_artists = ManyToManyField(
         'MusicArtist',
         through='MusicAlbumToMusicArtist',
         related_name='music_albums',
         blank=True)
-    # songrecordings = ManyToManyField(
+    # song_recordings = ManyToManyField(
     #     'SongRecording', through='MusicAlbumToSongRecording',
     #     blank=True)
 
@@ -597,21 +597,21 @@ class MusicAlbum(BaseAuditable):
 
     # @cached_property
     # def duration(self):
-    #     return self.songrecordings.aggregate(Sum('duration'))['duration__sum']
+    #     return self.song_recordings.aggregate(Sum('duration'))['duration__sum']
     #
     # @cached_property
     # def total_songs(self):
-    #     return self.songrecordings.count()
+    #     return self.song_recordings.count()
 
 
 class MusicAlbumArtwork(BaseAuditable):
     """Holds zero or many images relating to a MusicAlbum."""
-    musicalbum = ForeignKey(MusicAlbum, on_delete=CASCADE)
-    musicalbum_id: int
+    music_album = ForeignKey(MusicAlbum, on_delete=CASCADE)
+    music_album_id: int
     image = ImageField()
 
     def __str__(self):
-        return f'MusicAlbumArtwork {self.pk}: {self.musicalbum_id}'
+        return f'MusicAlbumArtwork {self.pk}: {self.music_album_id}'
 
 
 class MusicAlbumEdition(BaseAuditable):
@@ -621,7 +621,7 @@ class MusicAlbumEdition(BaseAuditable):
      Although formats are sometimes linked to editions. "DigiPak", "Bonus track"
      Remastered albums contain remastered tracks, maybe bonuses
     """
-    musicalbum = ForeignKey(MusicAlbum, on_delete=PROTECT)
+    music_album = ForeignKey(MusicAlbum, on_delete=PROTECT)
     total_discs = PositiveSmallIntegerField(default=1)  # TODO
     year_copyright = PositiveSmallIntegerField(null=True, blank=True, validators=[validate_year_not_future])
     year_produced = PositiveSmallIntegerField(null=True, blank=True, validators=[validate_year_not_future])
@@ -632,7 +632,7 @@ class MusicAlbumProduction(BaseAuditable):
 
 
     """
-    musicalbumedition = ForeignKey(MusicAlbumEdition, on_delete=PROTECT)
+    music_album_edition = ForeignKey(MusicAlbumEdition, on_delete=PROTECT)
     total_discs = PositiveSmallIntegerField(default=1)
     year_produced = PositiveSmallIntegerField(null=True, blank=True, validators=[validate_year_not_future])
 
@@ -647,44 +647,44 @@ class MusicAlbumToMusicArtist(BaseAuditable):
     This does not replace individual song artists, as there are "featured"
     tracks, or compilation albums.
     """
-    musicalbum = ForeignKey(MusicAlbum, on_delete=CASCADE)
-    musicalbum_id: int
-    musicartist = ForeignKey('MusicArtist', on_delete=CASCADE)
-    musicartist_id: int
+    music_album = ForeignKey(MusicAlbum, on_delete=CASCADE)
+    music_album_id: int
+    music_artist = ForeignKey('MusicArtist', on_delete=CASCADE)
+    music_artist_id: int
 
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=('musicalbum', 'musicartist'),
+                fields=('music_album', 'music_artist'),
                 name='unique_musicalbumtomusicartist')
         ]
 
     def __str__(self):
-        return f'MusicAlbumToMusicArtist {self.pk}: {self.musicalbum_id}-{self.musicartist_id}'
+        return f'MusicAlbumToMusicArtist {self.pk}: {self.music_album_id}-{self.music_artist_id}'
 
 
 class MusicAlbumToSongRecording(BaseAuditable):
     disc_number = PositiveSmallIntegerField(null=True, blank=True)
-    musicalbum = ForeignKey(MusicAlbum, on_delete=CASCADE)
-    musicalbum_id: int
-    songrecording = ForeignKey('SongRecording', on_delete=CASCADE)
-    songrecording_id: int
+    music_album = ForeignKey(MusicAlbum, on_delete=CASCADE)
+    music_album_id: int
+    song_recording = ForeignKey('SongRecording', on_delete=CASCADE)
+    song_recording_id: int
     track_number = PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=('musicalbum', 'songrecording'),
+                fields=('music_album', 'song_recording'),
                 name='unique_musicalbumtosongrecording'
             ),
             UniqueConstraint(
-                fields=('musicalbum', 'disc_number', 'track_number'),
+                fields=('music_album', 'disc_number', 'track_number'),
                 name='unique_musicalbumtosongrecording_disc_track'
             )
         ]
 
     def __str__(self):
-        return f'MusicAlbumToSongRecording {self.pk}: {self.musicalbum_id}-{self.songrecording_id}'
+        return f'MusicAlbumToSongRecording {self.pk}: {self.music_album_id}-{self.song_recording_id}'
 
 
 class MusicArtist(BaseAuditable):
@@ -702,7 +702,7 @@ class MusicArtist(BaseAuditable):
 
     @cached_property
     def total_albums(self):
-        return self.musicalbums.count()
+        return self.music_albums.count()
 
     @cached_property
     def total_songs(self):
@@ -711,14 +711,14 @@ class MusicArtist(BaseAuditable):
 
 class MusicArtistActivity(BaseAuditable):
     """Dates for MusicArtist activity, as bands can go on hiatus."""
-    musicartist = ForeignKey(MusicArtist, on_delete=CASCADE)
-    musicartist_id: int
+    music_artist = ForeignKey(MusicArtist, on_delete=CASCADE)
+    music_artist_id: int
     year_active = PositiveSmallIntegerField(validators=[validate_year_not_future])
     year_inactive = PositiveSmallIntegerField(null=True, blank=True, validators=[validate_year_not_future])
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=('musicartist', 'year_active'), name='unique_musicartistactivity')
+            UniqueConstraint(fields=('music_artist', 'year_active'), name='unique_musicartistactivity')
         ]
 
 
@@ -731,8 +731,8 @@ class MusicArtistToPerson(BaseAuditable):
     a group.
     Only "official" members of a band are considered.
     """
-    musicartist = ForeignKey(MusicArtist, on_delete=CASCADE)
-    musicartist_id: int
+    music_artist = ForeignKey(MusicArtist, on_delete=CASCADE)
+    music_artist_id: int
     person = ForeignKey('Person', on_delete=CASCADE)
     person_id: int
 
@@ -741,11 +741,11 @@ class MusicArtistToPerson(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=('musicartist', 'person'), name='unique_musicartisttoperson')
+            UniqueConstraint(fields=('music_artist', 'person'), name='unique_musicartisttoperson')
         ]
 
     def __str__(self):
-        return f'MusicArtistToPerson {self.pk}: {self.musicartist_id}-{self.person_id}'
+        return f'MusicArtistToPerson {self.pk}: {self.music_artist_id}-{self.person_id}'
 
     @property
     def is_active(self) -> Optional[bool]:
@@ -760,45 +760,45 @@ class MusicArtistToPerson(BaseAuditable):
 
 class MusicArtistToPersonActivity(BaseAuditable):
     """Holds records of when a person was part of a group or act."""
-    musicartisttoperson = ForeignKey(MusicArtistToPerson, on_delete=CASCADE)
-    musicartisttoperson_id: int
+    music_artist_to_person = ForeignKey(MusicArtistToPerson, on_delete=CASCADE)
+    music_artist_to_person_id: int
     date_active = DateField(validators=[validate_date_not_future])
     date_inactive = DateField(null=True, blank=True, validators=[validate_date_not_future])
 
 
 class MusicArtistToSong(BaseAuditable):
     """Relates a MusicArtist to a Song"""
-    musicartist = ForeignKey(MusicArtist, on_delete=CASCADE)
-    musicartist_id: int
+    music_artist = ForeignKey(MusicArtist, on_delete=CASCADE)
+    music_artist_id: int
     song = ForeignKey('Song', on_delete=CASCADE)
     song_id: int
     # role?
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=('musicartist', 'song'), name='unique_musicartisttosong')
+            UniqueConstraint(fields=('music_artist', 'song'), name='unique_musicartisttosong')
         ]
 
     def __str__(self):
-        return f'MusicArtistToSong {self.pk}: {self.musicartist_id}-{self.song_id}'
+        return f'MusicArtistToSong {self.pk}: {self.music_artist_id}-{self.song_id}'
 
 
 class MusicArtistToSongRecording(BaseAuditable):
-    musicartist = ForeignKey(MusicArtist, on_delete=CASCADE)
-    musicartist_id: int
-    songrecording = ForeignKey('SongRecording', on_delete=CASCADE)
-    songrecording_id: int
+    music_artist = ForeignKey(MusicArtist, on_delete=CASCADE)
+    music_artist_id: int
+    song_recording = ForeignKey('SongRecording', on_delete=CASCADE)
+    song_recording_id: int
 
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=('musicartist', 'songrecording'),
+                fields=('music_artist', 'song_recording'),
                 name='unique_musicartisttosongrecording'
             )
         ]
 
     def __str__(self):
-        return f'MusicArtistToSongRecording {self.pk}: {self.musicartist_id}-{self.songrecording_id}'
+        return f'MusicArtistToSongRecording {self.pk}: {self.music_artist_id}-{self.song_recording_id}'
 
 
 class NonCatalogItem(BaseAuditable):
@@ -836,7 +836,7 @@ class Party(BaseAuditable):
         COMPANY = 'BUSINESS'
         PERSON = 'PERSON'
     name = CharField(max_length=255)
-    partytype = ForeignKey('PartyType', on_delete=SET_NULL, null=True, blank=True)
+    party_type = ForeignKey('PartyType', on_delete=SET_NULL, null=True, blank=True)
     subtype = CharField(max_length=31, choices=Subtype.choices)
 
     def __str__(self):
@@ -863,7 +863,7 @@ class PartyPerson(BaseAuditable):
 
 class PartyType(BaseAuditable):
     name = CharField(max_length=255)
-    parent_partytype = ForeignKey(
+    parent_party_type = ForeignKey(
         'self', on_delete=SET_NULL, null=True, blank=True, related_name='child_party_types'
     )
 
@@ -945,8 +945,8 @@ class PointOfSale(BaseAuditable):
 
 class PointOfSaleDocument(BaseAuditable):
     """Scanned document(s) related to a PointOfSale transaction."""
-    pointofsale = ForeignKey(PointOfSale, on_delete=PROTECT)
-    pointofsale_id: int
+    point_of_sale = ForeignKey(PointOfSale, on_delete=PROTECT)
+    point_of_sale_id: int
     document = FileField()
 
 
@@ -955,13 +955,13 @@ class PointOfSaleLineItem(BaseAuditable):
     class Subtype(TextChoices):
         CATALOGUE_ITEM = 'CATALOGUE_ITEM', 'CATALOGUE_ITEM'
         NON_CATALOGUE_ITEM = 'NON_CATALOGUE_ITEM', 'NON_CATALOGUE_ITEM'
-    pointofsale = ForeignKey(PointOfSale, on_delete=PROTECT, related_name='line_items')
-    pointofsale_id: int
+    point_of_sale = ForeignKey(PointOfSale, on_delete=PROTECT, related_name='line_items')
+    point_of_sale_id: int
     short_memo = CharField(max_length=255, null=True)
     subtype = CharField(max_length=31, choices=Subtype.choices)
 
     def __str__(self):
-        return f'PointOfSaleLineItem {self.pk}: {self.pointofsale_id}'
+        return f'PointOfSaleLineItem {self.pk}: {self.point_of_sale_id}'
 
 
 class PointOfSaleToTxn(BaseAuditable):
@@ -975,8 +975,8 @@ class PointOfSaleToTxn(BaseAuditable):
     however, this is intentionally modeled as a separate table for consistency
     and to avoid a refactor for any edge cases.
     """
-    pointofsale = OneToOneField(PointOfSale, on_delete=CASCADE)  # maybe foreign key?
-    pointofsale_id: int
+    point_of_sale = OneToOneField(PointOfSale, on_delete=CASCADE)  # maybe foreign key?
+    point_of_sale_id: int
     txn = OneToOneField('Txn', on_delete=CASCADE)  # definitely one-to-one
     txn_id: int
 
@@ -994,7 +994,7 @@ class Song(BaseAuditable):
     lyrics = TextField(blank=True, default='')
     title = CharField(max_length=255)
     # Relationships
-    musicartists = ManyToManyField(
+    music_artists = ManyToManyField(
         MusicArtist, through='MusicArtistToSong',
         related_name='+'
     )
@@ -1013,7 +1013,7 @@ class SongRecording(BaseAuditable):
     song = ForeignKey(Song, on_delete=CASCADE)
     recording_type = CharField(max_length=6, choices=RecordingType.choices, default=RecordingType.STUDIO)
     # Relationships
-    musicartists = ManyToManyField(
+    music_artists = ManyToManyField(
         MusicArtist, through='MusicArtistToSongRecording',
         related_name='+'
     )
@@ -1224,29 +1224,29 @@ class VehicleServiceItem(BaseAuditable):  # Line item
     # TODO: Should have foreign keys for service types, like oil change, oil filter, tire rotation, since those are
     #  standard across vehicles.
     description = CharField(max_length=255)
-    vehicleservice = ForeignKey(VehicleService, on_delete=CASCADE)
-    vehicleservice_id: int
+    vehicle_service = ForeignKey(VehicleService, on_delete=CASCADE)
+    vehicle_service_id: int
 
 
 class VehicleTrim(BaseAuditable):
     """An edition/trim of a vehicle model, such as EX, Turbo, Base."""
     name = CharField(max_length=255, help_text="Trim Level, such as EX, GT, SS")
-    vehiclemodel = ForeignKey(VehicleModel, on_delete=PROTECT)
-    vehiclemodel_id: int
+    vehicle_model = ForeignKey(VehicleModel, on_delete=PROTECT)
+    vehicle_model_id: int
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=('name', 'vehiclemodel'), name='unique_vehicletrim')
+            UniqueConstraint(fields=('name', 'vehicle_model'), name='unique_vehicletrim')
         ]
 
     def __str__(self):
-        return f'VehicleTrim {self.pk}: {self.vehiclemodel_id}-{self.name}'
+        return f'VehicleTrim {self.pk}: {self.vehicle_model_id}-{self.name}'
 
 
 class VehicleYear(BaseAuditable):
     """Year that a Make/Model/Trim was actually produced."""
-    vehicletrim = ForeignKey(VehicleTrim, on_delete=PROTECT)
-    vehicletrim_id: int
+    vehicle_trim = ForeignKey(VehicleTrim, on_delete=PROTECT)
+    vehicle_trim_id: int
     year = IntegerField(
         validators=[MinValueValidator(1886), validate_year_not_future],
         help_text="Production year"
@@ -1254,11 +1254,11 @@ class VehicleYear(BaseAuditable):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=('vehicletrim', 'year'), name='unique_vehicleyear')
+            UniqueConstraint(fields=('vehicle_trim', 'year'), name='unique_vehicleyear')
         ]
 
     def __str__(self):
-        return f'VehicleYear {self.pk}: {self.vehicletrim_id}-{self.year}'
+        return f'VehicleYear {self.pk}: {self.vehicle_trim_id}-{self.year}'
 
 
 class VideoGame(BaseAuditable):

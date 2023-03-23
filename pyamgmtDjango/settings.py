@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     # Local Apps
     'base',
     'accounts',
-    'core',
+    # 'core',
     'sandbox',
 ]
 
