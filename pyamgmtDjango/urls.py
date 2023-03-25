@@ -22,6 +22,7 @@ import debug_toolbar
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('schemaviz/', include('schemaviz.urls'))
 ]
 
 if settings.DEBUG is True:

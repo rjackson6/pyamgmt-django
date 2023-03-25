@@ -11,7 +11,7 @@ def pascal_case_to_snake_case(value: str) -> str:
 
 
 def default_related_names(value: str) -> dict:
-    """Create related names in snake case."""
+    """Create both related names in snake case."""
     related_query_name = pascal_case_to_snake_case(value)
     related_name = f'{related_query_name}_set'
     return {

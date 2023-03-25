@@ -69,6 +69,7 @@ TEMPLATES = [
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
+            'builtins': ['base.builtins'],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -184,7 +185,8 @@ MEDIA_ROOT = BASE_DIR / 'var' / 'media'
 MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static'
+    BASE_DIR / 'static',
+    BASE_DIR / 'node_modules' / 'cytoscape' / 'dist'
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'

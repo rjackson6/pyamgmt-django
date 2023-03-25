@@ -743,7 +743,7 @@ class MusicAlbum(BaseAuditable):
     )
     # mediaformat = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_mediaformat_audio)  # TODO
     # mediaformat_id: int
-    title = CharField(max_length=255, unique=True)  # Temporary unique constraint
+    title = CharField(max_length=255, unique=True)  # TODO: This is a temporary unique constraint
     total_discs = PositiveSmallIntegerField(default=1)  # TODO
     year_copyright = PositiveSmallIntegerField(
         null=True, blank=True, validators=[validate_year_not_future])
@@ -805,7 +805,15 @@ class MusicAlbumEdition(BaseAuditable):
 class MusicAlbumProduction(BaseAuditable):
     """This resolves media formats for album releases.
 
+    Other terms that are of a similar concept would be "pressing" for vinyl.
+    That is to say that the same "edition" of an album, like a remaster, could
+    be released in multiple formats, like "digital", "CD", or "Vinyl".
     """
+    media_format = ForeignKey(
+        MediaFormat, on_delete=PROTECT,
+        default=get_default_mediaformat_audio,
+        **default_related_names(__qualname__)
+    )
     music_album_edition = ForeignKey(
         MusicAlbumEdition, on_delete=PROTECT,
         **default_related_names(__qualname__)
@@ -1001,7 +1009,7 @@ class MusicArtistToSong(BaseAuditable):
         **default_related_names(__qualname__)
     )
     song_id: int
-    # role?
+    # TODO: role?
 
     class Meta:
         constraints = [
@@ -1056,7 +1064,7 @@ class Order(BaseAuditable):
     """A purchase record which is usually paid in advance, but not immediately
     fulfilled.
     """
-    # party = ForeignKey()
+    # TODO: party = ForeignKey()
     order_date = DateField()
     order_number = CharField(max_length=255)
 
@@ -1551,7 +1559,10 @@ class VehicleService(BaseAuditable):
     date_out = DateField(null=True, blank=True)
     mileage_in = IntegerField()
     mileage_out = IntegerField()
-    vehicle = ForeignKey(Vehicle, on_delete=PROTECT)
+    vehicle = ForeignKey(
+        Vehicle, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
     vehicle_id: int
 
 

@@ -1,13 +1,56 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        body {
+            background-color: #cccccc;
+        }
+        #cy {
+            background-color: #eeeeee;
+            border: 1px solid black;
+            min-height: 400px;
+            min-width: 400px;
+        }
+    </style>
 </head>
 <body>
 
 <div>
     <h1>Testing</h1>
+    <div id="cy"></div>
+    <div>
+        <h2>"d"</h2>
+        <div>
+            {% for mdl, related in d.items %}
+            <div>Model: {{ mdl|name }}</div>
+            {% if related.from %}
+            <div>
+                <div>Referenced By:</div>
+                <div>
+                    {% for rel in related.from %}
+                    <div>{{ rel|name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% if related.to %}
+            <div>
+                <div>References:</div>
+                <div>
+                    {% for rel in related.to %}
+                    <div>{{ rel|name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <hr>
+            {% endfor %}
+        </div>
+    </div>
+    <h2>all_models</h2>
     {% for app, models in all_models.items %}
     <div>
         <div>{{ app }}</div>
@@ -15,5 +58,8 @@
     </div>
     {% endfor %}
 </div>
+<script type="module">
+
+</script>
 </body>
 </html>
