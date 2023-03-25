@@ -58,7 +58,7 @@ from django.utils.functional import cached_property
 
 from base.models import BaseAuditable
 from base.models.fields import UpperCharField
-from base.utils import default_related_names
+from base.utils import default_related_names, pascal_case_to_snake_case
 from base.validators import (
     validate_alphanumeric,
     validate_date_not_future,
@@ -160,7 +160,10 @@ class AccountAsset(BaseAuditable):
         REAL = 'REAL', 'REAL'
         OTHER = 'OTHER', 'OTHER'
 
-    account = OneToOneField(Account, on_delete=CASCADE, primary_key=True)
+    account = OneToOneField(
+        Account, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     account_id: int
     subtype = CharField(
         max_length=31, choices=Subtype.choices, default=Subtype.OTHER)
@@ -176,7 +179,9 @@ class AccountAssetFinancial(BaseAuditable):
     Examples: a cash or checking account.
     """
     account_asset = OneToOneField(
-        AccountAsset, on_delete=CASCADE, primary_key=True)
+        AccountAsset, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     account_asset_id: int
     account_number = CharField(max_length=63, null=True, blank=True)
     institution = None  # TODO
@@ -189,7 +194,9 @@ class AccountAssetReal(BaseAuditable):
     Implies inherent value, and may be subject to depreciation.
     """
     account_asset = OneToOneField(
-        AccountAsset, on_delete=CASCADE, primary_key=True)
+        AccountAsset, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     account_asset_id: int
     # TODO: Decide if I want `limit_choices_to=` here. If so, needs a callback.
     asset = ForeignKey(
@@ -207,7 +214,10 @@ class AccountEquity(BaseAuditable):
 
     Examples: Common Stock, Paid-In Capital.
     """
-    account = OneToOneField(Account, on_delete=CASCADE, primary_key=True)
+    account = OneToOneField(
+        Account, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     account_id: int
 
 
@@ -216,7 +226,10 @@ class AccountExpense(BaseAuditable):
 
     Examples: Utilities, Rent, or Fuel.
     """
-    account = OneToOneField(Account, on_delete=CASCADE, primary_key=True)
+    account = OneToOneField(
+        Account, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     account_id: int
 
 
@@ -225,7 +238,10 @@ class AccountIncome(BaseAuditable):
 
     Examples: Salary, dividends
     """
-    account = OneToOneField(Account, on_delete=CASCADE, primary_key=True)
+    account = OneToOneField(
+        Account, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     account_id: int
 
 
@@ -245,7 +261,10 @@ class AccountLiability(BaseAuditable):
     class Subtype(TextChoices):
         SECURED = 'SECURED', 'SECURED'
         OTHER = 'OTHER', 'OTHER'
-    account = OneToOneField(Account, on_delete=CASCADE, primary_key=True)
+    account = OneToOneField(
+        Account, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     account_id: int
     account_number = CharField(max_length=63, null=True, blank=True)
     lender = None  # TODO
@@ -256,7 +275,9 @@ class AccountLiability(BaseAuditable):
 class AccountLiabilitySecured(BaseAuditable):
     """A liability account that is held against an asset."""
     account_liability = OneToOneField(
-        AccountLiability, on_delete=CASCADE, primary_key=True)
+        AccountLiability, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     account_liability_id: int
     asset = ForeignKey(
         'Asset', on_delete=PROTECT,
@@ -287,7 +308,10 @@ class AssetDiscrete(BaseAuditable):
     class Subtype(TextChoices):
         CATALOG_ITEM = 'CATALOG_ITEM', 'CATALOG_ITEM'
         VEHICLE = 'VEHICLE', 'VEHICLE'
-    asset = OneToOneField(Asset, on_delete=CASCADE, primary_key=True)
+    asset = OneToOneField(
+        Asset, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     asset_id: int
     date_acquired = DateField(null=True, blank=True)
     date_withdrawn = DateField(null=True, blank=True)
@@ -297,7 +321,9 @@ class AssetDiscrete(BaseAuditable):
 class AssetDiscreteCatalogItem(BaseAuditable):
     """A discrete asset that can relate to a CatalogItem."""
     asset_discrete = OneToOneField(
-        AssetDiscrete, on_delete=CASCADE, primary_key=True)
+        AssetDiscrete, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     asset_discrete_id: int
     catalog_item = ForeignKey(
         'CatalogItem', on_delete=PROTECT,
@@ -309,9 +335,14 @@ class AssetDiscreteCatalogItem(BaseAuditable):
 class AssetDiscreteVehicle(BaseAuditable):
     """A discrete asset that can be associated with a unique vehicle."""
     asset_discrete = OneToOneField(
-        AssetDiscrete, on_delete=CASCADE, primary_key=True)
+        AssetDiscrete, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     asset_discrete_id: int
-    vehicle = OneToOneField('Vehicle', on_delete=PROTECT)
+    vehicle = OneToOneField(
+        'Vehicle', on_delete=PROTECT,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     vehicle_id: int
 
     def __str__(self) -> str:
@@ -324,10 +355,16 @@ class AssetInventory(BaseAuditable):
 
     Example: Copies of DVDs, un-serialized items.
     """
-    asset = OneToOneField(Asset, on_delete=CASCADE, primary_key=True)
+    asset = OneToOneField(
+        Asset, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     asset_id: int
     # CatalogItem is OneToOne because inventory should accumulate
-    catalog_item = OneToOneField('CatalogItem', on_delete=PROTECT)
+    catalog_item = OneToOneField(
+        'CatalogItem', on_delete=PROTECT,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     catalog_item_id: int
     quantity = IntegerField(default=1)
 # endregion Asset
@@ -484,14 +521,18 @@ class CatalogItemDigitalSong(BaseAuditable):
       medium for physical distribution, which makes it a "Single Album"
     """
     catalog_item = OneToOneField(
-        CatalogItem, on_delete=CASCADE, primary_key=True)
+        CatalogItem, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     catalog_item_id: int
 
 
 class CatalogItemMusicAlbumProduction(BaseAuditable):
     """A produced Music Album distributed in a particular format."""
     catalog_item = OneToOneField(
-        CatalogItem, on_delete=CASCADE, primary_key=True)
+        CatalogItem, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     catalog_item_id: int
     # Does
     media_format = ForeignKey(
@@ -515,7 +556,9 @@ class CatalogItemToCatalogItem(BaseAuditable):
 class CatalogItemToInvoiceLineItem(BaseAuditable):
     """Relates a CatalogItem record to an InvoiceLineItem record."""
     invoice_line_item = OneToOneField(
-        'InvoiceLineItem', on_delete=CASCADE, primary_key=True)
+        'InvoiceLineItem', on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     invoice_line_item_id: int
     catalogitem = ForeignKey(
         CatalogItem, on_delete=PROTECT,
@@ -533,7 +576,9 @@ class CatalogItemToInvoiceLineItem(BaseAuditable):
 class CatalogItemToOrderLineItem(BaseAuditable):
     """Relates a CatalogItem record to an OrderLineItem record."""
     orderlineitem = OneToOneField(
-        'OrderLineItem', on_delete=CASCADE, primary_key=True)
+        'OrderLineItem', on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     orderlineitem_id: int
     catalogitem = ForeignKey(
         CatalogItem, on_delete=PROTECT,
@@ -548,7 +593,9 @@ class CatalogItemToOrderLineItem(BaseAuditable):
 class CatalogItemToPointOfSaleLineItem(BaseAuditable):
     """Relates a CatalogItem record to a PointOfSaleLineItem record"""
     point_of_sale_line_item = OneToOneField(
-        'PointOfSaleLineItem', on_delete=CASCADE, primary_key=True)
+        'PointOfSaleLineItem', on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     point_of_sale_line_item_id: int
     catalogitem = ForeignKey(
         CatalogItem, on_delete=PROTECT,
@@ -602,7 +649,9 @@ class InvoiceLineItem(BaseAuditable):
 class InvoiceLineItemToNonCatalogItem(BaseAuditable):
     """Relates a NonCatalogItem record to an InvoiceLineItem record."""
     invoice_line_item = OneToOneField(
-        InvoiceLineItem, on_delete=CASCADE, primary_key=True)
+        InvoiceLineItem, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     invoice_line_item_id: int
     non_catalog_item = ForeignKey(
         'NonCatalogItem', on_delete=CASCADE,
@@ -1050,7 +1099,10 @@ class Party(BaseAuditable):
 
 class PartyBusiness(BaseAuditable):
     """A business or corporate entity."""
-    party = OneToOneField(Party, on_delete=CASCADE, primary_key=True)
+    party = OneToOneField(
+        Party, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     party_id: int
     trade_name = CharField(max_length=255)
 
@@ -1060,9 +1112,15 @@ class PartyBusiness(BaseAuditable):
 
 class PartyPerson(BaseAuditable):
     """An individual person."""
-    party = OneToOneField(Party, on_delete=CASCADE, primary_key=True)
+    party = OneToOneField(
+        Party, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     party_id: int
-    person = OneToOneField('Person', on_delete=CASCADE)
+    person = OneToOneField(
+        'Person', on_delete=CASCADE,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     person_id: int
 
 
@@ -1152,7 +1210,10 @@ class PointOfSale(BaseAuditable):
     party_id: int
     point_of_sale_date = DateField()
     point_of_sale_time = TimeField(null=True, blank=True)
-    txn = OneToOneField('Txn', on_delete=SET_NULL, null=True, blank=True)  # TODO
+    txn = OneToOneField(
+        'Txn', on_delete=SET_NULL, null=True, blank=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )  # TODO
 
     @property
     def line_item_total(self) -> Decimal:
@@ -1206,9 +1267,15 @@ class PointOfSaleToTxn(BaseAuditable):
     however, this is intentionally modeled as a separate table for consistency
     and to avoid a refactor for any edge cases.
     """
-    point_of_sale = OneToOneField(PointOfSale, on_delete=CASCADE)  # maybe foreign key?
+    point_of_sale = OneToOneField(
+        PointOfSale, on_delete=CASCADE,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )  # maybe foreign key?
     point_of_sale_id: int
-    txn = OneToOneField('Txn', on_delete=CASCADE)  # definitely one-to-one
+    txn = OneToOneField(
+        'Txn', on_delete=CASCADE,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )  # definitely one-to-one
     txn_id: int
 
 
@@ -1490,8 +1557,8 @@ class VehicleService(BaseAuditable):
 
 class VehicleServiceItem(BaseAuditable):  # Line item
     """Individual maintenance items from a service."""
-    # TODO: Should have foreign keys for service types, like oil change, oil filter, tire rotation, since those are
-    #  standard across vehicles.
+    # TODO: Should have foreign keys for service types, like oil change,
+    #  oil filter, tire rotation, since those are standard across vehicles.
     description = CharField(max_length=255)
     vehicle_service = ForeignKey(
         VehicleService, on_delete=CASCADE,
