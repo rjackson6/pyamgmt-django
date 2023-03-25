@@ -66,12 +66,18 @@ class AccountManager(Manager):
 
 class AccountManagerAsset(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(subtype=self.model.Subtype.ASSET)
+        return (
+            super().get_queryset()
+            .filter(subtype=self.model.Subtype.ASSET)
+        )
 
 
 class AccountManagerLiability(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(subtype=self.model.Subtype.LIABILITY)
+        return (
+            super().get_queryset()
+            .filter(subtype=self.model.Subtype.LIABILITY)
+        )
 
 
 class AccountManagerEquity(Manager):
@@ -91,7 +97,10 @@ class AccountManagerExpense(Manager):
 
 class AccountAssetManagerFinancial(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(subtype=self.model.Subtype.FINANCIAL)
+        return (
+            super().get_queryset()
+            .filter(subtype=self.model.Subtype.FINANCIAL)
+        )
 
 
 class AccountAssetManagerReal(Manager):
@@ -101,4 +110,4 @@ class AccountAssetManagerReal(Manager):
 
 class MusicArtistToPersonManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related('musicartist', 'person')
+        return super().get_queryset().select_related('music_artist', 'person')

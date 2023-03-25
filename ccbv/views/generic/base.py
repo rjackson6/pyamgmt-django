@@ -14,7 +14,7 @@ logger = logging.getLogger("django.request")
 
 class ContextMixin(base.ContextMixin):
     """Almost the same as Django, but doesn't set `view` in context."""
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
         if self.extra_context is not None:
             kwargs.update(self.extra_context)
         return kwargs
@@ -86,7 +86,9 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
     pass
 
 
-class TemplateView(base.TemplateView, TemplateResponseMixin, ContextMixin, View):
+class TemplateView(
+    base.TemplateView, TemplateResponseMixin, ContextMixin, View
+):
     """Render a template. Pass URL keyword arguments to context.
 
     Replaces normal .get() method to be keyword-only.

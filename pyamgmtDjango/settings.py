@@ -15,6 +15,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR: os.path.abspath(BASE_DIR)  # Helper for PyCharm
 
 # SECURITY WARNING: keep the secret key used in production secret!
 with open(BASE_DIR / 'etc' / 'sk.txt') as f:
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
     # Local Apps
     'base',
     'accounts',
-    # 'core',
+    'core',
     'sandbox',
 ]
 
@@ -169,7 +170,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'CRITICAL'),
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'WARNING'),
             'propagate': False,
         }
     }

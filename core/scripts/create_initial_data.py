@@ -6,7 +6,7 @@ functions can be re-written more easily than JSON files, and I don't want to
 rely on dumpdata/loaddata if that happens.
 """
 
-from pyamgmt.models import *
+from core.models import *
 
 
 def create_initial_records():

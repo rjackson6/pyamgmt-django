@@ -18,7 +18,7 @@ class VehicleYearChoiceField(ModelChoiceField):
             )
         super().__init__(queryset, **kwargs)
 
-    def label_from_instance(self, obj):
+    def label_from_instance(self, obj) -> str:
         vehicleyear = obj.year
         vehicletrim = obj.vehicletrim.name
         vehiclemodel = obj.vehicletrim.vehiclemodel.name

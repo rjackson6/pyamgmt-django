@@ -1,3 +1,8 @@
+__all__ = [
+    'validate_isbn',
+    'validate_isbn_13_check_digit',
+]
+
 import re
 
 from django.core.exceptions import ValidationError
@@ -12,7 +17,7 @@ validate_isbn = RegexValidator(
 )
 
 
-def validate_isbn_13_check_digit(value):
+def validate_isbn_13_check_digit(value) -> None:
     """Validation using the ISBN algorithm.
 
     Example:
