@@ -11,10 +11,10 @@
         #container {
             background-color: #eeeeee;
             border: 1px solid black;
-            height: 500px;
+            height: 600px;
             min-height: 400px;
             min-width: 400px;
-            width: 500px;
+            width: 1200px;
         }
     </style>
 </head>
@@ -75,27 +75,51 @@ No good
 <script type="module" src="{% static 'vis-network/standalone/index.js' %}"></script>
 {% endcomment %}
 
+{{ vis_data|json_script:"vis-data" }}
+
 <script type="text/javascript" src="{% static 'vis-network/standalone/umd/vis-network.js' %}"></script>
 
 <script type="text/javascript">
+    const context_data = JSON.parse(document.getElementById("vis-data").textContent);
     let container = document.getElementById("container");
-    console.log(vis.DataSet);
-    let nodes = new vis.DataSet([
-        { id: 1, label: "Node 1"},
-        { id: 2, label: "Node 2"},
-        { id: 3, label: "Node 3"},
-        { id: 4, label: "Node 4"},
-        { id: 5, label: "Node 5"}
-    ]);
-    let edges = new vis.DataSet([
-        { from: 1, to: 3},
-        { from: 1, to: 2}
-    ]);
-    let data = {
-        nodes: nodes,
-        edges: edges
+    let data = context_data;
+    console.log(data.nodes[7]);
+    // data.nodes[7].mass = 1000;
+    let options = {
+        nodes: {
+            opacity: 0.8,
+            shape: 'box'
+        },
+        edges: {
+            arrows: {
+                to: {
+                    enabled: true
+                }
+            },
+            color: {
+                opacity: 0.6
+            },
+            // physics: false,
+            smooth: {
+                // enabled: false,  // true
+                type: 'continuous',  // dynamic
+            }
+        },
+        physics: {
+            barnesHut: {
+                gravitationalConstant: -4000,  // -2000
+                damping: 0.5,  // 0.09
+                springLength: 100,  // 95
+                springConstant: 0.02,  // 0.04
+                avoidOverlap: 0.1,  // 0
+            },
+            repulsion: {
+                nodeDistance: 200,  // 100
+                damping: 0.5,  // 0.09
+            },
+            // solver: 'repulsion'  // 'barnesHut'
+        }
     };
-    let options = {};
     let network = new vis.Network(container, data, options);
 </script>
 </body>
