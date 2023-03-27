@@ -21,44 +21,8 @@
 <body>
 
 <div>
-    <h1>Testing</h1>
+    <h1>Installed Apps</h1>
     <div id="container"></div>
-    <div>
-        <h2>"d"</h2>
-        <div>
-            {% for mdl, related in d.items %}
-            <div>Model: {{ mdl }}</div>
-            {% if related.from %}
-            <div>
-                <div>Referenced By:</div>
-                <div>
-                    {% for rel in related.from %}
-                    <div>{{ rel }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-            {% if related.to %}
-            <div>
-                <div>References:</div>
-                <div>
-                    {% for rel in related.to %}
-                    <div>{{ rel }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-            <hr>
-            {% endfor %}
-        </div>
-    </div>
-    <h2>all_models</h2>
-    {% for app, models in all_models.items %}
-    <div>
-        <div>{{ app }}</div>
-        <div>{{ models }}</div>
-    </div>
-    {% endfor %}
 </div>
 {% comment %}
 No complaints from browser?
