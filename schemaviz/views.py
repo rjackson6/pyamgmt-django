@@ -8,8 +8,6 @@ class MainView(TemplateView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
-        # all_models is a defaultdict, as {'app': {'model_name': class}}
-        all_models = dict(apps.all_models)
         # get_models returns a list of classes
         # auto-created / swapped models False by default
         get_models = apps.get_models()
@@ -21,9 +19,9 @@ class MainView(TemplateView):
         # TODO: A standard node/edge format would be ideal
         d = {}
         for mdl in get_models:
-            print(mdl.__name__)
-            if mdl not in d:
-                d[mdl] = {'to': [], 'from': []}
+            label = mdl._meta.label  # noqa
+            if label not in d:
+                d[label] = {'to': [], 'from': []}
             fields = mdl._meta.get_fields()  # noqa
             for field in fields:
                 related_model = None
@@ -31,22 +29,20 @@ class MainView(TemplateView):
                 if isinstance(field, RelatedField):
                     # ForeignKey, which points to another model from this one
                     # Direction is "up" or "to"
-                    related_model = field.related_model
+                    related_model = field.related_model._meta.label  # noqa
                     direction = 'to'
                 elif isinstance(field, ForeignObjectRel):
                     # Field from another model points to this model
                     # Direction is "down" or "from"
-                    related_model = field.related_model
+                    related_model = field.related_model._meta.label  # noqa
                     direction = 'from'
                 if related_model:
                     # print(f'related_model found: {related_model}')
                     if related_model not in d:
                         d[related_model] = {'to': [], 'from': []}
-                    d[mdl][direction].append(related_model)
+                    d[label][direction].append(related_model)
 
         context.update({
-            'all_models': all_models,
-            'get_models': get_models,
             'd': d,
         })
         return context

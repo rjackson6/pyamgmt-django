@@ -27,13 +27,13 @@
         <h2>"d"</h2>
         <div>
             {% for mdl, related in d.items %}
-            <div>Model: {{ mdl|name }}</div>
+            <div>Model: {{ mdl }}</div>
             {% if related.from %}
             <div>
                 <div>Referenced By:</div>
                 <div>
                     {% for rel in related.from %}
-                    <div>{{ rel|name }}</div>
+                    <div>{{ rel }}</div>
                     {% endfor %}
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 <div>References:</div>
                 <div>
                     {% for rel in related.to %}
-                    <div>{{ rel|name }}</div>
+                    <div>{{ rel }}</div>
                     {% endfor %}
                 </div>
             </div>
@@ -77,9 +77,7 @@ No good
 
 <script type="text/javascript" src="{% static 'vis-network/standalone/umd/vis-network.js' %}"></script>
 
-{#<script type="module" src="{% static 'vendor/sanity.js' %}"></script>#}
-
-<script>
+<script type="text/javascript">
     let container = document.getElementById("container");
     console.log(vis.DataSet);
     let nodes = new vis.DataSet([
