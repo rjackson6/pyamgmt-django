@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="vis-network" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/node_modules/vis-network" />
+        <item url="file://$PROJECT_DIR$/node_modules/vis-network/standalone/umd/vis-network.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/node_modules/vis-network" />
+      <root url="file://$PROJECT_DIR$/node_modules/vis-network/standalone/umd/vis-network.js" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

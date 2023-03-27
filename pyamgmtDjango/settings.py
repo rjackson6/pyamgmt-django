@@ -186,7 +186,9 @@ MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    BASE_DIR / 'node_modules' / 'cytoscape' / 'dist'
+    # BASE_DIR / 'node_modules',
+    # os.path.join(BASE_DIR, 'node_modules'),
+    ('vis-network', BASE_DIR / 'node_modules' / 'vis-network')
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
@@ -202,4 +204,6 @@ STATIC_RESOURCES = {}
 ################
 
 if DEBUG:
+    # import mimetypes
+    # mimetypes.add_type('application/javascript', '.js', True)
     TEMPLATES[0]['OPTIONS']['string_if_invalid'] = '[INVALID %s]'

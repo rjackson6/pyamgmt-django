@@ -8,11 +8,13 @@
         body {
             background-color: #cccccc;
         }
-        #cy {
+        #container {
             background-color: #eeeeee;
             border: 1px solid black;
+            height: 500px;
             min-height: 400px;
             min-width: 400px;
+            width: 500px;
         }
     </style>
 </head>
@@ -20,7 +22,7 @@
 
 <div>
     <h1>Testing</h1>
-    <div id="cy"></div>
+    <div id="container"></div>
     <div>
         <h2>"d"</h2>
         <div>
@@ -58,8 +60,45 @@
     </div>
     {% endfor %}
 </div>
-<script type="module">
+{% comment %}
+No complaints from browser?
+<script type="module" src="{% static 'vis-network/standalone/esm/vis-network.js' %}"></script>
+{% endcomment %}
 
+{% comment %}
+No complaints from browser
+<script type="text/javascript" src="{% static 'vis-network/standalone/umd/vis-network.min.js' %}"></script>
+{% endcomment %}
+
+{% comment %}
+No good
+<script type="module" src="{% static 'vis-network/standalone/index.js' %}"></script>
+{% endcomment %}
+
+<script type="text/javascript" src="{% static 'vis-network/standalone/umd/vis-network.js' %}"></script>
+
+{#<script type="module" src="{% static 'vendor/sanity.js' %}"></script>#}
+
+<script>
+    let container = document.getElementById("container");
+    console.log(vis.DataSet);
+    let nodes = new vis.DataSet([
+        { id: 1, label: "Node 1"},
+        { id: 2, label: "Node 2"},
+        { id: 3, label: "Node 3"},
+        { id: 4, label: "Node 4"},
+        { id: 5, label: "Node 5"}
+    ]);
+    let edges = new vis.DataSet([
+        { from: 1, to: 3},
+        { from: 1, to: 2}
+    ]);
+    let data = {
+        nodes: nodes,
+        edges: edges
+    };
+    let options = {};
+    let network = new vis.Network(container, data, options);
 </script>
 </body>
 </html>
