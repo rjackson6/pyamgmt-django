@@ -47,12 +47,16 @@ No good
     const context_data = JSON.parse(document.getElementById("vis-data").textContent);
     let container = document.getElementById("container");
     let data = context_data;
-    console.log(data.nodes[7]);
-    // data.nodes[7].mass = 1000;
     let options = {
         nodes: {
             opacity: 0.8,
-            shape: 'box'
+            {#shape: 'box',#}
+            shape: 'dot',
+            {% comment %}scaling: {
+                label: {
+                    enabled: true
+                }
+            }{% endcomment %}
         },
         edges: {
             arrows: {
@@ -61,17 +65,18 @@ No good
                 }
             },
             color: {
-                opacity: 0.6
+                opacity: 0.5
             },
             // physics: false,
             smooth: {
                 // enabled: false,  // true
-                type: 'continuous',  // dynamic
+                {#type: 'continuous',  // dynamic#}
+                type: 'dynamic',  // dynamic
             }
         },
         physics: {
             barnesHut: {
-                gravitationalConstant: -4000,  // -2000
+                gravitationalConstant: -2000,  // -2000
                 damping: 0.5,  // 0.09
                 springLength: 100,  // 95
                 springConstant: 0.02,  // 0.04

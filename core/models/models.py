@@ -4,23 +4,23 @@ __all__ = [
     'Asset', 'AssetDiscrete', 'AssetDiscreteCatalogItem',
     'AssetDiscreteVehicle', 'AssetInventory', 'AssetType',
     'CatalogItem', 'CatalogItemDigitalSong',
-    'CatalogItemToInvoiceLineItem', 'CatalogItemToOrderLineItem',
-    'CatalogItemToPointOfSaleLineItem',
-    'Invoice', 'InvoiceLineItem', 'InvoiceLineItemToNonCatalogItem',
+    'CatalogItemXInvoiceLineItem', 'CatalogItemXOrderLineItem',
+    'CatalogItemXPointOfSaleLineItem',
+    'Invoice', 'InvoiceLineItem', 'InvoiceLineItemXNonCatalogItem',
     'MediaFormat',
     'MotionPicture',
     'MusicAlbum',
     'MusicAlbumArtwork',
-    'MusicAlbumToMusicArtist',
-    'MusicAlbumToSongRecording',
-    'MusicArtist', 'MusicArtistToPerson', 'MusicArtistToSong',
-    'MusicArtistToSongRecording',
+    'MusicAlbumXMusicArtist',
+    'MusicAlbumXSongRecording',
+    'MusicArtist', 'MusicArtistXPerson', 'MusicArtistXSong',
+    'MusicArtistXSongRecording',
     'NonCatalogItem',
     'Order', 'OrderLineItem',
     'Party', 'PartyBusiness', 'PartyPerson', 'PartyType', 'Payee', 'Person',
     'PointOfSale', 'PointOfSaleDocument', 'PointOfSaleLineItem',
     'Seller',
-    'Song', 'SongRecording',  # 'SongToSong',
+    'Song', 'SongRecording',  # 'SongXSong',
     'Txn', 'TxnLineItem',
     'Unit',
     'Vehicle', 'VehicleMake', 'VehicleMileage', 'VehicleModel', 'VehicleTrim',
@@ -437,7 +437,7 @@ class BookPublication(BaseAuditable):
 
 
 # region BookM2M
-class BookToMotionPicture(BaseAuditable):
+class BookXMotionPicture(BaseAuditable):
     """Loose relationship between a book and an adapted film.
 
     The edition of the book doesn't really matter.
@@ -546,14 +546,14 @@ class CatalogItemMusicAlbumProduction(BaseAuditable):
 
 
 # region CatalogItemM2M
-class CatalogItemToCatalogItem(BaseAuditable):
+class CatalogItemXCatalogItem(BaseAuditable):
     """Holds relationships between CatalogItems to account for bundles."""
     catalog_item_a = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
     catalog_item_b = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
     relationship = None
 
 
-class CatalogItemToInvoiceLineItem(BaseAuditable):
+class CatalogItemXInvoiceLineItem(BaseAuditable):
     """Relates a CatalogItem record to an InvoiceLineItem record."""
     invoice_line_item = OneToOneField(
         'InvoiceLineItem', on_delete=CASCADE, primary_key=True,
@@ -570,10 +570,10 @@ class CatalogItemToInvoiceLineItem(BaseAuditable):
     quantity = IntegerField()
 
     def __str__(self) -> str:
-        return f'CatalogItemToInvoiceLineItem {self.pk}: {self.catalogitem_id}'
+        return f'CatalogItemXInvoiceLineItem {self.pk}: {self.catalogitem_id}'
 
 
-class CatalogItemToOrderLineItem(BaseAuditable):
+class CatalogItemXOrderLineItem(BaseAuditable):
     """Relates a CatalogItem record to an OrderLineItem record."""
     orderlineitem = OneToOneField(
         'OrderLineItem', on_delete=CASCADE, primary_key=True,
@@ -587,10 +587,10 @@ class CatalogItemToOrderLineItem(BaseAuditable):
     catalogitem_id: int
 
     def __str__(self) -> str:
-        return f'CatalogItemToOrderLineItem {self.pk}: {self.catalogitem_id}'
+        return f'CatalogItemXOrderLineItem {self.pk}: {self.catalogitem_id}'
 
 
-class CatalogItemToPointOfSaleLineItem(BaseAuditable):
+class CatalogItemXPointOfSaleLineItem(BaseAuditable):
     """Relates a CatalogItem record to a PointOfSaleLineItem record"""
     point_of_sale_line_item = OneToOneField(
         'PointOfSaleLineItem', on_delete=CASCADE, primary_key=True,
@@ -612,7 +612,7 @@ class CatalogItemToPointOfSaleLineItem(BaseAuditable):
 
     def __str__(self) -> str:
         return (
-            f'CatalogItemToPointOfSaleLineItem {self.pk}:'
+            f'CatalogItemXPointOfSaleLineItem {self.pk}:'
             f' {self.catalogitem_id}'
         )
 
@@ -646,7 +646,7 @@ class InvoiceLineItem(BaseAuditable):
 
 
 # region InvoiceLineItemM2M
-class InvoiceLineItemToNonCatalogItem(BaseAuditable):
+class InvoiceLineItemXNonCatalogItem(BaseAuditable):
     """Relates a NonCatalogItem record to an InvoiceLineItem record."""
     invoice_line_item = OneToOneField(
         InvoiceLineItem, on_delete=CASCADE, primary_key=True,
@@ -661,7 +661,7 @@ class InvoiceLineItemToNonCatalogItem(BaseAuditable):
 
     def __str__(self) -> str:
         return (
-            f'InvoiceLineItemToNonCatalogItem {self.invoice_line_item_id}:'
+            f'InvoiceLineItemXNonCatalogItem {self.invoice_line_item_id}:'
             f' {self.non_catalog_item_id}'
         )
 # endregion InvoiceLineItemM2M
@@ -697,7 +697,7 @@ class MotionPictureRecording(BaseAuditable):
 
 
 # region MotionPictureM2M
-class MotionPictureToMusicAlbum(BaseAuditable):
+class MotionPictureXMusicAlbum(BaseAuditable):
     """Relates a motion picture to its soundtrack and/or score."""
     motion_picture = ForeignKey(
         MotionPicture, on_delete=CASCADE,
@@ -711,7 +711,7 @@ class MotionPictureToMusicAlbum(BaseAuditable):
     music_album_id: int
 
 
-class MotionPictureToSong(BaseAuditable):
+class MotionPictureXSong(BaseAuditable):
     """Not sure if needed, but would account for one-off non-score
     non-soundtrack songs.
 
@@ -752,11 +752,11 @@ class MusicAlbum(BaseAuditable):
     # Relationships
     music_artists = ManyToManyField(
         'MusicArtist',
-        through='MusicAlbumToMusicArtist',
+        through='MusicAlbumXMusicArtist',
         related_name='music_albums',
         blank=True)
-    # song_recordings = ManyToManyField(
-    #     'SongRecording', through='MusicAlbumToSongRecording',
+    # song_recordings = ManyXManyField(
+    #     'SongRecording', through='MusicAlbumXSongRecording',
     #     blank=True)
 
     def __str__(self) -> str:
@@ -824,7 +824,7 @@ class MusicAlbumProduction(BaseAuditable):
 
 
 # region MusicAlbumM2M
-class MusicAlbumToMusicArtist(BaseAuditable):
+class MusicAlbumXMusicArtist(BaseAuditable):
     """Relates a MusicAlbum to a MusicArtist; Album Artist.
 
     This is assuming that while most albums are released under one artist, there
@@ -854,11 +854,11 @@ class MusicAlbumToMusicArtist(BaseAuditable):
 
     def __str__(self) -> str:
         return (
-            f'MusicAlbumToMusicArtist {self.pk}:'
+            f'MusicAlbumXMusicArtist {self.pk}:'
             f' {self.music_album_id}-{self.music_artist_id}')
 
 
-class MusicAlbumToSongRecording(BaseAuditable):
+class MusicAlbumXSongRecording(BaseAuditable):
     disc_number = PositiveSmallIntegerField(null=True, blank=True)
     music_album = ForeignKey(
         MusicAlbum, on_delete=CASCADE,
@@ -886,7 +886,7 @@ class MusicAlbumToSongRecording(BaseAuditable):
 
     def __str__(self) -> str:
         return (
-            f'MusicAlbumToSongRecording {self.pk}:'
+            f'MusicAlbumXSongRecording {self.pk}:'
             f' {self.music_album_id}-{self.song_recording_id}')
 # endregion MusicAlbumM2M
 
@@ -899,7 +899,7 @@ class MusicArtist(BaseAuditable):
         help_text="Website or homepage for this music artist."
     )
     # Relationships
-    # songs = ManyToManyField('Song', through='MusicArtistToSong', related_name='+', blank=True)
+    # songs = ManyXManyField('Song', through='MusicArtistXSong', related_name='+', blank=True)
 
     def __str__(self) -> str:
         return f'{self.name}'
@@ -933,7 +933,7 @@ class MusicArtistActivity(BaseAuditable):
         ]
 
 
-class MusicArtistToPerson(BaseAuditable):
+class MusicArtistXPerson(BaseAuditable):
     """Relates a MusicArtist to a Person.
 
     A MusicArtist may be one or many persons, e.g., solo artists, composers,
@@ -954,7 +954,7 @@ class MusicArtistToPerson(BaseAuditable):
     person_id: int
 
     objects = Manager()
-    with_related = managers.MusicArtistToPersonManager()
+    with_related = managers.MusicArtistXPersonManager()
 
     class Meta:
         constraints = [
@@ -966,14 +966,14 @@ class MusicArtistToPerson(BaseAuditable):
 
     def __str__(self) -> str:
         return (
-            f'MusicArtistToPerson {self.pk}:'
+            f'MusicArtistXPerson {self.pk}:'
             f' {self.music_artist_id}-{self.person_id}'
         )
 
     @property
     def is_active(self) -> Optional[bool]:
         activity = (
-            self.musicartisttopersonactivity_set
+            self.music_artist_x_person_activity_set
             .order_by('date_active')
             .first()
         )
@@ -985,10 +985,10 @@ class MusicArtistToPerson(BaseAuditable):
             return False
 
 
-class MusicArtistToPersonActivity(BaseAuditable):
+class MusicArtistXPersonActivity(BaseAuditable):
     """Holds records of when a person was part of a group or act."""
     music_artist_to_person = ForeignKey(
-        MusicArtistToPerson, on_delete=CASCADE,
+        MusicArtistXPerson, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
     music_artist_to_person_id: int
@@ -997,7 +997,7 @@ class MusicArtistToPersonActivity(BaseAuditable):
         null=True, blank=True, validators=[validate_date_not_future])
 
 
-class MusicArtistToSong(BaseAuditable):
+class MusicArtistXSong(BaseAuditable):
     """Relates a MusicArtist to a Song"""
     music_artist = ForeignKey(
         MusicArtist, on_delete=CASCADE,
@@ -1020,12 +1020,12 @@ class MusicArtistToSong(BaseAuditable):
 
     def __str__(self) -> str:
         return (
-            f'MusicArtistToSong {self.pk}:'
+            f'MusicArtistXSong {self.pk}:'
             f' {self.music_artist_id}-{self.song_id}'
         )
 
 
-class MusicArtistToSongRecording(BaseAuditable):
+class MusicArtistXSongRecording(BaseAuditable):
     music_artist = ForeignKey(
         MusicArtist, on_delete=CASCADE,
         **default_related_names(__qualname__)
@@ -1047,7 +1047,7 @@ class MusicArtistToSongRecording(BaseAuditable):
 
     def __str__(self) -> str:
         return (
-            f'MusicArtistToSongRecording {self.pk}:'
+            f'MusicArtistXSongRecording {self.pk}:'
             f' {self.music_artist_id}-{self.song_recording_id}'
         )
 
@@ -1264,7 +1264,7 @@ class PointOfSaleLineItem(BaseAuditable):
         return f'PointOfSaleLineItem {self.pk}: {self.point_of_sale_id}'
 
 
-class PointOfSaleToTxn(BaseAuditable):
+class PointOfSaleXTxn(BaseAuditable):
     """Relates a PointOfSale purchase to its correlated Transaction.
 
     In a PointOfSale scenario, these are settled paid in-full at the time of
@@ -1301,7 +1301,7 @@ class Song(BaseAuditable):
     title = CharField(max_length=255)
     # Relationships
     music_artists = ManyToManyField(
-        MusicArtist, through='MusicArtistToSong',
+        MusicArtist, through='MusicArtistXSong',
         related_name='+'
     )
 
@@ -1327,12 +1327,12 @@ class SongRecording(BaseAuditable):
         default=RecordingType.STUDIO)
     # Relationships
     music_artists = ManyToManyField(
-        MusicArtist, through='MusicArtistToSongRecording',
+        MusicArtist, through='MusicArtistXSongRecording',
         related_name='+'
     )
 
 
-class SongToSong(BaseAuditable):
+class SongXSong(BaseAuditable):
     """Many to many for Songs.
 
     Includes covers, arrangements, or other derivative works.
@@ -1656,7 +1656,7 @@ class VideoGamePlatform(BaseAuditable):
     short_name = CharField(max_length=15)
 
 
-class VideoGameToVideoGamePlatform(BaseAuditable):
+class VideoGameXVideoGamePlatform(BaseAuditable):
     """"""
     # release_date
     # video_game

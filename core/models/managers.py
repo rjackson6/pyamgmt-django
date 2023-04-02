@@ -108,6 +108,6 @@ class AccountAssetManagerReal(Manager):
         return super().get_queryset().filter(subtype=self.model.Subtype.REAL)
 
 
-class MusicArtistToPersonManager(Manager):
+class MusicArtistXPersonManager(Manager):
     def get_queryset(self):
         return super().get_queryset().select_related('music_artist', 'person')
