@@ -547,7 +547,12 @@ class CatalogItemMusicAlbumProduction(BaseAuditable):
 
 # region CatalogItemM2M
 class CatalogItemXCatalogItem(BaseAuditable):
-    """Holds relationships between CatalogItems to account for bundles."""
+    """Holds relationships between CatalogItems to account for bundles.
+
+    A "bundle" can contain individual items that may be listed separately. A
+    bundle probably shouldn't contain bundles, though there's no real
+    enforcement mechanism for that.
+    """
     catalog_item_a = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
     catalog_item_b = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
     relationship = None
@@ -622,6 +627,7 @@ class CatalogItemXPointOfSaleLineItem(BaseAuditable):
 # endregion CatalogItemM2M
 
 
+# region Invoice
 class Invoice(BaseAuditable):
     """Payment due to a party for a good or service."""
     # party_id = ForeignKey()
@@ -643,6 +649,7 @@ class InvoiceLineItem(BaseAuditable):
 
     def __str__(self) -> str:
         return f'InvoiceLineItem {self.pk}: {self.invoice_id}'
+# endregion Invoice
 
 
 # region InvoiceLineItemM2M
