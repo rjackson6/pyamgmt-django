@@ -20,9 +20,12 @@ from django.urls import include, path
 
 import debug_toolbar
 
+admin.site.site_header = 'PyAMgmt Admin'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('schemaviz/', include('schemaviz.urls'))
+    path('schemaviz/', include('schemaviz.urls')),
+    path('sandbox/', include('sandbox.urls')),
 ]
 
 if settings.DEBUG is True:

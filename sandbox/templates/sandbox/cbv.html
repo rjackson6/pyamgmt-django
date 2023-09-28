@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<div style="background-color: firebrick; border: 1px dashed aqua">
+  {{ forms }}
+</div>
+<hr>
+<div style="background-color: aliceblue">
+  {{ forms.abc }}
+  {{ forms.hij }}
+</div>
+<hr>
+<div style="background-color: azure">
+  {% for form in forms %}
+  {{ form.as_p }}
+  {% endfor %}
+</div>
+<hr>
+<form method="post" style="border: 1px dashed brown">
+  {% csrf_token %}
+  {% for form in forms %}
+  {{ form.as_p }}
+  {% endfor %}
+  <button type="submit">Test it!</button>
+</form>
+</body>
+</html>

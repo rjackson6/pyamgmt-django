@@ -1,67 +1,181 @@
-from collections import defaultdict, deque
+from collections import deque
 
 from django.db.models import Manager
 
 
-class AccountManager(Manager):
-    def get_hierarchy_dd(self, *, root_pk: int = None) -> dict:
-        qs_values = ['pk', 'name', 'parent_account_id']
-        qs_account = self.get_queryset().values(*qs_values)
-        data = {}
-        deferred = deque()
-        for account in qs_account.iterator():
-            account = defaultdict(list, account)
-            pk = account['pk']
-            data[pk] = account
-            parent_account_id = account['parent_account_id']
-            if parent_account_id in data:
-                data[parent_account_id]['child_accounts'].append(account)
+# TODO: This should be a utils.function
+#  I guess it could take a list of callbacks, too? Then other functions could
+#  be applied to each record as they are traversed.
+#  Alternatively, and for cases where depth calculation isn't required, just
+#  keep a flat list of references and do the extra work somewhere else
+#  The reason why "depth" is specific is because it's part of the memo, and the
+#  only part that's directly connected to the traversal
+#  Since this mutates the given list and objects, the return could be the flat
+#  version.
+def calculate_depth(
+    data_list: list[dict],
+    key: str,
+    depth_key: str = 'depth',
+) -> list:
+    """"""
+    queue = deque([(id(x), x, 1) for x in data_list])
+    memo = set()
+    while queue:
+        id_, account, depth = queue.popleft()
+        if id_ in memo:
+            continue
+        memo.add(id_)
+        account[depth_key] = depth
+        queue.extend((id(x), x, depth + 1) for x in account[key])
+    return data_list
 
-    def get_hierarchy(self, *, root_pk: int = None) -> dict:
+
+def traverse_depth(
+    data_list: list[dict],
+    key: str,
+    depth_key: str = 'depth',
+) -> list:
+    """Updates dictionaries with depth and returns the flattened list."""
+    all_ = []
+    queue = deque([(id(x), x, 1) for x in data_list])
+    memo = set()
+    while queue:
+        id_, account, depth = queue.popleft()
+        if id_ in memo:
+            continue
+        memo.add(id_)
+        all_.append(account)
+        account[depth_key] = depth
+        queue.extend((id(x), x, depth + 1) for x in account[key])
+    return all_
+
+
+def hierarchy(foreign_key: str, *values):
+    # values / extra values for queryset
+    # queryset object; values
+    # could I use values_list? or in_bulk()?
+    qs = None
+    data = []
+    data_map = {}
+    deferred = deque()
+    for record in qs.iterator():
+        record['descendents'] = []
+    return
+
+
+class AccountManager(Manager):
+    def get_hierarchy_list(
+        self,
+        *,
+        root_pk: int = None,
+        flat: bool = False,
+    ) -> list:
+        # TODO: A "flat" option would be appropriate for node/edge format
         qs_values = ['pk', 'name', 'parent_account_id']
         qs_account = self.get_queryset().values(*qs_values)
-        data = {}
+        if root_pk and not qs_account.filter(pk=root_pk).exists():
+            raise ValueError(
+                f"{self.model} with pk of {root_pk} does not exist"
+            )
+        data = []
+        data_map = {}  # full structure
         deferred = deque()
+        root = None
+        account: dict
         for account in qs_account.iterator():
+            account['child_accounts'] = []
             pk = account['pk']
-            data[pk] = account
+            data_map[pk] = account
             parent_account_id = account['parent_account_id']
-            if parent_account_id in data:
-                (
-                    data[parent_account_id]
-                    .setdefault('child_accounts', [])
-                    .append(account)
-                )
+            if root_pk:
+                if root_pk == pk:
+                    root = account
+                    data.append(root)
+            elif parent_account_id is None:
+                data.append(account)
+            if parent_account_id in data_map:
+                data_map[parent_account_id]['child_accounts'].append(account)
+            elif parent_account_id is not None:
+                deferred.append(account)
+        # At this point, every record has been seen once
+        while deferred:
+            account = deferred.popleft()
+            parent_account_id = account['parent_account_id']
+            if parent_account_id in data_map:
+                data_map[parent_account_id]['child_accounts'].append(account)
+        # At this point, the full structure is known.
+        # If a root id was given, use that as the reference point
+        if root:
+            memo = set()
+            obj = root
+            memo.add(id(obj))
+            while obj['parent_account_id']:
+                parent_account_cp = data_map[obj['parent_account_id']].copy()
+                # De-reference the nested data
+                # TODO: this is mostly for the sake of serialization
+                del parent_account_cp['child_accounts']
+                obj['parent_account'] = parent_account_cp
+                obj = obj['parent_account']
+                if id(obj) in memo:
+                    break
+                memo.add(id(obj))
+            del obj
+        # Analyze depth/level of nesting
+        # This is also where post-processing or aggregation could happen, since
+        # every _relevant_ record will be visited.
+        # TODO: I think this is the key.
+        #  Originally I used this to calculate depth, but it's an obvious way
+        #  to visit every record and do extra work.
+        # TODO: Flattening also needs to remove nesting.
+        #  Or use another function that doesn't nest at all.
+        flattened = traverse_depth(data, 'child_accounts')
+        if flat:
+            return flattened
+        return data
+
+    def get_hierarchy_flat(self) -> list:
+        qs_values = ['pk', 'name', 'parent_account_id']
+        qs_account = self.get_queryset().values(*qs_values)
+        data = []
+        data_map = {}
+        deferred = deque()
+        account: dict
+        for account in qs_account.iterator():
+            account['child_account_ids'] = []  # just a list, no nesting
+            pk = account['pk']
+            data_map[pk] = account
+            parent_account_id = account['parent_account_id']
+            # optional selective stuff would go here
+            data.append(account)
+            if parent_account_id in data_map:
+                data_map[parent_account_id]['child_account_ids'].append(pk)
             elif parent_account_id is not None:
                 deferred.append(account)
         while deferred:
             account = deferred.popleft()
+            pk = account['pk']
             parent_account_id = account['parent_account_id']
-            if parent_account_id in data:
-                (
-                    data[parent_account_id]
-                    .setdefault('child_accounts', [])
-                    .append(account)
+            if parent_account_id in data_map:
+                data_map[parent_account_id]['child_account_ids'].append(pk)
+        return data
+
+    def get_hierarchy_raw(self, pk):
+        """Tries to use recursive CTE?"""
+        params = [pk]
+        query = ("""\
+            WITH RECURSIVE
+                cte(n) AS (
+                    VALUES(%s)
+                    UNION
+                    SELECT id
+                    FROM core_account, cte
+                    WHERE core_account.parent_account_id=cte.n
                 )
-        root = data[root_pk]
-        obj = root
-        while obj.get('parent_account_id', None):
-            parent_account_cp = data[obj['parent_account_id']].copy()
-            del parent_account_cp['child_accounts']
-            obj['parent_account'] = parent_account_cp
-            obj = obj['parent_account']
-        del obj
-        queue = deque([(id(root), root, 1)])
-        memo = set()
-        while queue:
-            id_, account, level = queue.popleft()
-            if id_ in memo:
-                continue
-            memo.add(id_)
-            account['level'] = level
-            if child_accounts := account.get('child_accounts', []):
-                queue += ((id(x), x, level + 1) for x in child_accounts)
-        return root
+            SELECT *
+            FROM core_account
+            WHERE core_account.id IN cte;
+        """)
+        return self.raw(query, params)
 
 
 class AccountManagerAsset(Manager):

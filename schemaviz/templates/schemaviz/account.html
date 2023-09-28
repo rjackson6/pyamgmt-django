@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account</title>
+  <link rel="icon" href="{% static 'favicon.ico' %}">
+  <style>
+      body {
+          background-color: #777;
+      }
+
+      #vis-container {
+          background-color: #999;
+          border: 1px solid black;
+          height: 90vh;
+          width: 90vw;
+      }
+  </style>
+</head>
+<body>
+<div>
+  <h1>Account</h1>
+  <div id="vis-container"></div>
+</div>
+
+{{ vis_data|json_script:"vis-data" }}
+{{ nodes|json_script:"nodes" }}
+{{ edges|json_script:"edges" }}
+
+<script src="{% static 'vis-network/standalone/umd/vis-network.js' %}"></script>
+
+<script>
+    const context_data = JSON.parse(document.getElementById("vis-data").textContent);
+    const nodes = JSON.parse(document.getElementById("nodes").textContent);
+    const edges = JSON.parse(document.getElementById("edges").textContent);
+    console.debug(context_data);
+    let container = document.getElementById("vis-container");
+    let data = {
+        nodes: nodes,
+        edges: edges,
+    }
+    let network = new vis.Network(container, data, {});
+</script>
+
+</body>
+</html>

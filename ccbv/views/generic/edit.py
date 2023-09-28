@@ -7,14 +7,27 @@ from ccbv.views.generic.detail import BaseDetailView, SingleObjectMixin, SingleO
 
 
 class FormMixin(edit.FormMixin, ContextMixin):
-    pass
+    def render_to_response(self):
+        raise NotImplementedError
 
 
-class ModelFormMixin(edit.ModelFormMixin, SingleObjectMixin):
+class ModelFormMixin(edit.ModelFormMixin, FormMixin, SingleObjectMixin):
     pass
 
 
 class ProcessFormView(edit.ProcessFormView, View):
+    def form_valid(self):
+        raise NotImplementedError
+
+    def form_invalid(self):
+        raise NotImplementedError
+
+    def get_form(self):
+        raise NotImplementedError
+
+    def render_to_response(self):
+        raise NotImplementedError
+
     def get(self, request, **kwargs):
         return super().get(request, **kwargs)
 
@@ -58,6 +71,9 @@ class UpdateView(edit.UpdateView, SingleObjectTemplateResponseMixin, BaseUpdateV
 
 
 class DeletionMixin(edit.DeletionMixin):
+    def get_object(self):
+        raise NotImplementedError
+
     def delete(self, request, **kwargs):
         return super().delete(request, **kwargs)
 

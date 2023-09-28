@@ -108,9 +108,11 @@ class Account(BaseAuditable):
         on_delete=SET_NULL,
         related_name='child_accounts',
         null=True,
-        blank=True)
+        blank=True
+    )
     subtype = CharField(
-        max_length=9, choices=Subtype.choices, default=Subtype.OTHER)
+        max_length=9, choices=Subtype.choices, default=Subtype.OTHER
+    )
 
     objects = managers.AccountManager()
     assets = managers.AccountManagerAsset()
@@ -166,7 +168,8 @@ class AccountAsset(BaseAuditable):
     )
     account_id: int
     subtype = CharField(
-        max_length=31, choices=Subtype.choices, default=Subtype.OTHER)
+        max_length=31, choices=Subtype.choices, default=Subtype.OTHER
+    )
 
     objects = Manager()
     financials = managers.AccountAssetManagerFinancial()
@@ -204,7 +207,8 @@ class AccountAssetReal(BaseAuditable):
         on_delete=SET_NULL,
         null=True,
         blank=True,
-        **default_related_names(__qualname__))
+        **default_related_names(__qualname__)
+    )
     asset_id: int
 # endregion AccountAsset
 
@@ -269,7 +273,8 @@ class AccountLiability(BaseAuditable):
     account_number = CharField(max_length=63, null=True, blank=True)
     lender = None  # TODO
     subtype = CharField(
-        max_length=15, choices=Subtype.choices, default=Subtype.OTHER)
+        max_length=15, choices=Subtype.choices, default=Subtype.OTHER
+    )
 
 
 class AccountLiabilitySecured(BaseAuditable):
@@ -281,7 +286,8 @@ class AccountLiabilitySecured(BaseAuditable):
     account_liability_id: int
     asset = ForeignKey(
         'Asset', on_delete=PROTECT,
-        **default_related_names(__qualname__))
+        **default_related_names(__qualname__)
+    )
     asset_id: int
 # endregion Account
 
@@ -444,10 +450,12 @@ class BookXMotionPicture(BaseAuditable):
     """
     book = ForeignKey(
         Book, on_delete=CASCADE,
-        **default_related_names(__qualname__))
+        **default_related_names(__qualname__)
+    )
     motion_picture = ForeignKey(
         'MotionPicture', on_delete=CASCADE,
-        **default_related_names(__qualname__))
+        **default_related_names(__qualname__)
+    )
 
     class Meta:
         constraints = [
@@ -506,7 +514,8 @@ class CatalogItem(BaseAuditable):
     )
     name = CharField(max_length=255)
     subtype = CharField(
-        max_length=31, choices=Subtype.choices, null=True, blank=True)
+        max_length=31, choices=Subtype.choices, null=True, blank=True
+    )
     upc_a = CharField(
         max_length=12, unique=True, null=True, blank=True,
         validators=[MinLengthValidator(12), validate_digit]
@@ -630,9 +639,13 @@ class CatalogItemXPointOfSaleLineItem(BaseAuditable):
 # region Invoice
 class Invoice(BaseAuditable):
     """Payment due to a party for a good or service."""
-    # party_id = ForeignKey()
     invoice_date = DateField()
     invoice_number = CharField(max_length=255)
+    party = ForeignKey(
+        'Party', on_delete=SET_NULL,
+        null=True,
+        **default_related_names(__qualname__)
+    )
 
 
 class InvoiceLineItem(BaseAuditable):
@@ -674,6 +687,13 @@ class InvoiceLineItemXNonCatalogItem(BaseAuditable):
 # endregion InvoiceLineItemM2M
 
 
+class Manufacturer(BaseAuditable):
+    """
+    Placeholder while I figure out how crazy to get with business entities.
+    """
+    name = CharField(max_length=255, unique=True)
+
+
 class MediaFormat(BaseAuditable):
     name = CharField(max_length=255, unique=True)
 
@@ -686,7 +706,9 @@ class MediaFormat(BaseAuditable):
 class MotionPicture(BaseAuditable):
     title = CharField(max_length=255)
     year_produced = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future])
+        null=True, blank=True,
+        validators=[validate_year_not_future]
+    )
 
     def __str__(self) -> str:
         return f'{self.title}'
@@ -753,15 +775,18 @@ class MusicAlbum(BaseAuditable):
     title = CharField(max_length=255, unique=True)  # TODO: This is a temporary unique constraint
     total_discs = PositiveSmallIntegerField(default=1)  # TODO
     year_copyright = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future])
+        null=True, blank=True, validators=[validate_year_not_future]
+    )
     year_produced = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future])
+        null=True, blank=True, validators=[validate_year_not_future]
+    )
     # Relationships
     music_artists = ManyToManyField(
         'MusicArtist',
         through='MusicAlbumXMusicArtist',
         related_name='music_albums',
-        blank=True)
+        blank=True
+    )
     # song_recordings = ManyXManyField(
     #     'SongRecording', through='MusicAlbumXSongRecording',
     #     blank=True)
@@ -804,9 +829,11 @@ class MusicAlbumEdition(BaseAuditable):
     )
     total_discs = PositiveSmallIntegerField(default=1)  # TODO
     year_copyright = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future])
+        null=True, blank=True, validators=[validate_year_not_future]
+    )
     year_produced = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future])
+        null=True, blank=True, validators=[validate_year_not_future]
+    )
 
 
 class MusicAlbumProduction(BaseAuditable):
@@ -827,7 +854,8 @@ class MusicAlbumProduction(BaseAuditable):
     )
     total_discs = PositiveSmallIntegerField(default=1)
     year_produced = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future])
+        null=True, blank=True, validators=[validate_year_not_future]
+    )
 
 
 # region MusicAlbumM2M
@@ -928,9 +956,11 @@ class MusicArtistActivity(BaseAuditable):
     )
     music_artist_id: int
     year_active = PositiveSmallIntegerField(
-        validators=[validate_year_not_future])
+        validators=[validate_year_not_future]
+    )
     year_inactive = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future])
+        null=True, blank=True, validators=[validate_year_not_future]
+    )
 
     class Meta:
         constraints = [
@@ -1001,7 +1031,8 @@ class MusicArtistXPersonActivity(BaseAuditable):
     music_artist_to_person_id: int
     date_active = DateField(validators=[validate_date_not_future])
     date_inactive = DateField(
-        null=True, blank=True, validators=[validate_date_not_future])
+        null=True, blank=True, validators=[validate_date_not_future]
+    )
 
 
 class MusicArtistXSong(BaseAuditable):
@@ -1071,9 +1102,13 @@ class Order(BaseAuditable):
     """A purchase record which is usually paid in advance, but not immediately
     fulfilled.
     """
-    # TODO: party = ForeignKey()
     order_date = DateField()
     order_number = CharField(max_length=255)
+    party = ForeignKey(
+        'Party', on_delete=SET_NULL,
+        null=True,
+        **default_related_names(__qualname__)
+    )
 
     def __str__(self) -> str:
         return f'Order {self.pk}: {self.order_number}'
@@ -1331,7 +1366,8 @@ class SongRecording(BaseAuditable):
     recording_type = CharField(
         max_length=6,
         choices=RecordingType.choices,
-        default=RecordingType.STUDIO)
+        default=RecordingType.STUDIO
+    )
     # Relationships
     music_artists = ManyToManyField(
         MusicArtist, through='MusicArtistXSongRecording',
@@ -1367,7 +1403,8 @@ class SongXSong(BaseAuditable):
     )
     song_archetype_id: int
     song_relationship = CharField(
-        max_length=15, choices=SongRelationship.choices)
+        max_length=15, choices=SongRelationship.choices
+    )
 
     class Meta:
         constraints = [
@@ -1447,7 +1484,8 @@ class TxnLineItem(BaseAuditable):
     memo = TextField(null=True, blank=True)
     txn = ForeignKey(
         Txn, on_delete=PROTECT,
-        related_name='line_items')
+        related_name='line_items'
+    )
     txn_id: int
 
     def __str__(self) -> str:
@@ -1488,7 +1526,8 @@ class Vehicle(BaseAuditable):
     )
     vehicle_year_id: int
     vin = UpperCharField(
-        max_length=17, unique=True, validators=[MinLengthValidator(11)])
+        max_length=17, unique=True, validators=[MinLengthValidator(11)]
+    )
     # TODO: VIN Validator based on year + date
     # NHTSA vPIC data could go in a JSON format
 
@@ -1499,7 +1538,11 @@ class Vehicle(BaseAuditable):
 class VehicleMake(BaseAuditable):
     """The make/brand/marque of a vehicle."""
     name = CharField(max_length=255, unique=True, help_text="Make/Brand/Marque")
-    # manufacturer
+    manufacturer = ForeignKey(
+        Manufacturer, on_delete=SET_NULL,
+        null=True,
+        **default_related_names(__qualname__)
+    )
 
     def __str__(self) -> str:
         return f'{self.__class__.__name__} {self.pk}: {self.name}'
@@ -1518,7 +1561,8 @@ class VehicleMileage(BaseAuditable):
     )
     odometer_miles = PositiveIntegerField(help_text="Odometer reading in miles")
     odometer_time = TimeField(
-        null=True, blank=True, help_text="Time of this reading, if available")
+        null=True, blank=True, help_text="Time of this reading, if available"
+    )
 
     class Meta:
         constraints = [
@@ -1538,7 +1582,8 @@ class VehicleModel(BaseAuditable):
     """The model of a vehicle, e.g., Supra."""
     name = CharField(
         max_length=255,
-        help_text="Model name, such as 3000GT, Forte, Supra")
+        help_text="Model name, such as 3000GT, Forte, Supra"
+    )
     vehicle_make = ForeignKey(
         VehicleMake, on_delete=PROTECT,
         **default_related_names(__qualname__)
@@ -1631,41 +1676,110 @@ class VehicleYear(BaseAuditable):
 
 
 class VideoGame(BaseAuditable):
-    """"""
-    # developer(s) - person or company or other entity
-    # genre(s)
-    # language?
-    # platform: PC, PS4, NES, SNES - not mutually exclusive; m2m
-    # publisher(s) - usually a company, but could be independently published or n/a
-    # release date - different per platform, port, region, or market (part of m2m)
-    # tag(s)? Something looser than genre, though not required.
-    # title
+    """
+    developer(s) - person or company or other entity
+    genre(s)
+    language?
+    platform: PC, PS4, NES, SNES - not mutually exclusive; m2m
+    publisher(s) - usually a company, but could be independently published
+    release date - different per platform, port, region, or market (part of m2m)
+    tag(s)? Something looser than genre, though not required.
+    title
 
-    # Could also relate to people: voice acting, developers, directors, composers, producers
-    # Relates to music via soundtracks (songs vs albums is debatable, like movies)
-    #  Like, an "unofficial" OST is kind of an issue for copyright, but not every game was published alongside an OST
-    # Not every game is regionalized right? NTSC / PAL / JP was common for consoles. Region # is a thing for media.
+    Could also relate to people:
+        voice acting, developers, directors, composers, producers
+    Relates to music via soundtracks (songs vs albums is debatable, like movies)
+    Like, an "unofficial" OST is kind of an issue for copyright, but not every
+    game was published alongside an OST
+    Not every game is regionalized right? NTSC / PAL / JP was common for
+    consoles. Region # is a thing for media.
+
+    Video Games also are released under different editions
+    Sometimes editions are just bundles that include add-ons
+    """
+    title = CharField(max_length=100)
+    # platforms = ManyToManyField()
+    series = ForeignKey(
+        'VideoGameSeries', on_delete=SET_NULL,
+        null=True, blank=True,
+        **default_related_names(__qualname__)
+    )
 
 
 class VideoGameAddon(BaseAuditable):
-    """DLC, Expansion pack, or other additional components that are optional."""
-    # video_game = ForeignKey
+    """DLC, Expansion pack, or other additional components that are optional.
+
+    """
     # release date
-    # title / name
-    # type, such as DLC, expansion, addon, content, in-game something (or tags may be appropriate)
+    # type, such as DLC, expansion, addon, content, in-game something
+    # (or tags may be appropriate)
+    name = CharField(max_length=100)
+    release_date = DateField(null=True, blank=True)
+    video_game = ForeignKey(
+        VideoGame, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
+
+
+class VideoGameEdition(BaseAuditable):
+    name = CharField(max_length=100)
+    release_date = DateField(null=True, blank=True)
+    video_game = ForeignKey(
+        VideoGame, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
 
 
 class VideoGamePlatform(BaseAuditable):
-    """"""
-    # May also be a commodity, asset, or catalogue item, but we will probably keep this abstracted from the physical
-    #  consoles or assemblies
+    """
+    May also be a commodity, asset, or catalog item, but we will probably keep
+    this abstracted from the physical consoles or assemblies
+    """
+
     name = CharField(max_length=31)
-    short_name = CharField(max_length=15)
+    short_name = CharField(max_length=15, blank=True)
 
 
-class VideoGameXVideoGamePlatform(BaseAuditable):
-    """"""
-    # release_date
-    # video_game
-    # video_game_platform
-    # TODO: region...
+class VideoGameSeries(BaseAuditable):
+    """A grouping of related video games."""
+    name = CharField(max_length=63)
+    parent_series = ForeignKey(
+        'self', on_delete=SET_NULL,
+        null=True, blank=True,
+        related_name='sub_series'
+    )
+
+
+# class VideoGameXVideoGamePlatform(BaseAuditable):
+class VideoGameXVideoGamePlatform:
+    """
+    This gets closer to the catalog item.
+
+    Example:
+        "I bought a [copy] of [game] on [platform]
+        "I bought a [key] for [World of Final Fantasy] on [Steam/PC]
+        "I bought a [blu-ray] of [World of Final Fantasy] on [PS4]
+
+    TODO: region...
+    """
+    release_date = DateField(null=True, blank=True)
+    video_game = ForeignKey(
+        VideoGame, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
+    video_game_platform = ForeignKey(
+        VideoGamePlatform, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
+
+
+class VideoGameEditionXVideoGamePlatform(BaseAuditable):
+    release_date = DateField(null=True, blank=True)
+    video_game_edition = ForeignKey(
+        VideoGameEdition, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
+    video_game_platform = ForeignKey(
+        VideoGamePlatform, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )

@@ -1,4 +1,9 @@
-__all__ = ['BaseDetailView', 'DetailView', 'SingleObjectMixin', 'SingleObjectTemplateResponseMixin']
+__all__ = [
+    'BaseDetailView',
+    'DetailView',
+    'SingleObjectMixin',
+    'SingleObjectTemplateResponseMixin'
+]
 
 from django.views.generic import detail
 

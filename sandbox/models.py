@@ -8,11 +8,11 @@ from base.utils import default_related_names
 class SuperManager(Manager):
     """Testing inheritance between classes."""
 
-    def get_queryset(self):
-        print(f'calling {__class__}.get_queryset()...')
-        qs = super().get_queryset().filter(name__icontains='5')
-        print(qs.query)
-        return qs
+    # def get_queryset(self):
+    #     print(f'calling {__class__}.get_queryset()...')
+    #     qs = super().get_queryset().filter(name__icontains='5')
+    #     print(qs.query)
+    #     return qs
 
 
 class SubManager(SuperManager):

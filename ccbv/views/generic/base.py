@@ -1,6 +1,12 @@
 """Django Class-based View overrides from django.generic.base."""
 
-__all__ = ['ContextMixin', 'RedirectView', 'TemplateResponseMixin', 'TemplateView', 'View']
+__all__ = [
+    'ContextMixin',
+    'RedirectView',
+    'TemplateResponseMixin',
+    'TemplateView',
+    'View'
+]
 
 import logging
 from typing import Callable
@@ -9,7 +15,7 @@ from django.http import HttpRequest
 from django.views.generic import base
 from django.utils.decorators import classonlymethod
 
-logger = logging.getLogger("django.request")
+logger = logging.getLogger('django.request')
 
 
 class ContextMixin(base.ContextMixin):
