@@ -1,18 +1,18 @@
 from django.contrib import admin
 
-from .models import models
+from .models import account, asset, catalog_item, models
 
 
 # Account and subtypes
-admin.site.register(models.Account)
-admin.site.register(models.AccountAsset)
-admin.site.register(models.AccountAssetFinancial)
-admin.site.register(models.AccountAssetReal)
+admin.site.register(account.Account)
+admin.site.register(account.AccountAsset)
+admin.site.register(account.AccountAssetFinancial)
+admin.site.register(account.AccountAssetReal)
 # Asset and subtypes
-admin.site.register(models.Asset)
-admin.site.register(models.AssetDiscrete)
-admin.site.register(models.AssetDiscreteCatalogItem)
-admin.site.register(models.AssetDiscreteVehicle)
+admin.site.register(asset.Asset)
+admin.site.register(asset.AssetDiscrete)
+admin.site.register(asset.AssetDiscreteCatalogItem)
+admin.site.register(asset.AssetDiscreteVehicle)
 
 admin.site.register(models.Invoice)
 admin.site.register(models.InvoiceLineItem)

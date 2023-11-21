@@ -1,9 +1,5 @@
 __all__ = [
-    'Account', 'AccountAsset', 'AccountAssetFinancial', 'AccountAssetReal',
-    'AccountEquity', 'AccountExpense', 'AccountIncome', 'AccountLiability',
-    'Asset', 'AssetDiscrete', 'AssetDiscreteCatalogItem',
-    'AssetDiscreteVehicle', 'AssetInventory', 'AssetType',
-    'CatalogItem', 'CatalogItemDigitalSong',
+    'AssetType',
     'CatalogItemXInvoiceLineItem', 'CatalogItemXOrderLineItem',
     'CatalogItemXPointOfSaleLineItem',
     'Invoice', 'InvoiceLineItem', 'InvoiceLineItemXNonCatalogItem',
@@ -17,7 +13,7 @@ __all__ = [
     'MusicArtistXSongRecording',
     'NonCatalogItem',
     'Order', 'OrderLineItem',
-    'Party', 'PartyBusiness', 'PartyPerson', 'PartyType', 'Payee', 'Person',
+    'PartyType', 'Payee', 'Person',
     'PointOfSale', 'PointOfSaleDocument', 'PointOfSaleLineItem',
     'Seller',
     'Song', 'SongRecording',  # 'SongXSong',
@@ -25,6 +21,7 @@ __all__ = [
     'Unit',
     'Vehicle', 'VehicleMake', 'VehicleMileage', 'VehicleModel', 'VehicleTrim',
     'VehicleYear',
+    'get_default_media_format_audio',
 ]
 
 import datetime
@@ -75,305 +72,13 @@ from core.validators import (
 )
 
 
-def get_default_mediaformat_audio() -> int:
-    return MediaFormat.get_default_audio()
-
-
 ##########
 # MODELS #
 ##########
 
-# region Account
-class Account(BaseAuditable):
-    """Double-entry style account.
 
-    If money goes into it or comes out of it, literally or figuratively, it may
-    be tracked as an account.
-    Assets, Expenses, Dividends, Losses:
-        increased by debit; decreased by credit
-    Liabilities, Income, Capital, Revenue, Gains, Equity:
-        decreased by debit; increased by credit
-    """
-
-    class Subtype(TextChoices):
-        ASSET = 'ASSET'  # Checking, Savings, Real, Discrete, Inventory
-        LIABILITY = 'LIABILITY'  # Loan, Mortgage, Credit Card
-        EQUITY = 'EQUITY'  # Not sure yet
-        INCOME = 'INCOME'  # Salary
-        EXPENSE = 'EXPENSE'  # Rent, Utilities, Internet, Fees
-        OTHER = 'OTHER'  # Not likely to use
-    name = CharField(max_length=255, unique=True)
-    parent_account = ForeignKey(
-        'self',
-        on_delete=SET_NULL,
-        related_name='child_accounts',
-        null=True,
-        blank=True
-    )
-    subtype = CharField(
-        max_length=9, choices=Subtype.choices, default=Subtype.OTHER
-    )
-
-    objects = managers.AccountManager()
-    assets = managers.AccountManagerAsset()
-    liabilities = managers.AccountManagerLiability()
-    equities = managers.AccountManagerEquity()
-    incomes = managers.AccountManagerIncome()
-    expenses = managers.AccountManagerExpense()
-
-    def __str__(self) -> str:
-        return f'{self.name}'
-
-    def clean(self) -> None:
-        if self.parent_account == self:
-            raise ValidationError("An account may not be its own parent.")
-
-    @property
-    def balance(self) -> int:
-        return 0
-
-    def debit_coef(self, debit: bool) -> int:
-        if self.debit_increases is debit:
-            return 1
-        else:
-            return -1
-
-    @property
-    def debit_increases(self) -> bool:
-        if self.subtype in (self.Subtype.ASSET, self.Subtype.EXPENSE):
-            return True
-        elif self.subtype in (
-            self.Subtype.EQUITY,
-            self.Subtype.INCOME,
-            self.Subtype.LIABILITY
-        ):
-            return False
-
-
-# region AccountAsset
-class AccountAsset(BaseAuditable):
-    """An asset account.
-
-    Examples: a bank checking account, or a physical item with value.
-    """
-
-    class Subtype(TextChoices):
-        FINANCIAL = 'FINANCIAL', 'FINANCIAL'
-        REAL = 'REAL', 'REAL'
-        OTHER = 'OTHER', 'OTHER'
-
-    account = OneToOneField(
-        Account, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    account_id: int
-    subtype = CharField(
-        max_length=31, choices=Subtype.choices, default=Subtype.OTHER
-    )
-
-    objects = Manager()
-    financials = managers.AccountAssetManagerFinancial()
-    real = managers.AccountAssetManagerReal()
-
-
-class AccountAssetFinancial(BaseAuditable):
-    """An asset which is monetary.
-
-    Examples: a cash or checking account.
-    """
-    account_asset = OneToOneField(
-        AccountAsset, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    account_asset_id: int
-    account_number = CharField(max_length=63, null=True, blank=True)
-    institution = None  # TODO
-
-
-class AccountAssetReal(BaseAuditable):
-    """A real asset.
-
-    Examples: a vehicle, or real estate.
-    Implies inherent value, and may be subject to depreciation.
-    """
-    account_asset = OneToOneField(
-        AccountAsset, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    account_asset_id: int
-    # TODO: Decide if I want `limit_choices_to=` here. If so, needs a callback.
-    asset = ForeignKey(
-        'Asset',
-        on_delete=SET_NULL,
-        null=True,
-        blank=True,
-        **default_related_names(__qualname__)
-    )
-    asset_id: int
-# endregion AccountAsset
-
-
-class AccountEquity(BaseAuditable):
-    """A business model included for completeness
-
-    Examples: Common Stock, Paid-In Capital.
-    """
-    account = OneToOneField(
-        Account, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    account_id: int
-
-
-class AccountExpense(BaseAuditable):
-    """An expense account.
-
-    Examples: Utilities, Rent, or Fuel.
-    """
-    account = OneToOneField(
-        Account, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    account_id: int
-
-
-class AccountIncome(BaseAuditable):
-    """An income account.
-
-    Examples: Salary, dividends
-    """
-    account = OneToOneField(
-        Account, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    account_id: int
-
-
-class AccountLiability(BaseAuditable):
-    """A liability account.
-
-    Examples: a loan, mortgage, or credit card
-    Notes:
-        Secured vs Unsecured
-        Revolving vs Non-Revolving
-        - Credit card is Unsecured, Revolving
-        - Mortgage is Secured, Non-Revolving
-        - Car Loan is Secured, Non-Revolving
-        - HELOC is Secured (by equity)
-            - somewhat revolving? Open term with a limit?
-    """
-    class Subtype(TextChoices):
-        SECURED = 'SECURED', 'SECURED'
-        OTHER = 'OTHER', 'OTHER'
-    account = OneToOneField(
-        Account, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    account_id: int
-    account_number = CharField(max_length=63, null=True, blank=True)
-    lender = None  # TODO
-    subtype = CharField(
-        max_length=15, choices=Subtype.choices, default=Subtype.OTHER
-    )
-
-
-class AccountLiabilitySecured(BaseAuditable):
-    """A liability account that is held against an asset."""
-    account_liability = OneToOneField(
-        AccountLiability, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    account_liability_id: int
-    asset = ForeignKey(
-        'Asset', on_delete=PROTECT,
-        **default_related_names(__qualname__)
-    )
-    asset_id: int
-# endregion Account
-
-
-# region Asset
-class Asset(BaseAuditable):
-    """Any item which implies ownership."""
-    class Subtype(TextChoices):
-        DISCRETE = 'DISCRETE', 'DISCRETE'
-        INVENTORY = 'INVENTORY', 'INVENTORY'
-    description = TextField(null=True, blank=True)
-    subtype = CharField(max_length=31, choices=Subtype.choices)
-
-    def __str__(self) -> str:
-        return f'Asset {self.pk}'
-
-
-# region AssetDiscrete
-class AssetDiscrete(BaseAuditable):
-    """An item that is uniquely identifiable.
-
-    Examples: A vehicle, serialized equipment, or property
-    """
-    class Subtype(TextChoices):
-        CATALOG_ITEM = 'CATALOG_ITEM', 'CATALOG_ITEM'
-        VEHICLE = 'VEHICLE', 'VEHICLE'
-    asset = OneToOneField(
-        Asset, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    asset_id: int
-    date_acquired = DateField(null=True, blank=True)
-    date_withdrawn = DateField(null=True, blank=True)
-    subtype = CharField(max_length=31, choices=Subtype.choices, default='NONE')
-
-
-class AssetDiscreteCatalogItem(BaseAuditable):
-    """A discrete asset that can relate to a CatalogItem."""
-    asset_discrete = OneToOneField(
-        AssetDiscrete, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    asset_discrete_id: int
-    catalog_item = ForeignKey(
-        'CatalogItem', on_delete=PROTECT,
-        **default_related_names(__qualname__)
-    )
-    catalog_item_id: int
-
-
-class AssetDiscreteVehicle(BaseAuditable):
-    """A discrete asset that can be associated with a unique vehicle."""
-    asset_discrete = OneToOneField(
-        AssetDiscrete, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    asset_discrete_id: int
-    vehicle = OneToOneField(
-        'Vehicle', on_delete=PROTECT,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    vehicle_id: int
-
-    def __str__(self) -> str:
-        return f'AssetDiscreteVehicle {self.pk}: {self.vehicle_id}'
-# endregion AssetDiscrete
-
-
-class AssetInventory(BaseAuditable):
-    """An item that is not uniquely identifiable.
-
-    Example: Copies of DVDs, un-serialized items.
-    """
-    asset = OneToOneField(
-        Asset, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    asset_id: int
-    # CatalogItem is OneToOne because inventory should accumulate
-    catalog_item = OneToOneField(
-        'CatalogItem', on_delete=PROTECT,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    catalog_item_id: int
-    quantity = IntegerField(default=1)
-# endregion Asset
+def get_default_media_format_audio() -> int:
+    return MediaFormat.get_default_audio()
 
 
 class AssetType(BaseAuditable):
@@ -467,93 +172,6 @@ class BookXMotionPicture(BaseAuditable):
 # endregion BookM2M
 
 
-# region CatalogItem
-class CatalogItem(BaseAuditable):
-    """An item with unique registries in other global systems.
-
-    Can generally be ordered, purchased, re-sold, and accumulated as a discrete
-    asset or inventory.
-    Does not include concepts like labor hours, services, or warranties.
-    """
-    class Subtype(TextChoices):
-        DIGITAL_SONG = 'DIGITAL_SONG', 'DIGITAL_SONG'
-        MUSIC_ALBUM = 'MUSIC_ALBUM', 'MUSIC_ALBUM'
-    asin = UpperCharField(
-        max_length=10, unique=True, null=True, blank=True,
-        validators=[MinLengthValidator(10), validate_alphanumeric],
-        verbose_name="ASIN",
-        help_text="Amazon Standard Identification Number"
-    )
-    ean_13 = CharField(
-        max_length=13, unique=True, null=True, blank=True,
-        validators=[MinLengthValidator(13), validate_digit],
-        verbose_name="EAN-13",
-        help_text="European Article Number"
-    )
-    eav = JSONField(null=True, blank=True)
-    # isbn is also part of gsin / gs1 spec now, apparently
-    isbn = CharField(
-        max_length=10, unique=True, null=True, blank=True,
-        validators=[MinLengthValidator(10), validate_isbn],
-        verbose_name="ISBN",
-        help_text="International Standard Book Number"
-    )
-    isbn_13 = CharField(
-        max_length=13, unique=True, null=True, blank=True,
-        validators=[
-            MinLengthValidator(13),
-            validate_digit,
-            validate_isbn_13_check_digit
-        ]
-    )
-    ismn = CharField(
-        max_length=13, unique=True, null=True, blank=True,
-        validators=[MinLengthValidator(13)],
-        verbose_name="ISMN",
-        help_text="International Standard Music Number"
-    )
-    name = CharField(max_length=255)
-    subtype = CharField(
-        max_length=31, choices=Subtype.choices, null=True, blank=True
-    )
-    upc_a = CharField(
-        max_length=12, unique=True, null=True, blank=True,
-        validators=[MinLengthValidator(12), validate_digit]
-    )
-
-
-class CatalogItemDigitalSong(BaseAuditable):
-    """Digital songs.
-
-    Unlike Music albums, can be distributed individually absent of other medium.
-    - Even if a song is released as a "Single", that "Single" still requires a
-      medium for physical distribution, which makes it a "Single Album"
-    """
-    catalog_item = OneToOneField(
-        CatalogItem, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    catalog_item_id: int
-
-
-class CatalogItemMusicAlbumProduction(BaseAuditable):
-    """A produced Music Album distributed in a particular format."""
-    catalog_item = OneToOneField(
-        CatalogItem, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    catalog_item_id: int
-    # Does
-    media_format = ForeignKey(
-        'MediaFormat', on_delete=SET_DEFAULT,
-        default=get_default_mediaformat_audio,
-        **default_related_names(__qualname__)
-    )
-    media_format_id: int
-    # music_album_production = ForeignKey('MusicAlbumProduction')
-# endregion CatalogItem
-
-
 # region CatalogItemM2M
 class CatalogItemXCatalogItem(BaseAuditable):
     """Holds relationships between CatalogItems to account for bundles.
@@ -562,8 +180,8 @@ class CatalogItemXCatalogItem(BaseAuditable):
     bundle probably shouldn't contain bundles, though there's no real
     enforcement mechanism for that.
     """
-    catalog_item_a = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
-    catalog_item_b = ForeignKey(CatalogItem, on_delete=CASCADE, related_name='+')
+    catalog_item_a = ForeignKey('CatalogItem', on_delete=CASCADE, related_name='+')
+    catalog_item_b = ForeignKey('CatalogItem', on_delete=CASCADE, related_name='+')
     relationship = None
 
 
@@ -575,7 +193,7 @@ class CatalogItemXInvoiceLineItem(BaseAuditable):
     )
     invoice_line_item_id: int
     catalogitem = ForeignKey(
-        CatalogItem, on_delete=PROTECT,
+        'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
     catalogitem_id: int
@@ -595,7 +213,7 @@ class CatalogItemXOrderLineItem(BaseAuditable):
     )
     orderlineitem_id: int
     catalogitem = ForeignKey(
-        CatalogItem, on_delete=PROTECT,
+        'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
     catalogitem_id: int
@@ -612,7 +230,7 @@ class CatalogItemXPointOfSaleLineItem(BaseAuditable):
     )
     point_of_sale_line_item_id: int
     catalogitem = ForeignKey(
-        CatalogItem, on_delete=PROTECT,
+        'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
     catalogitem_id: int
@@ -845,7 +463,7 @@ class MusicAlbumProduction(BaseAuditable):
     """
     media_format = ForeignKey(
         MediaFormat, on_delete=PROTECT,
-        default=get_default_mediaformat_audio,
+        default=get_default_media_format_audio,
         **default_related_names(__qualname__)
     )
     music_album_edition = ForeignKey(
@@ -1129,51 +747,6 @@ class OrderLineItem(BaseAuditable):
         return f'OrderLineItem {self.pk}: {self.order_id}'
 
 
-class Party(BaseAuditable):
-    class Subtype(TextChoices):
-        COMPANY = 'BUSINESS'
-        PERSON = 'PERSON'
-    name = CharField(max_length=255)
-    party_type = ForeignKey(
-        'PartyType',
-        on_delete=SET_NULL,
-        null=True,
-        blank=True,
-        **default_related_names(__qualname__)
-    )
-    subtype = CharField(max_length=31, choices=Subtype.choices)
-
-    def __str__(self) -> str:
-        return f'{self.name}'
-
-
-class PartyBusiness(BaseAuditable):
-    """A business or corporate entity."""
-    party = OneToOneField(
-        Party, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    party_id: int
-    trade_name = CharField(max_length=255)
-
-    def __str__(self) -> str:
-        return f'PartyCompany {self.pk}: {self.trade_name}'
-
-
-class PartyPerson(BaseAuditable):
-    """An individual person."""
-    party = OneToOneField(
-        Party, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    party_id: int
-    person = OneToOneField(
-        'Person', on_delete=CASCADE,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    person_id: int
-
-
 class PartyType(BaseAuditable):
     name = CharField(max_length=255)
     parent_party_type = ForeignKey(
@@ -1196,7 +769,7 @@ class Payee(BaseAuditable):
         help_text="Name as displayed on transaction ledger."
     )
     party = ForeignKey(
-        Party,
+        'Party',
         on_delete=PROTECT,
         null=True,
         blank=True,
@@ -1254,7 +827,7 @@ class PointOfSale(BaseAuditable):
     """
     barcode = CharField(max_length=255, null=True, blank=True)
     party = ForeignKey(
-        Party, on_delete=PROTECT,
+        'Party', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
     party_id: int
@@ -1475,7 +1048,7 @@ class TxnLineItem(BaseAuditable):
     "from" and "to" accounts.
     """
     account = ForeignKey(
-        Account, on_delete=PROTECT,
+        'Account', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
     account_id: int
