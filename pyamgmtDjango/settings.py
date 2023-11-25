@@ -39,10 +39,11 @@ INSTALLED_APPS = [
     # Third-party apps
     'debug_toolbar',
     # Local Dependencies
+    'django_base',
     'ccbv',
     'schemaviz',
     # Local Apps
-    'base',
+    # 'base',
     'accounts',
     'core',
     'sandbox',
@@ -69,7 +70,7 @@ TEMPLATES = [
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
-            'builtins': ['base.builtins'],
+            'builtins': ['django_base.builtins'],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',

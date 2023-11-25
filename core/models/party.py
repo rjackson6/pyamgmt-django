@@ -2,8 +2,8 @@ from django.db.models import (
     CASCADE, CharField, ForeignKey, OneToOneField, SET_NULL, TextChoices
 )
 
-from base.models import BaseAuditable
-from base.utils import default_related_names, pascal_case_to_snake_case
+from django_base.models import BaseAuditable
+from django_base.utils import default_related_names, pascal_case_to_snake_case
 
 
 class Party(BaseAuditable):

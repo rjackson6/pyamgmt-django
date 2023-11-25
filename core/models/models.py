@@ -53,10 +53,10 @@ from django.db.models import (
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from base.models import BaseAuditable
-from base.models.fields import UpperCharField
-from base.utils import default_related_names, pascal_case_to_snake_case
-from base.validators import (
+from django_base.models import BaseAuditable
+from django_base.models.fields import UpperCharField
+from django_base.utils import default_related_names, pascal_case_to_snake_case
+from django_base.validators import (
     validate_alphanumeric,
     validate_date_not_future,
     validate_digit,
