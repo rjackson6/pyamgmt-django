@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "author": "Ryan Jackson",
-  "license": "GPLv3",
+  "license": "AGPL",
   "private": true,
-  "devDependencies": {
-    "typescript": "^4.9.5"
-  },
   "dependencies": {
     "vis-network": "^9.1.6"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
   }
 }

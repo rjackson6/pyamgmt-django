@@ -1,12 +1,12 @@
 JAPANESE = {
     '温もり': {
         'en': 'warmth',
-        'phoenetic': 'nukumori',
+        'phonetic': 'nukumori',
         'utf-8': '\u6e29\u3082\u308a'
     },
     '虚無の浜辺': {
         'en': 'the beach of nothingness',
-        'phoenetic': 'kyomu no hamabe'
+        'phonetic': 'kyomu no hamabe'
     }
 }
 

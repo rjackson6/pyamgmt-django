@@ -166,6 +166,23 @@ type = "directory"
 url = "../django_base"
 
 [[package]]
+name = "django-ccbv"
+version = "0.1.0"
+description = ""
+category = "main"
+optional = false
+python-versions = "^3.12"
+files = []
+develop = true
+
+[package.dependencies]
+django = "^4.2"
+
+[package.source]
+type = "directory"
+url = "../django_ccbv"
+
+[[package]]
 name = "django-debug-toolbar"
 version = "4.2.0"
 description = "A configurable set of panels that display various debug information about the current request/response."
@@ -368,4 +385,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "5337d65e2f937a449eda327783dcc28cd83830b2d1df4678fb87acea4165acd9"
+content-hash = "7b891d505cf3c3a48cd1659c210ebec70f712ec706939bb798f7aaf406647672"
