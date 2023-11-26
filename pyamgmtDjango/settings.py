@@ -161,6 +161,8 @@ ASSET_URL: str = 'http://localhost:1235/assets/'
 
 STATIC_RESOURCES = {}
 
+VITE_CLIENT_URL = 'http://localhost:1235/assets/@vite/client'
+
 VITE_URL: str = 'assets/'
 
 if DEBUG:
