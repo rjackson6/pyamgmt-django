@@ -40,55 +40,11 @@ No good
 
 {{ vis_data|json_script:"vis-data" }}
 
-<script src="{% static 'vis-network/standalone/umd/vis-network.js' %}"></script>
+{#<script src="{% asset 'schemaviz/assets/main.ts' %}"></script>#}
+<script type="module" src="{% asset 'schemaviz/assets/main.ts' %}"></script>
 
 <script>
-    const context_data = JSON.parse(document.getElementById("vis-data").textContent);
-    let container = document.getElementById("vis-container");
-    let data = context_data;
-    let options = {
-        nodes: {
-            opacity: 0.8,
-            {#shape: 'box',#}
-            shape: 'dot',
-            {% comment %}scaling: {
-                label: {
-                    enabled: true
-                }
-            }{% endcomment %}
-        },
-        edges: {
-            arrows: {
-                to: {
-                    enabled: true
-                }
-            },
-            color: {
-                opacity: 0.5
-            },
-            // physics: false,
-            smooth: {
-                // enabled: false,  // true
-                {#type: 'continuous',  // dynamic#}
-                type: 'dynamic',  // dynamic
-            }
-        },
-        physics: {
-            barnesHut: {
-                gravitationalConstant: -2000,  // -2000
-                damping: 0.5,  // 0.09
-                springLength: 100,  // 95
-                springConstant: 0.02,  // 0.04
-                avoidOverlap: 0.1,  // 0
-            },
-            repulsion: {
-                nodeDistance: 200,  // 100
-                damping: 0.5,  // 0.09
-            },
-            // solver: 'repulsion'  // 'barnesHut'
-        }
-    };
-    let network = new vis.Network(container, data, options);
+
 </script>
 </body>
 </html>

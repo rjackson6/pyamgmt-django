@@ -13,3 +13,4 @@ from .catalog_item import (
 from .party import (
     Party, PartyBusiness, PartyPerson,
 )
+from .non_catalog_item import NonCatalogItem

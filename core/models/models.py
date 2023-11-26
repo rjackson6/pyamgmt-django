@@ -11,7 +11,6 @@ __all__ = [
     'MusicAlbumXSongRecording',
     'MusicArtist', 'MusicArtistXPerson', 'MusicArtistXSong',
     'MusicArtistXSongRecording',
-    'NonCatalogItem',
     'Order', 'OrderLineItem',
     'PartyType', 'Payee', 'Person',
     'PointOfSale', 'PointOfSaleDocument', 'PointOfSaleLineItem',
@@ -34,7 +33,7 @@ from django.db.models import (
     # Fields
     BooleanField, CharField, DateField, DecimalField, DurationField, FileField,
     ForeignKey,
-    ImageField, IntegerField, JSONField,
+    ImageField, IntegerField,
     ManyToManyField,
     OneToOneField,
     PositiveIntegerField, PositiveSmallIntegerField, TextField,
@@ -46,7 +45,7 @@ from django.db.models import (
     # Enum
     TextChoices,
     # on_delete callbacks
-    CASCADE, PROTECT, SET_DEFAULT, SET_NULL,
+    CASCADE, PROTECT, SET_NULL,
     # SQL
     F, Sum,
 )
@@ -57,19 +56,13 @@ from django_base.models import BaseAuditable
 from django_base.models.fields import UpperCharField
 from django_base.utils import default_related_names, pascal_case_to_snake_case
 from django_base.validators import (
-    validate_alphanumeric,
     validate_date_not_future,
-    validate_digit,
     validate_positive_timedelta,
     validate_year_not_future,
 )
 
 from core.models import managers, querysets
 from core.models.fields import CurrencyField
-from core.validators import (
-    validate_isbn,
-    validate_isbn_13_check_digit,
-)
 
 
 ##########
@@ -125,7 +118,7 @@ class BookEdition(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('book', 'edition'),
-                name='unique_bookedition'
+                name='unique_book_edition'
             )
         ]
 
@@ -166,7 +159,7 @@ class BookXMotionPicture(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('book', 'motion_picture'),
-                name='unique_booktomotionpicture'
+                name='unique_book_to_motion_picture'
             )
         ]
 # endregion BookM2M
@@ -192,34 +185,34 @@ class CatalogItemXInvoiceLineItem(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     invoice_line_item_id: int
-    catalogitem = ForeignKey(
+    catalog_item = ForeignKey(
         'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    catalogitem_id: int
+    catalog_item_id: int
     unit_price = CurrencyField()
     # seller?
     quantity = IntegerField()
 
     def __str__(self) -> str:
-        return f'CatalogItemXInvoiceLineItem {self.pk}: {self.catalogitem_id}'
+        return f'CatalogItemXInvoiceLineItem {self.pk}: {self.catalog_item_id}'
 
 
 class CatalogItemXOrderLineItem(BaseAuditable):
     """Relates a CatalogItem record to an OrderLineItem record."""
-    orderlineitem = OneToOneField(
+    order_line_item = OneToOneField(
         'OrderLineItem', on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    orderlineitem_id: int
-    catalogitem = ForeignKey(
+    order_line_item_id: int
+    catalog_item = ForeignKey(
         'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    catalogitem_id: int
+    catalog_item_id: int
 
     def __str__(self) -> str:
-        return f'CatalogItemXOrderLineItem {self.pk}: {self.catalogitem_id}'
+        return f'CatalogItemXOrderLineItem {self.pk}: {self.catalog_item_id}'
 
 
 class CatalogItemXPointOfSaleLineItem(BaseAuditable):
@@ -229,11 +222,11 @@ class CatalogItemXPointOfSaleLineItem(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     point_of_sale_line_item_id: int
-    catalogitem = ForeignKey(
+    catalog_item = ForeignKey(
         'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    catalogitem_id: int
+    catalog_item_id: int
     quantity = DecimalField(max_digits=19, decimal_places=5, default=1)
     unit_price = CurrencyField()
     unit = ForeignKey(
@@ -245,7 +238,7 @@ class CatalogItemXPointOfSaleLineItem(BaseAuditable):
     def __str__(self) -> str:
         return (
             f'CatalogItemXPointOfSaleLineItem {self.pk}:'
-            f' {self.catalogitem_id}'
+            f' {self.catalog_item_id}'
         )
 
     @property
@@ -388,8 +381,8 @@ class MusicAlbum(BaseAuditable):
         default=False,
         help_text="Album is a compilation of other songs, such as a Greatest Hits album."
     )
-    # mediaformat = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_mediaformat_audio)  # TODO
-    # mediaformat_id: int
+    # media_format = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_media_format_audio)  # TODO
+    # media_format_id: int
     title = CharField(max_length=255, unique=True)  # TODO: This is a temporary unique constraint
     total_discs = PositiveSmallIntegerField(default=1)  # TODO
     year_copyright = PositiveSmallIntegerField(
@@ -502,7 +495,7 @@ class MusicAlbumXMusicArtist(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_album', 'music_artist'),
-                name='unique_musicalbumtomusicartist')
+                name='unique_music_album_to_music_artist')
         ]
 
     def __str__(self) -> str:
@@ -529,11 +522,11 @@ class MusicAlbumXSongRecording(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_album', 'song_recording'),
-                name='unique_musicalbumtosongrecording'
+                name='unique_music_album_to_song_recording'
             ),
             UniqueConstraint(
                 fields=('music_album', 'disc_number', 'track_number'),
-                name='unique_musicalbumtosongrecording_disc_track'
+                name='unique_music_album_to_song_recording_disc_track'
             )
         ]
 
@@ -584,7 +577,7 @@ class MusicArtistActivity(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_artist', 'year_active'),
-                name='unique_musicartistactivity')
+                name='unique_music_artist_activity')
         ]
 
 
@@ -615,7 +608,7 @@ class MusicArtistXPerson(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_artist', 'person'),
-                name='unique_musicartisttoperson'
+                name='unique_music_artist_to_person'
             )
         ]
 
@@ -671,7 +664,7 @@ class MusicArtistXSong(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_artist', 'song'),
-                name='unique_musicartisttosong')
+                name='unique_music_artist_to_song')
         ]
 
     def __str__(self) -> str:
@@ -697,7 +690,7 @@ class MusicArtistXSongRecording(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_artist', 'song_recording'),
-                name='unique_musicartisttosongrecording'
+                name='unique_music_artist_to_song_recording'
             )
         ]
 
@@ -706,14 +699,6 @@ class MusicArtistXSongRecording(BaseAuditable):
             f'MusicArtistXSongRecording {self.pk}:'
             f' {self.music_artist_id}-{self.song_recording_id}'
         )
-
-
-class NonCatalogItem(BaseAuditable):
-    """A non-tangible or generic item, such as a tax levied."""
-    name = CharField(max_length=255, unique=True)
-
-    def __str__(self) -> str:
-        return f'{self.name}'
 
 
 class Order(BaseAuditable):
@@ -844,8 +829,8 @@ class PointOfSale(BaseAuditable):
             self.line_items.all()
             .aggregate(
                 total=Sum(
-                    F('catalogitemtopointofsalelineitem__quantity') *
-                    F('catalogitemtopointofsalelineitem__unit_price')
+                    F('catalog_item_to_point_of_sale_line_item__quantity') *
+                    F('catalog_item_to_point_of_sale_line_item__unit_price')
                 )
             )
         )
@@ -983,7 +968,7 @@ class SongXSong(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('song_archetype', 'song_derivative'),
-                name='unique_songtosong'
+                name='unique_song_to_song'
             )
         ]
 
@@ -1142,7 +1127,7 @@ class VehicleMileage(BaseAuditable):
             # Sanity date/time constraint
             UniqueConstraint(
                 fields=('vehicle', 'odometer_date', 'odometer_time'),
-                name='unique_vehiclemileage'
+                name='unique_vehicle_mileage'
             )
         ]
 
@@ -1167,7 +1152,7 @@ class VehicleModel(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('name', 'vehicle_make'),
-                name='unique_vehiclemodel'
+                name='unique_vehicle_model'
             )
         ]
 
@@ -1216,7 +1201,7 @@ class VehicleTrim(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('name', 'vehicle_model'),
-                name='unique_vehicletrim'
+                name='unique_vehicle_trim'
             )
         ]
 
@@ -1240,7 +1225,7 @@ class VehicleYear(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('vehicle_trim', 'year'),
-                name='unique_vehicleyear'
+                name='unique_vehicle_year'
             )
         ]
 

@@ -1,6 +1,6 @@
 from collections import deque
 
-from django.db.models import Manager
+from django.db.models import Manager, QuerySet
 
 
 # TODO: This should be a utils.function
@@ -54,12 +54,14 @@ def hierarchy(foreign_key: str, *values):
     # values / extra values for queryset
     # queryset object; values
     # could I use values_list? or in_bulk()?
-    qs = None
+    qs: QuerySet
+    qs = QuerySet()
     data = []
     data_map = {}
     deferred = deque()
-    for record in qs.iterator():
-        record['descendents'] = []
+    if qs:
+        for record in qs.iterator():
+            record['descendents'] = []
     return
 
 

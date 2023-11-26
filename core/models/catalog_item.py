@@ -36,7 +36,7 @@ class CatalogItem(BaseAuditable):
         help_text="European Article Number"
     )
     eav = JSONField(null=True, blank=True)
-    # isbn is also part of gsin / gs1 spec now, apparently
+    # isbn is also part of GSIN / gs1 spec now, apparently
     isbn = CharField(
         max_length=10, unique=True, null=True, blank=True,
         validators=[MinLengthValidator(10), validate_isbn],

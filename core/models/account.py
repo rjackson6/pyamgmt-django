@@ -59,7 +59,7 @@ class Account(BaseAuditable):
     def balance(self) -> int:
         return 0
 
-    def debit_coef(self, debit: bool) -> int:
+    def debit_polarity(self, debit: bool) -> int:
         if self.debit_increases is debit:
             return 1
         else:

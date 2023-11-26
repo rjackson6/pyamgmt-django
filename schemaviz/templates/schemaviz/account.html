@@ -28,19 +28,10 @@
 {{ nodes|json_script:"nodes" }}
 {{ edges|json_script:"edges" }}
 
-<script src="{% static 'vis-network/standalone/umd/vis-network.js' %}"></script>
+<script src="{% static 'core/assets/account.ts' %}"></script>
 
 <script>
-    const context_data = JSON.parse(document.getElementById("vis-data").textContent);
-    const nodes = JSON.parse(document.getElementById("nodes").textContent);
-    const edges = JSON.parse(document.getElementById("edges").textContent);
-    console.debug(context_data);
-    let container = document.getElementById("vis-container");
-    let data = {
-        nodes: nodes,
-        edges: edges,
-    }
-    let network = new vis.Network(container, data, {});
+
 </script>
 
 </body>

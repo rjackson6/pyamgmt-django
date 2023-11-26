@@ -1,8 +1,8 @@
 from django.db import models
 from django.db.models import Manager
 
-from base.models import Base
-from base.utils import default_related_names
+from django_base.models import Base
+from django_base.utils import default_related_names
 
 
 class SuperManager(Manager):
