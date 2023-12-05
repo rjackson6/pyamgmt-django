@@ -21,7 +21,7 @@ def reverse_proxy(request: WSGIRequest):
     from django.http.response import HttpResponse
 
     request_path = request.get_full_path()
-    url = f"http://localhost:1235/{request_path}"
+    url = f"http://localhost:1234/{request_path}"
     requestor = getattr(requests, request.method.lower())
     proxied_response = requestor(url, data=request.body, files=request.FILES)
     response = HttpResponse(

@@ -10,7 +10,7 @@ class Node:
     id: str
     label: str
     group: str = ''
-    mass: int = 1
+    mass: int = 1  # "count" would help generalize
     value: int = 1
 
 

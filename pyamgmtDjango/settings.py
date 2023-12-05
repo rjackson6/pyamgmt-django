@@ -154,14 +154,16 @@ WSGI_APPLICATION = 'pyamgmtDjango.wsgi.application'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
+######################
 # Non-standard options
+######################
 
 # ASSET_URL: str = '/assets/'
-ASSET_URL: str = 'http://localhost:1235/assets/'
+ASSET_URL: str = 'http://localhost:1234/assets/'
 
 STATIC_RESOURCES = {}
 
-VITE_CLIENT_URL = 'http://localhost:1235/assets/@vite/client'
+VITE_CLIENT_URL = 'http://localhost:1234/assets/@vite/client'
 
 VITE_URL: str = 'assets/'
 

@@ -26,23 +26,23 @@
 {% block _body %}
 <body>
 {% block body %}
-  <div class="container">
-    {% block _header %}
-    <header class="header">
-      {% block header %}{% endblock header %}
-    </header>
-    {% endblock _header %}
-    {% block _main %}
-    <main class="main">
-      {% block main %}{% endblock main %}
-    </main>
-    {% endblock _main %}
-    {% block _footer %}
-    <footer class="footer">
-      {% block footer %}{% endblock footer %}
-    </footer>
-    {% endblock _footer %}
-  </div>
+<div class="container">
+  {% block _header %}
+  <header class="header">
+    {% block header %}{% endblock header %}
+  </header>
+  {% endblock _header %}
+  {% block _main %}
+  <main class="main">
+    {% block main %}{% endblock main %}
+  </main>
+  {% endblock _main %}
+  {% block _footer %}
+  <footer class="footer">
+    {% block footer %}{% endblock footer %}
+  </footer>
+  {% endblock _footer %}
+</div>
 {% endblock body %}
 
 {% block _javascript %}

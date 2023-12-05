@@ -8,19 +8,19 @@ class VehicleYearChoiceField(ModelChoiceField):
         if queryset is not None:
             queryset = (
                 queryset
-                .select_related('vehicletrim__vehiclemodel__vehiclemake')
+                .select_related('vehicle_trim__vehicle_model__vehicle_make')
                 .order_by(
                     '-year',
-                    'vehicletrim__vehiclemodel__vehiclemake__name',
-                    'vehicletrim__vehiclemodel__name',
-                    'vehicletrim__name'
+                    'vehicle_trim__vehicle_model__vehicle_make__name',
+                    'vehicle_trim__vehicle_model__name',
+                    'vehicle_trim__name'
                 )
             )
         super().__init__(queryset, **kwargs)
 
     def label_from_instance(self, obj) -> str:
-        vehicleyear = obj.year
-        vehicletrim = obj.vehicletrim.name
-        vehiclemodel = obj.vehicletrim.vehiclemodel.name
-        vehiclemake = obj.vehicletrim.vehiclemodel.vehiclemake.name
-        return f'{vehicleyear} {vehiclemake} {vehiclemodel} {vehicletrim}'
+        vehicle_year = obj.year
+        vehicle_trim = obj.vehicletrim.name
+        vehicle_model = obj.vehicletrim.vehiclemodel.name
+        vehicle_make = obj.vehicletrim.vehiclemodel.vehiclemake.name
+        return f'{vehicle_year} {vehicle_make} {vehicle_model} {vehicle_trim}'

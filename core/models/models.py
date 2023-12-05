@@ -604,6 +604,8 @@ class MusicArtistXPerson(BaseAuditable):
     objects = Manager()
     with_related = managers.MusicArtistXPersonManager()
 
+    music_artist_x_person_activity_set: Manager
+
     class Meta:
         constraints = [
             UniqueConstraint(

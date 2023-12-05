@@ -1,6 +1,9 @@
 import pprint
 
 
+# TODO: Vite could have middleware for its own HTML injection.
+
+
 class SimpleMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

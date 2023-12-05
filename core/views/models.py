@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 from ccbv.views.generic import DetailView, ListView, TemplateView
 
 from core.models import *
