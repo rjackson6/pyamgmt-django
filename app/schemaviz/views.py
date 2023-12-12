@@ -1,4 +1,4 @@
-from ccbv.views import TemplateView
+from django_ccbv.views import TemplateView
 
 from core.models import Account
 

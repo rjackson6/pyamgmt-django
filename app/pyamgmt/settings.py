@@ -1,16 +1,14 @@
 import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-BASE_DIR: os.path.abspath(BASE_DIR)  # Helper for PyCharm
+from . import env
 
-# SECURITY WARNING: keep the secret key used in production secret!
-with open(BASE_DIR / 'etc' / 'sk.txt') as f:
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+with open(BASE_DIR.parent / 'etc' / 'secret-key.txt') as f:
     SECRET_KEY = f.read().strip()
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -59,10 +57,9 @@ INSTALLED_APPS = [
     'debug_toolbar',
     # Local Dependencies
     'django_base',
-    'ccbv',
+    'django_ccbv',
     'schemaviz',
     # Local Apps
-    # 'base',
     'accounts',
     'core',
     'sandbox',
@@ -102,8 +99,10 @@ LOGGING = {
 
 LOGIN_REDIRECT_URL = '/'
 
+# env
 MEDIA_ROOT = BASE_DIR / 'var' / 'media'
 
+# env
 MEDIA_URL = '/media/'
 
 MIDDLEWARE = [
@@ -121,6 +120,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'pyamgmt.urls'
 
+# env
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
@@ -158,12 +158,15 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 # Non-standard options
 ######################
 
-# ASSET_URL: str = '/assets/'
-ASSET_URL: str = 'http://localhost:1234/assets/'
+ARANGO_HOST = env.ARANGO_HOST
+ARANGO_PORT = env.ARANGO_PORT
+ARANGO_URL = f'{ARANGO_HOST}:{ARANGO_PORT}/'
+
+ASSET_URL = env.ASSET_URL
 
 STATIC_RESOURCES = {}
 
-VITE_CLIENT_URL = 'http://localhost:1234/assets/@vite/client'
+VITE_CLIENT_URL = 'http://localhost:1234/assets/@vite/client' if DEBUG else ''
 
 VITE_URL: str = 'assets/'
 

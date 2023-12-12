@@ -12,13 +12,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "babel-preset-solid": "^1.8.6",
+    "d3": "^7.8.5",
     "plotly.js": "^2.27.1",
-    "vis-network": "^9.1.6"
+    "solid-js": "^1.8.7",
+    "vis-network": "^9.1.9"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.2"
+    "@types/d3": "^7.4.3",
+    "@types/node": "^20.10.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.7",
+    "vite-plugin-solid": "^2.8.0"
   }
 }

@@ -4,5 +4,5 @@ __pycache__/
 .idea/
 
 /etc/
-/node_modules/
-/var/
+**/node_modules/
+**/var/

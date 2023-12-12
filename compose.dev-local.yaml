@@ -1,0 +1,32 @@
+services:
+  arangodb:
+    image: arangodb
+    environment:
+      ARANGO_NO_AUTH: 1
+    ports:
+      - "8529:8529"
+    volumes:
+      - arango-app-data:/var/lib/arangodb3-apps
+      - arango-data:/var/lib/arangodb3
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: pyamgmt
+      POSTGRES_USER: pyamgmt
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    ports:
+      - "5432:5432"
+    secrets:
+      - postgres_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+secrets:
+  postgres_password:
+    file: ./etc/postgres.txt
+
+volumes:
+  arango-app-data:
+  arango-data:
+  postgres-data:

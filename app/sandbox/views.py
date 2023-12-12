@@ -4,7 +4,7 @@ from django import forms
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from ccbv.views.custom.edit import (
+from django_ccbv.views.custom.edit import (
     OneToOneCreateView,
     OneToOneUpdateView,
     FormCollection,
