@@ -3,7 +3,7 @@ from collections import deque
 from django.db.models import Manager, QuerySet
 
 
-# TODO: This should be a utils.function
+# TODO 2023-12-12: This should be a utils.function
 #  I guess it could take a list of callbacks, too? Then other functions could
 #  be applied to each record as they are traversed.
 #  Alternatively, and for cases where depth calculation isn't required, just
@@ -72,7 +72,8 @@ class AccountManager(Manager):
         root_pk: int = None,
         flat: bool = False,
     ) -> list:
-        # TODO: A "flat" option would be appropriate for node/edge format
+        # TODO 2023-12-12: A "flat" option would be appropriate for node/edge
+        #  format
         qs_values = ['pk', 'name', 'parent_account_id']
         qs_account = self.get_queryset().values(*qs_values)
         if root_pk and not qs_account.filter(pk=root_pk).exists():
@@ -114,7 +115,7 @@ class AccountManager(Manager):
             while obj['parent_account_id']:
                 parent_account_cp = data_map[obj['parent_account_id']].copy()
                 # De-reference the nested data
-                # TODO: this is mostly for the sake of serialization
+                # TODO 2023-12-12: this is mostly for the sake of serialization
                 del parent_account_cp['child_accounts']
                 obj['parent_account'] = parent_account_cp
                 obj = obj['parent_account']
@@ -125,10 +126,10 @@ class AccountManager(Manager):
         # Analyze depth/level of nesting
         # This is also where post-processing or aggregation could happen, since
         # every _relevant_ record will be visited.
-        # TODO: I think this is the key.
+        # TODO 2023-12-12: I think this is the key.
         #  Originally I used this to calculate depth, but it's an obvious way
         #  to visit every record and do extra work.
-        # TODO: Flattening also needs to remove nesting.
+        # TODO 2023-12-12: Flattening also needs to remove nesting.
         #  Or use another function that doesn't nest at all.
         flattened = traverse_depth(data, 'child_accounts')
         if flat:

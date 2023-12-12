@@ -79,7 +79,7 @@ class AssetType(BaseAuditable):
 
     Not to be confused with AssetSubtype.
     """
-    # TODO: Do I care about this?
+    # TODO 2023-12-12: Do I care about this?
     name = CharField(max_length=255)
     parent_asset_type = ForeignKey(
         'self',
@@ -136,8 +136,8 @@ class BookPublication(BaseAuditable):
         BookEdition, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    format = None  # TODO
-    publisher = None  # TODO
+    format = None  # TODO 2023-12-12
+    publisher = None  # TODO 2023-12-12
 
 
 # region BookM2M
@@ -374,17 +374,23 @@ class MotionPictureXSong(BaseAuditable):
 
 class MusicAlbum(BaseAuditable):
     """An individual Music album production."""
-    # TODO: MusicAlbums can also have different "editions", like special or remastered
-    #  They would still group together under the same title. Usually they share tracks.
-    # TODO: Move media format? Or would be treat albums as being different productions?
+    # TODO 2023-12-12: MusicAlbums can also have different "editions", like
+    #  special or remastered.
+    #  They would still group together under the same title.
+    #  Usually they share tracks.
+    # TODO 2023-12-12: Move media format? Or would be treat albums as being
+    #  different productions?
     is_compilation = BooleanField(
         default=False,
         help_text="Album is a compilation of other songs, such as a Greatest Hits album."
     )
-    # media_format = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_media_format_audio)  # TODO
+    # TODO 2023-12-12
+    # media_format = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_media_format_audio)
     # media_format_id: int
-    title = CharField(max_length=255, unique=True)  # TODO: This is a temporary unique constraint
-    total_discs = PositiveSmallIntegerField(default=1)  # TODO
+    # TODO 2023-12-12: This is a temporary unique constraint
+    title = CharField(max_length=255, unique=True)
+    # TODO 2023-12-12: This is really a property
+    total_discs = PositiveSmallIntegerField(default=1)
     year_copyright = PositiveSmallIntegerField(
         null=True, blank=True, validators=[validate_year_not_future]
     )
@@ -430,7 +436,8 @@ class MusicAlbumArtwork(BaseAuditable):
 class MusicAlbumEdition(BaseAuditable):
     """Further classification of different releases of an album.
 
-    TODO: Format here? Probably, or model it after books, e.g., "Production"
+    TODO 2023-12-12: Format here? Probably, or model it after books, e.g.,
+     "Production"
      Although formats are sometimes linked to editions. "DigiPak", "Bonus track"
      Remastered albums contain remastered tracks, maybe bonuses
     """
@@ -438,7 +445,8 @@ class MusicAlbumEdition(BaseAuditable):
         MusicAlbum, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    total_discs = PositiveSmallIntegerField(default=1)  # TODO
+    # TODO 2023-12-12: likely a property
+    total_discs = PositiveSmallIntegerField(default=1)
     year_copyright = PositiveSmallIntegerField(
         null=True, blank=True, validators=[validate_year_not_future]
     )
@@ -660,7 +668,8 @@ class MusicArtistXSong(BaseAuditable):
         **default_related_names(__qualname__)
     )
     song_id: int
-    # TODO: role?
+    # TODO 2023-12-12: role for how an artist contributed to the song
+    #  e.g., guitarist, vocalist, engineer
 
     class Meta:
         constraints = [
@@ -823,7 +832,7 @@ class PointOfSale(BaseAuditable):
     txn = OneToOneField(
         'Txn', on_delete=SET_NULL, null=True, blank=True,
         related_name=pascal_case_to_snake_case(__qualname__)
-    )  # TODO
+    )
 
     @property
     def line_item_total(self) -> Decimal:
@@ -1088,7 +1097,7 @@ class Vehicle(BaseAuditable):
     vin = UpperCharField(
         max_length=17, unique=True, validators=[MinLengthValidator(11)]
     )
-    # TODO: VIN Validator based on year + date
+    # TODO 2023-12-12: VIN Validator based on year + date
     # NHTSA vPIC data could go in a JSON format
 
     def __str__(self) -> str:
@@ -1320,7 +1329,7 @@ class VideoGameXVideoGamePlatform:
         "I bought a [key] for [World of Final Fantasy] on [Steam/PC]
         "I bought a [blu-ray] of [World of Final Fantasy] on [PS4]
 
-    TODO: region...
+    TODO 2023-12-12: Console games were regionalized for PAL/NTSC
     """
     release_date = DateField(null=True, blank=True)
     video_game = ForeignKey(

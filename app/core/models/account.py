@@ -114,7 +114,7 @@ class AccountAssetFinancial(BaseAuditable):
     )
     account_asset_id: int
     account_number = CharField(max_length=63, null=True, blank=True)
-    institution = None  # TODO
+    institution = None  # TODO 2023-12-12
 
 
 class AccountAssetReal(BaseAuditable):
@@ -128,7 +128,8 @@ class AccountAssetReal(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     account_asset_id: int
-    # TODO: Decide if I want `limit_choices_to=` here. If so, needs a callback.
+    # TODO 2023-12-12: Decide if I want `limit_choices_to=` here. If so, needs a
+    #  callback.
     asset = ForeignKey(
         'Asset',
         on_delete=SET_NULL,
@@ -198,7 +199,7 @@ class AccountLiability(BaseAuditable):
     )
     account_id: int
     account_number = CharField(max_length=63, null=True, blank=True)
-    lender = None  # TODO
+    lender = None  # TODO 2023-12-12
     subtype = CharField(
         max_length=15, choices=Subtype.choices, default=Subtype.OTHER
     )

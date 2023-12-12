@@ -1,4 +1,4 @@
-from ccbv.views.generic import DetailView, ListView, TemplateView
+from django_ccbv.views.generic import DetailView, ListView, TemplateView
 
 from core.models import *
 
