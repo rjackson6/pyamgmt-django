@@ -67,7 +67,7 @@ def apps_dataset():
 
 if __name__ == '__main__':
     import os
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pyamgmtDjango.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pyamgmt.settings')
     import django
     django.setup()
 

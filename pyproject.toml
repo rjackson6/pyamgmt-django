@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pyamgmtdjango"
+name = "pyamgmt"
 version = "0.1.0"
 description = "An excessive personal finance and asset management suite."
 authors = ["Ryan Jackson <supra621@gmail.com>"]

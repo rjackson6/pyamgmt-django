@@ -119,7 +119,7 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
-ROOT_URLCONF = 'pyamgmtDjango.urls'
+ROOT_URLCONF = 'pyamgmt.urls'
 
 STATIC_URL = 'static/'
 
@@ -150,7 +150,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-WSGI_APPLICATION = 'pyamgmtDjango.wsgi.application'
+WSGI_APPLICATION = 'pyamgmt.wsgi.application'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
