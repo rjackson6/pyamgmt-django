@@ -10,6 +10,7 @@ admin.site.site_header = 'PyAMgmt Admin'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('pyamgmt/', include('core.urls')),
     path('schemaviz/', include('schemaviz.urls')),
     path('sandbox/', include('sandbox.urls')),
 ]

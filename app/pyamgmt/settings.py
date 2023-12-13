@@ -30,8 +30,8 @@ AUTH_USER_MODEL = 'accounts.User'
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': BASE_DIR / 'var' / 'tmp' / 'django_cache'
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': f'redis://{env.REDIS_HOST}:{env.REDIS_PORT}'
     }
 }
 

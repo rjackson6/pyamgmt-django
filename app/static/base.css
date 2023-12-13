@@ -1,0 +1,86 @@
+/*
+ * 3. Generic
+ */
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+:root {
+    box-sizing: border-box;
+    font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
+}
+
+:link,
+:visited {
+    color: blue;
+}
+
+/*
+ * 4. Element
+ */
+
+body {
+    height: 100vh;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    outline: 1px solid blue;
+}
+
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+th {
+    background-color: #dddddd;
+    border: 1px solid black;
+    padding: 0.2rem;
+}
+
+td {
+    background-color: #eeeeee;
+    border: 1px solid black;
+    padding: 0.1rem;
+}
+
+td > a {
+    display: inline-block;
+    min-width: 3rem;
+}
+
+.monospace {
+    font-family: monospace, monospace;
+}
+
+/* Layout components */
+
+#root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#header {
+    background-color: steelblue;
+}
+
+#main {
+    flex: auto;
+    margin: 8px 0;
+    overflow: auto;
+    padding: 0 8px;
+}
+
+#footer {
+    background-color: dimgrey;
+    color: white;
+}

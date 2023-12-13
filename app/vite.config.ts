@@ -5,5 +5,12 @@ import solidPlugin from "vite-plugin-solid";
 export default defineConfig({
     appType: "custom",
     base: "/assets/",
-    plugins: [solidPlugin()]
+    plugins: [solidPlugin()],
+    build: {
+        manifest: true
+    },
+    server: {
+        host: true,
+        strictPort: true,
+    }
 });

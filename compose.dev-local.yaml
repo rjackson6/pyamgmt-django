@@ -22,6 +22,13 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
 secrets:
   postgres_password:
     file: ./etc/postgres-password.txt
@@ -30,3 +37,4 @@ volumes:
   arango-app-data:
   arango-data:
   postgres-data:
+  redis-data:

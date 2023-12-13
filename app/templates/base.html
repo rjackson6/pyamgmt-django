@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}{% endblock title %}</title>
+  <link rel="icon" href="{% static 'favicon.ico' %}">
+  {% block _css %}
+  {% block css_3p %}{% endblock css_3p %}
+  <link rel="stylesheet" href="{% static 'base.css' %}">
+  {% block css_theme %}{% endblock css_theme %}
+  {% block extra_css %}{# <link> #}{% endblock extra_css %}
+  {% block extra_css_style %}{# <style> #}{% endblock extra_css_style %}
+  {% endblock _css %}
+  <script type="module" src="{% vite %}"></script>
+  <script>
+      {# Prettify URLS from empty GET form requests. #}
+      if (window.location.href.slice(-1) === '?') {
+          history.replaceState(null, '', window.location.href.slice(0, -1));
+      }
+  </script>
+</head>
+
+{% block _body %}
+<body>
+{% block body %}
+<div id="root">
+  {% block _header %}
+  <header id="header">
+    {% block header %}
+    <nav>
+      <ol>
+        <li>Header</li>
+      </ol>
+    </nav>
+    {% endblock header %}
+  </header>
+  {% endblock _header %}
+  {% block _main %}
+  <div id="main">
+    {% block main %}{% endblock main %}
+  </div>
+  {% endblock _main %}
+  {% block _footer %}
+  <footer id="footer">
+    {% block footer %}
+    <div>
+      <p>Some footer content</p>
+    </div>
+    {% endblock footer %}
+  </footer>
+  {% endblock _footer %}
+</div>
+{% endblock body %}
+
+{% block _javascript %}
+{% block javascript_3p %}{% endblock javascript_3p %}
+{% block csrf_cookie %}{% endblock csrf_cookie %}
+{% block core_javascript %}
+<script src="{% static 'core/js/utils.js' %}"></script>
+{% endblock core_javascript %}
+{% block javascript %}{% endblock javascript %}
+{% endblock _javascript %}
+</body>
+{% endblock _body %}
+</html>
