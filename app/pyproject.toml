@@ -3,23 +3,22 @@ name = "pyamgmt"
 version = "0.1.0"
 description = "An excessive personal finance and asset management suite."
 authors = ["Ryan Jackson <supra621@gmail.com>"]
-readme = "README.md"
 license = "AGPL"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 django = "^5.0"
 django-debug-toolbar = "^4.2.0"
-psycopg = "^3.1.13"
+psycopg = { version = "^3.1.13", extras = ["binary"] }
 pillow = "^10.1"
 requests = "^2.28.2"
 
 [tool.poetry.dependencies.django_base]
-path = "../django_base"
+path = "../../django_base"
 develop = true
 
 [tool.poetry.dependencies.django_ccbv]
-path = "../django_ccbv"
+path = "../../django_ccbv"
 develop = true
 
 [build-system]

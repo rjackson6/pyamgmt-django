@@ -5,10 +5,9 @@ from . import env
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-with open(BASE_DIR.parent / 'etc' / 'secret-key.txt') as f:
-    SECRET_KEY = f.read().strip()
-
 DEBUG = env.DEBUG
+
+SECRET_KEY = env.SECRET_KEY
 
 ALLOWED_HOSTS = ['*']
 
@@ -38,8 +37,12 @@ CACHES = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'var' / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env.DATABASE_NAME,
+        'USER': env.DATABASE_USER,
+        'PASSWORD': env.DATABASE_PASSWORD,
+        'HOST': env.DATABASE_HOST,
+        'PORT': env.DATABASE_PORT,
     }
 }
 

@@ -9,7 +9,7 @@ services:
       - arango-app-data:/var/lib/arangodb3-apps
       - arango-data:/var/lib/arangodb3
 
-  db:
+  postgres:
     image: postgres
     environment:
       POSTGRES_DB: pyamgmt
@@ -24,7 +24,7 @@ services:
 
 secrets:
   postgres_password:
-    file: ./etc/postgres.txt
+    file: ./etc/postgres-password.txt
 
 volumes:
   arango-app-data:

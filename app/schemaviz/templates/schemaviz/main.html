@@ -24,28 +24,10 @@
   <h1>Installed Apps</h1>
   <div id="vis-container"></div>
 </div>
-{% comment %}
-No complaints from browser?
-<script type="module" src="{% static 'vis-network/standalone/esm/vis-network.js' %}"></script>
-{% endcomment %}
-
-{% comment %}
-No complaints from browser
-<script type="text/javascript" src="{% static 'vis-network/standalone/umd/vis-network.min.js' %}"></script>
-{% endcomment %}
-
-{% comment %}
-No good
-<script type="module" src="{% static 'vis-network/standalone/index.js' %}"></script>
-{% endcomment %}
 
 {{ vis_data|json_script:"vis-data" }}
 
-{#<script src="{% asset 'schemaviz/assets/main.ts' %}"></script>#}
 <script type="module" src="{% asset 'schemaviz/assets/main.ts' %}"></script>
 
-<script>
-
-</script>
 </body>
 </html>
