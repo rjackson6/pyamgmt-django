@@ -159,7 +159,7 @@ class BookXMotionPicture(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('book', 'motion_picture'),
-                name='unique_book_to_motion_picture'
+                name='unique_book_x_motion_picture'
             )
         ]
 # endregion BookM2M
@@ -244,6 +244,26 @@ class CatalogItemXPointOfSaleLineItem(BaseAuditable):
     @property
     def price(self) -> Decimal:
         return self.quantity * self.unit_price
+
+
+class CatalogItemXVideoGamePlatform(BaseAuditable):
+    catalog_item = ForeignKey(
+        'CatalogItem', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    video_game_platform = ForeignKey(
+        'VideoGamePlatform', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('catalog_item', 'video_game_platform'),
+                name='unique_catalog_item_x_video_game_platform'
+            )
+        ]
+
 # endregion CatalogItemM2M
 
 
@@ -503,7 +523,7 @@ class MusicAlbumXMusicArtist(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_album', 'music_artist'),
-                name='unique_music_album_to_music_artist')
+                name='unique_music_album_x_music_artist')
         ]
 
     def __str__(self) -> str:
@@ -530,11 +550,11 @@ class MusicAlbumXSongRecording(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_album', 'song_recording'),
-                name='unique_music_album_to_song_recording'
+                name='unique_music_album_x_song_recording'
             ),
             UniqueConstraint(
                 fields=('music_album', 'disc_number', 'track_number'),
-                name='unique_music_album_to_song_recording_disc_track'
+                name='unique_music_album_x_song_recording_disc_track'
             )
         ]
 
@@ -618,7 +638,7 @@ class MusicArtistXPerson(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_artist', 'person'),
-                name='unique_music_artist_to_person'
+                name='unique_music_artist_x_person'
             )
         ]
 
@@ -675,7 +695,7 @@ class MusicArtistXSong(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_artist', 'song'),
-                name='unique_music_artist_to_song')
+                name='unique_music_artist_x_song')
         ]
 
     def __str__(self) -> str:
@@ -701,7 +721,7 @@ class MusicArtistXSongRecording(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('music_artist', 'song_recording'),
-                name='unique_music_artist_to_song_recording'
+                name='unique_music_artist_x_song_recording'
             )
         ]
 
@@ -979,7 +999,7 @@ class SongXSong(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('song_archetype', 'song_derivative'),
-                name='unique_song_to_song'
+                name='unique_song_x_song'
             )
         ]
 
@@ -1301,12 +1321,15 @@ class VideoGameEdition(BaseAuditable):
 
 class VideoGamePlatform(BaseAuditable):
     """
-    May also be a commodity, asset, or catalog item, but we will probably keep
+    May also be a commodity, asset, or catalog item, but keep
     this abstracted from the physical consoles or assemblies
     """
 
-    name = CharField(max_length=31)
+    name = CharField(max_length=31, unique=True)
     short_name = CharField(max_length=15, blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 class VideoGameSeries(BaseAuditable):

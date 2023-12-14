@@ -5,6 +5,9 @@ let container = document.getElementById("vis-container");
 let data = context_data;
 let options: Options = {
     nodes: {
+        font: {
+            size: 20
+        },
         opacity: 0.8,
         shape: 'dot',
     },
