@@ -153,7 +153,8 @@ td > a {
     font-family: monospace, monospace;
 }
 
-/* Layout components */
+/* Specific layout components */
+/* I'm OK with using IDs here since they uniquely frame the site */
 
 #root {
     display: flex;
@@ -161,19 +162,19 @@ td > a {
     height: 100%;
 }
 
-#header {
+#root-header {
     background-color: var(--Prussian-blue);
+    border-bottom: 3px solid var(--Timberwolf);
     color: white;
 }
 
-#main {
+#root-main {
     flex: auto;
-    margin: 8px 0;
     overflow: auto;
-    padding: 0 8px;
 }
 
-#footer {
+#root-footer {
     background-color: var(--Prussian-blue);
+    border-top: 3px solid var(--Timberwolf);
     color: white;
 }

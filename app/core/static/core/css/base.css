@@ -1,0 +1,29 @@
+#root-main {
+    background-color: var(--Gunmetal);
+    color: white;
+    display: flex;
+}
+
+.main-wrapper {
+    display: flex;
+}
+
+.sidebar {
+    border-right: 3px ridge var(--Timberwolf);
+    flex: none;
+    overflow: auto;
+    min-width: 12rem;
+    max-width: 15%;
+    padding-right: 5px;
+}
+
+.sidebar__nav-list {
+    list-style-position: inside;
+    padding-left: 20px;
+}
+
+.main {
+    flex: auto;
+    margin: 8px;
+    overflow: auto;
+}

@@ -1,13 +1,15 @@
 from django.core.exceptions import ValidationError
 from django.db.models import (
-    CASCADE, CharField, ForeignKey, Manager, OneToOneField, PROTECT, SET_NULL,
+    CharField, ForeignKey, OneToOneField,
     TextChoices,
+    CASCADE, PROTECT, SET_NULL,
+    Manager,
 )
 
 from django_base.models.models import BaseAuditable
 from django_base.utils import default_related_names, pascal_case_to_snake_case
 
-from . import managers
+from . import _managers
 
 
 # region Account
@@ -41,12 +43,12 @@ class Account(BaseAuditable):
         max_length=9, choices=Subtype.choices, default=Subtype.OTHER
     )
 
-    objects = managers.AccountManager()
-    assets = managers.AccountManagerAsset()
-    liabilities = managers.AccountManagerLiability()
-    equities = managers.AccountManagerEquity()
-    incomes = managers.AccountManagerIncome()
-    expenses = managers.AccountManagerExpense()
+    objects = _managers.AccountManager()
+    assets = _managers.AccountManagerAsset()
+    liabilities = _managers.AccountManagerLiability()
+    equities = _managers.AccountManagerEquity()
+    incomes = _managers.AccountManagerIncome()
+    expenses = _managers.AccountManagerExpense()
 
     def __str__(self) -> str:
         return f'{self.name}'
@@ -99,8 +101,8 @@ class AccountAsset(BaseAuditable):
     )
 
     objects = Manager()
-    financials = managers.AccountAssetManagerFinancial()
-    real = managers.AccountAssetManagerReal()
+    financials = _managers.AccountAssetManagerFinancial()
+    real = _managers.AccountAssetManagerReal()
 
 
 class AccountAssetFinancial(BaseAuditable):

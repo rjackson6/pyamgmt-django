@@ -1,8 +1,29 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
+
+{% block extra_css %}
 <link
     rel="stylesheet"
     href="{% static 'core/css/base.css' %}">
-{% endblock css %}
+{% endblock extra_css %}
+
+
+{% block root_main %}
+<div class="main-wrapper">
+  <div class="sidebar">
+    {% block sidebar %}
+    <nav>
+      {% block sidebar__nav-list %}
+      <ul class="sidebar__nav-list">
+        <li>Nav Item</li>
+      </ul>
+      {% endblock sidebar__nav-list %}
+    </nav>
+    {% endblock sidebar %}
+  </div>
+  <div class="main">
+    {% block main %}{% lorem %}{% endblock main %}
+  </div>
+</div>
+{% endblock root_main %}

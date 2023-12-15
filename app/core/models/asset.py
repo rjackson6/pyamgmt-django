@@ -1,6 +1,7 @@
 from django.db.models import (
-    CASCADE, CharField, DateField, ForeignKey, IntegerField, OneToOneField,
-    PROTECT, TextChoices, TextField
+    CharField, DateField, ForeignKey, IntegerField, OneToOneField, TextField,
+    TextChoices,
+    CASCADE, PROTECT, SET_NULL
 )
 
 from django_base.models import BaseAuditable
@@ -19,7 +20,6 @@ class Asset(BaseAuditable):
         return f'Asset {self.pk}'
 
 
-# region AssetDiscrete
 class AssetDiscrete(BaseAuditable):
     """An item that is uniquely identifiable.
 
@@ -67,7 +67,6 @@ class AssetDiscreteVehicle(BaseAuditable):
 
     def __str__(self) -> str:
         return f'AssetDiscreteVehicle {self.pk}: {self.vehicle_id}'
-# endregion AssetDiscrete
 
 
 class AssetInventory(BaseAuditable):
@@ -87,4 +86,21 @@ class AssetInventory(BaseAuditable):
     )
     catalog_item_id: int
     quantity = IntegerField(default=1)
-# endregion Asset
+
+
+class AssetType(BaseAuditable):
+    """Expandable type to support hierarchy
+
+    Not to be confused with AssetSubtype.
+    """
+    # TODO 2023-12-12: Do I care about this?
+    name = CharField(max_length=255)
+    parent_asset_type = ForeignKey(
+        'self',
+        on_delete=SET_NULL,
+        related_name='child_asset_types',
+        null=True, blank=True,
+    )
+
+    def __str__(self) -> str:
+        return f'AssetType {self.pk}: {self.name}'

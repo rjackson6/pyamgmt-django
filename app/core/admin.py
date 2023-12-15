@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from .models import account, asset, catalog_item, models
+from .models import (
+    account, asset, catalog_item, invoice, models, motion_picture, music_album,
+    music_artist, txn, vehicle, video_game,
+)
 
 
 # Account and subtypes
@@ -14,24 +17,24 @@ admin.site.register(asset.AssetDiscrete)
 admin.site.register(asset.AssetDiscreteCatalogItem)
 admin.site.register(asset.AssetDiscreteVehicle)
 
-admin.site.register(models.Invoice)
-admin.site.register(models.InvoiceLineItem)
+admin.site.register(invoice.Invoice)
+admin.site.register(invoice.InvoiceLineItem)
 
-admin.site.register(models.MotionPicture)
-admin.site.register(models.MusicAlbum)
-admin.site.register(models.MusicAlbumArtwork)
-admin.site.register(models.MusicArtist)
+admin.site.register(motion_picture.MotionPicture)
+admin.site.register(music_album.MusicAlbum)
+admin.site.register(music_album.MusicAlbumArtwork)
+admin.site.register(music_artist.MusicArtist)
 
-admin.site.register(models.Txn)
-admin.site.register(models.TxnLineItem)
+admin.site.register(txn.Txn)
+admin.site.register(txn.TxnLineItem)
 
-admin.site.register(models.Vehicle)
-admin.site.register(models.VehicleMake)
-admin.site.register(models.VehicleMileage)
-admin.site.register(models.VehicleModel)
-admin.site.register(models.VehicleService)
-admin.site.register(models.VehicleServiceItem)
-admin.site.register(models.VehicleTrim)
-admin.site.register(models.VehicleYear)
-admin.site.register(models.VideoGame)
-admin.site.register(models.VideoGamePlatform)
+admin.site.register(vehicle.Vehicle)
+admin.site.register(vehicle.VehicleMake)
+admin.site.register(vehicle.VehicleMileage)
+admin.site.register(vehicle.VehicleModel)
+admin.site.register(vehicle.VehicleService)
+admin.site.register(vehicle.VehicleServiceItem)
+admin.site.register(vehicle.VehicleTrim)
+admin.site.register(vehicle.VehicleYear)
+admin.site.register(video_game.VideoGame)
+admin.site.register(video_game.VideoGamePlatform)

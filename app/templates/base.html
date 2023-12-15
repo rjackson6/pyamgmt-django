@@ -26,31 +26,31 @@
 <body>
 {% block body %}
 <div id="root">
-  {% block _header %}
-  <header id="header">
-    {% block header %}
-    <nav>
+  {% block _root_header %}
+  <header id="root-header">
+    {% block root_header %}
+    <nav id="root-header-nav">
       <ol>
         <li>Header</li>
       </ol>
     </nav>
-    {% endblock header %}
+    {% endblock root_header %}
   </header>
-  {% endblock _header %}
-  {% block _main %}
-  <div id="main">
-    {% block main %}{% endblock main %}
+  {% endblock _root_header %}
+  {% block _root_main %}
+  <div id="root-main">
+    {% block root_main %}{% endblock root_main %}
   </div>
-  {% endblock _main %}
-  {% block _footer %}
-  <footer id="footer">
-    {% block footer %}
+  {% endblock _root_main %}
+  {% block _root_footer %}
+  <footer id="root-footer">
+    {% block root_footer %}
     <div>
       <p>Some footer content</p>
     </div>
-    {% endblock footer %}
+    {% endblock root_footer %}
   </footer>
-  {% endblock _footer %}
+  {% endblock _root_footer %}
 </div>
 {% endblock body %}
 
