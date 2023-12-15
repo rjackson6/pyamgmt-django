@@ -43,6 +43,13 @@ DATABASES = {
         'PASSWORD': env.DATABASE_PASSWORD,
         'HOST': env.DATABASE_HOST,
         'PORT': env.DATABASE_PORT,
+    },
+    'mariadb': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pyamgmt',
+        'USER': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
     }
 }
 

@@ -135,12 +135,14 @@ table {
 th {
     background-color: #dddddd;
     border: 1px solid black;
+    color: black;
     padding: 0.2rem;
 }
 
 td {
     background-color: #eeeeee;
     border: 1px solid black;
+    color: black;
     padding: 0.1rem;
 }
 

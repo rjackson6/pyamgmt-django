@@ -6,6 +6,7 @@
 
 .main-wrapper {
     display: flex;
+    flex: auto;
 }
 
 .sidebar {

@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+
+{% block main %}
+<h1>Vehicles</h1>
+<table>
+  <thead>
+  <tr>
+    <th>VIN</th>
+    <th>Year</th>
+    <th>Make</th>
+    <th>Model</th>
+    <th>Trim</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for obj in object_list %}
+  <tr>
+    <td>{{ obj.vin }}</td>
+    <td>{{ obj.vehicle_year.year }}</td>
+    <td>{{ obj.vehicle_year.vehicle_trim.vehicle_model.vehicle_make.name }}</td>
+    <td>{{ obj.vehicle_year.vehicle_trim.vehicle_model.name }}</td>
+    <td>{{ obj.vehicle_year.vehicle_trim.name }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock main %}

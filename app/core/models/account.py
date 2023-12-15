@@ -12,7 +12,6 @@ from django_base.utils import default_related_names, pascal_case_to_snake_case
 from . import _managers
 
 
-# region Account
 class Account(BaseAuditable):
     """Double-entry style account.
 
@@ -79,7 +78,6 @@ class Account(BaseAuditable):
             return False
 
 
-# region AccountAsset
 class AccountAsset(BaseAuditable):
     """An asset account.
 
@@ -104,6 +102,9 @@ class AccountAsset(BaseAuditable):
     financials = _managers.AccountAssetManagerFinancial()
     real = _managers.AccountAssetManagerReal()
 
+    class Meta:
+        verbose_name_plural = 'Account::Asset'
+
 
 class AccountAssetFinancial(BaseAuditable):
     """An asset which is monetary.
@@ -117,6 +118,9 @@ class AccountAssetFinancial(BaseAuditable):
     account_asset_id: int
     account_number = CharField(max_length=63, null=True, blank=True)
     institution = None  # TODO 2023-12-12
+
+    class Meta:
+        verbose_name_plural = 'Account::Asset::Financial'
 
 
 class AccountAssetReal(BaseAuditable):
@@ -140,7 +144,9 @@ class AccountAssetReal(BaseAuditable):
         **default_related_names(__qualname__)
     )
     asset_id: int
-# endregion AccountAsset
+
+    class Meta:
+        verbose_name_plural = 'Account::Asset::Real'
 
 
 class AccountEquity(BaseAuditable):
@@ -154,6 +160,9 @@ class AccountEquity(BaseAuditable):
     )
     account_id: int
 
+    class Meta:
+        verbose_name_plural = 'Account::Equity'
+
 
 class AccountExpense(BaseAuditable):
     """An expense account.
@@ -166,6 +175,9 @@ class AccountExpense(BaseAuditable):
     )
     account_id: int
 
+    class Meta:
+        verbose_name_plural = 'Account::Expense'
+
 
 class AccountIncome(BaseAuditable):
     """An income account.
@@ -177,6 +189,9 @@ class AccountIncome(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     account_id: int
+
+    class Meta:
+        verbose_name_plural = 'Account::Income'
 
 
 class AccountLiability(BaseAuditable):
@@ -206,6 +221,9 @@ class AccountLiability(BaseAuditable):
         max_length=15, choices=Subtype.choices, default=Subtype.OTHER
     )
 
+    class Meta:
+        verbose_name_plural = 'Account::Liability'
+
 
 class AccountLiabilitySecured(BaseAuditable):
     """A liability account that is held against an asset."""
@@ -219,4 +237,6 @@ class AccountLiabilitySecured(BaseAuditable):
         **default_related_names(__qualname__)
     )
     asset_id: int
-# endregion Account
+
+    class Meta:
+        verbose_name_plural = 'Account::Liability::Secured'

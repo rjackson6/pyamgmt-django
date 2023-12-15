@@ -69,6 +69,9 @@ class MusicAlbumArtwork(BaseAuditable):
     music_album_id: int
     image = ImageField()
 
+    class Meta:
+        verbose_name_plural = 'music album artwork'
+
     def __str__(self) -> str:
         return f'MusicAlbumArtwork {self.pk}: {self.music_album_id}'
 

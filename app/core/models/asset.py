@@ -37,6 +37,10 @@ class AssetDiscrete(BaseAuditable):
     date_withdrawn = DateField(null=True, blank=True)
     subtype = CharField(max_length=31, choices=Subtype.choices, default='NONE')
 
+    class Meta:
+        verbose_name = 'Asset::Discrete'
+        verbose_name_plural = 'Asset::Discrete'
+
 
 class AssetDiscreteCatalogItem(BaseAuditable):
     """A discrete asset that can relate to a CatalogItem."""
@@ -51,6 +55,10 @@ class AssetDiscreteCatalogItem(BaseAuditable):
     )
     catalog_item_id: int
 
+    class Meta:
+        verbose_name = 'Asset::Discrete::CatalogItem'
+        verbose_name_plural = 'Asset::Discrete::CatalogItem'
+
 
 class AssetDiscreteVehicle(BaseAuditable):
     """A discrete asset that can be associated with a unique vehicle."""
@@ -64,6 +72,10 @@ class AssetDiscreteVehicle(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     vehicle_id: int
+
+    class Meta:
+        verbose_name = 'Asset::Discrete::Vehicle'
+        verbose_name_plural = 'Asset::Discrete::Vehicle'
 
     def __str__(self) -> str:
         return f'AssetDiscreteVehicle {self.pk}: {self.vehicle_id}'
@@ -86,6 +98,10 @@ class AssetInventory(BaseAuditable):
     )
     catalog_item_id: int
     quantity = IntegerField(default=1)
+
+    class Meta:
+        verbose_name = 'Asset::Inventory'
+        verbose_name_plural = 'Asset::Inventory'
 
 
 class AssetType(BaseAuditable):

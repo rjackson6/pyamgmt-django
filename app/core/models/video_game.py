@@ -84,6 +84,9 @@ class VideoGameSeries(BaseAuditable):
         related_name='sub_series'
     )
 
+    class Meta:
+        verbose_name_plural = 'video game series'
+
 
 # class VideoGameXVideoGamePlatform(BaseAuditable):
 class VideoGameXVideoGamePlatform:

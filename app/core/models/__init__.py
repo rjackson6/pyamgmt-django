@@ -50,6 +50,9 @@ from .song import (
 from .txn import (
     Txn, TxnLineItem,
 )
+from .vehicle import (
+    Vehicle, VehicleMake,
+)
 from .video_game import (
     VideoGame, VideoGameAddon, VideoGameEdition, VideoGameXVideoGamePlatform,
     VideoGameEditionXVideoGamePlatform, VideoGamePlatform, VideoGameSeries,
