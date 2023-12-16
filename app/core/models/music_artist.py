@@ -2,7 +2,7 @@ from django.db.models import (
     CharField, DateField, ForeignKey, PositiveSmallIntegerField, URLField,
     CASCADE,
     Manager,
-    UniqueConstraint,
+    UniqueConstraint, ManyToManyField,
 )
 
 from django.utils import timezone
@@ -25,6 +25,10 @@ class MusicArtist(BaseAuditable):
         help_text="Website or homepage for this music artist."
     )
     # Relationships
+    albums = ManyToManyField(
+        'MusicAlbum', through='MusicAlbumXMusicArtist', related_name='+',
+        blank=True,
+    )
     # songs = ManyXManyField('Song', through='MusicArtistXSong', related_name='+', blank=True)
 
     def __str__(self) -> str:
@@ -60,6 +64,15 @@ class MusicArtistActivity(BaseAuditable):
                 name='unique_music_artist_activity')
         ]
 
+    @cached_property
+    def display_name(self) -> str:
+        text = f'{self.music_artist.name} : {self.year_active}'
+        if self.year_inactive:
+            text += f' - {self.year_inactive}'
+        else:
+            text += f' - Present'
+        return text
+
 
 class MusicArtistXPerson(BaseAuditable):
     """Relates a MusicArtist to a Person.
@@ -69,6 +82,8 @@ class MusicArtistXPerson(BaseAuditable):
     These are also optionally bound by time. Band members can leave and re-join
     a group.
     Only "official" members of a band are considered.
+    Solo artist activity considers their timeline as a music artist by
+    profession.
     """
     music_artist = ForeignKey(
         MusicArtist, on_delete=CASCADE,
@@ -100,6 +115,12 @@ class MusicArtistXPerson(BaseAuditable):
             f' {self.music_artist_id}-{self.person_id}'
         )
 
+    @cached_property
+    def display_name(self) -> str:
+        return (
+            f'{self.music_artist.name} : {self.person.full_name}'
+        )
+
     @property
     def is_active(self) -> bool | None:
         activity = (
@@ -117,15 +138,23 @@ class MusicArtistXPerson(BaseAuditable):
 
 class MusicArtistXPersonActivity(BaseAuditable):
     """Holds records of when a person was part of a group or act."""
-    music_artist_to_person = ForeignKey(
+    music_artist_x_person = ForeignKey(
         MusicArtistXPerson, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_artist_to_person_id: int
+    music_artist_x_person_id: int
     date_active = DateField(validators=[validate_date_not_future])
     date_inactive = DateField(
         null=True, blank=True, validators=[validate_date_not_future]
     )
+
+    @cached_property
+    def display_name(self) -> str:
+        return (
+            f'{self.music_artist_x_person.music_artist.name}'
+            f' : {self.music_artist_x_person.person.full_name}'
+            f' : {self.date_active}'
+        )
 
 
 class MusicArtistXSong(BaseAuditable):

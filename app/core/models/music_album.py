@@ -4,6 +4,7 @@ from django.db.models import (
     CASCADE, PROTECT,
     UniqueConstraint,
 )
+from django.utils.functional import cached_property
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
@@ -22,7 +23,10 @@ class MusicAlbum(BaseAuditable):
     #  different productions?
     is_compilation = BooleanField(
         default=False,
-        help_text="Album is a compilation of other songs, such as a Greatest Hits album."
+        help_text=(
+            "Album is a compilation of other songs, such as a Greatest Hits"
+            " album."
+        )
     )
     # TODO 2023-12-12
     # media_format = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_media_format_audio)
@@ -37,7 +41,6 @@ class MusicAlbum(BaseAuditable):
     year_produced = PositiveSmallIntegerField(
         null=True, blank=True, validators=[validate_year_not_future]
     )
-    # Relationships
     music_artists = ManyToManyField(
         'MusicArtist',
         through='MusicAlbumXMusicArtist',
@@ -88,6 +91,7 @@ class MusicAlbumEdition(BaseAuditable):
         MusicAlbum, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
+    name = CharField(max_length=31, blank=True)
     # TODO 2023-12-12: likely a property
     total_discs = PositiveSmallIntegerField(default=1)
     year_copyright = PositiveSmallIntegerField(
@@ -96,6 +100,38 @@ class MusicAlbumEdition(BaseAuditable):
     year_produced = PositiveSmallIntegerField(
         null=True, blank=True, validators=[validate_year_not_future]
     )
+
+
+class MusicAlbumEditionXSongRecording(BaseAuditable):
+    disc_number = PositiveSmallIntegerField(null=True, blank=True)
+    music_album_edition = ForeignKey(
+        MusicAlbumEdition, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    music_album_edition_id: int
+    song_recording = ForeignKey(
+        'SongRecording', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    song_recording_id: int
+    track_number = PositiveSmallIntegerField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('music_album_edition', 'song_recording'),
+                name='unique_music_album_edition_x_song_recording'
+            ),
+            UniqueConstraint(
+                fields=('music_album_edition', 'disc_number', 'track_number'),
+                name='unique_music_album_edition_x_song_recording_disc_track'
+            )
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f'MusicAlbumEditionXSongRecording {self.pk}:'
+            f' {self.music_album_edition_id}-{self.song_recording_id}')
 
 
 class MusicAlbumProduction(BaseAuditable):
@@ -154,34 +190,6 @@ class MusicAlbumXMusicArtist(BaseAuditable):
             f'MusicAlbumXMusicArtist {self.pk}:'
             f' {self.music_album_id}-{self.music_artist_id}')
 
-
-class MusicAlbumXSongRecording(BaseAuditable):
-    disc_number = PositiveSmallIntegerField(null=True, blank=True)
-    music_album = ForeignKey(
-        MusicAlbum, on_delete=CASCADE,
-        **default_related_names(__qualname__)
-    )
-    music_album_id: int
-    song_recording = ForeignKey(
-        'SongRecording', on_delete=CASCADE,
-        **default_related_names(__qualname__)
-    )
-    song_recording_id: int
-    track_number = PositiveSmallIntegerField(null=True, blank=True)
-
-    class Meta:
-        constraints = [
-            UniqueConstraint(
-                fields=('music_album', 'song_recording'),
-                name='unique_music_album_x_song_recording'
-            ),
-            UniqueConstraint(
-                fields=('music_album', 'disc_number', 'track_number'),
-                name='unique_music_album_x_song_recording_disc_track'
-            )
-        ]
-
-    def __str__(self) -> str:
-        return (
-            f'MusicAlbumXSongRecording {self.pk}:'
-            f' {self.music_album_id}-{self.song_recording_id}')
+    @cached_property
+    def display_name(self) -> str:
+        return f'{self.music_artist.name} : {self.music_album.title}'

@@ -1,8 +1,12 @@
 import datetime
 
-from django.db.models import BooleanField, CharField, DateField, TextField
+from django.db.models import (
+    CharField, DateField, OneToOneField, TextField,
+    CASCADE,
+)
 
 from django_base.models import BaseAuditable
+from django_base.utils import pascal_case_to_snake_case
 
 
 class Person(BaseAuditable):
@@ -13,11 +17,9 @@ class Person(BaseAuditable):
     """
     first_name = CharField(max_length=255)
     middle_name = CharField(max_length=255, blank=True)
-    last_name = CharField(max_length=255)
+    last_name = CharField(max_length=255, blank=True)
     date_of_birth = DateField(null=True, blank=True)
     date_of_death = DateField(null=True, blank=True)
-    subtype_acquaintance = BooleanField()
-    subtype_notable = BooleanField()
     notes = TextField(blank=True)
 
     def __str__(self) -> str:
@@ -39,5 +41,12 @@ class Person(BaseAuditable):
         return years
 
     @property
+    def is_living(self) -> bool:
+        return not self.date_of_death
+
+    @property
     def full_name(self) -> str:
-        return f'{self.first_name} {self.last_name}'
+        text = f'{self.first_name}'
+        if self.last_name:
+            text += f' {self.last_name}'
+        return text

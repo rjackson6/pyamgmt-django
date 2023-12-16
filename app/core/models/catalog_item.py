@@ -54,7 +54,8 @@ class CatalogItem(BaseAuditable):
             MinLengthValidator(13),
             validate_digit,
             validate_isbn_13_check_digit
-        ]
+        ],
+        verbose_name="ISBN-13"
     )
     ismn = CharField(
         max_length=13, unique=True, null=True, blank=True,
@@ -70,6 +71,9 @@ class CatalogItem(BaseAuditable):
         max_length=12, unique=True, null=True, blank=True,
         validators=[MinLengthValidator(12), validate_digit]
     )
+
+    def __str__(self):
+        return f'[{self.subtype}] {self.name}'
 
 
 class CatalogItemDigitalSong(BaseAuditable):
@@ -196,20 +200,20 @@ class CatalogItemXVideoGameEdition(BaseAuditable):
     )
 
 
-class CatalogItemXVideoGamePlatform(BaseAuditable):
+class CatalogItemXVideoGamePlatformEdition(BaseAuditable):
     catalog_item = ForeignKey(
         CatalogItem, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    video_game_platform = ForeignKey(
-        'VideoGamePlatform', on_delete=CASCADE,
+    video_game_platform_edition = ForeignKey(
+        'VideoGamePlatformEdition', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
 
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=('catalog_item', 'video_game_platform'),
-                name='unique_catalog_item_x_video_game_platform'
+                fields=('catalog_item', 'video_game_platform_edition'),
+                name='unique_catalog_item_x_video_game_platform_edition'
             )
         ]

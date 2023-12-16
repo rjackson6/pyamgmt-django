@@ -10,6 +10,9 @@ from .asset import (
     Asset, AssetDiscrete, AssetDiscreteCatalogItem, AssetDiscreteVehicle,
     AssetInventory, AssetType,
 )
+from .author import (
+    Author, AuthorXBook,
+)
 from .book import (
     Book, BookEdition, BookPublication, BookXMotionPicture,
 )
@@ -36,7 +39,7 @@ from .motion_picture import (
 )
 from .music_album import (
     MusicAlbum, MusicAlbumArtwork, MusicAlbumEdition, MusicAlbumProduction,
-    MusicAlbumXMusicArtist, MusicAlbumXSongRecording,
+    MusicAlbumXMusicArtist,
 )
 from .music_artist import (
     MusicArtist, MusicArtistActivity, MusicArtistXPerson,
@@ -54,7 +57,7 @@ from .person import (
     Person,
 )
 from .point_of_sale import (
-    PointOfSale, PointOfSaleDocument, PointOfSaleLineItem, PointOfSaleXTxn
+    PointOfSale, PointOfSaleDocument, PointOfSaleLineItem,
 )
 from .song import (
     Song, SongRecording, SongXSong,

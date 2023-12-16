@@ -1,5 +1,6 @@
 from django.db.models import (
     CharField, ForeignKey, PositiveSmallIntegerField,
+    UniqueConstraint,
     CASCADE, PROTECT,
 )
 
@@ -15,8 +16,19 @@ class MotionPicture(BaseAuditable):
         validators=[validate_year_not_future]
     )
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=['title', 'year_produced'],
+                name='unique_motion_picture'
+            )
+        ]
+
     def __str__(self) -> str:
-        return f'{self.title}'
+        text = f'{self.title}'
+        if self.year_produced:
+            text += f' ({self.year_produced})'
+        return text
 
 
 class MotionPictureRecording(BaseAuditable):

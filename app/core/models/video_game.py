@@ -88,6 +88,21 @@ class VideoGamePlatform(BaseAuditable):
         return self.name
 
 
+class VideoGamePlatformEdition(BaseAuditable):
+    name = CharField(max_length=31)
+    video_game_platform = ForeignKey(
+        VideoGamePlatform, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    def __str__(self):
+        return self.name
+
+    @cached_property
+    def display_name(self):
+        return f'{self.video_game_platform.name} : {self.name}'
+
+
 class VideoGamePlatformRegion(BaseAuditable):
     Region = _enums.Region
 

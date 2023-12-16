@@ -3,9 +3,10 @@ from django.db.models import (
     UniqueConstraint,
     CASCADE, PROTECT,
 )
+from django.utils.functional import cached_property
 
 from django_base.models import BaseAuditable
-from django_base.utils import default_related_names
+from django_base.utils import default_related_names, ordinal
 
 
 class Book(BaseAuditable):
@@ -38,6 +39,10 @@ class BookEdition(BaseAuditable):
             )
         ]
 
+    @cached_property
+    def display_name(self):
+        return f'{self.book.title}, {ordinal(self.edition)} Edition'
+
 
 class BookPublication(BaseAuditable):
     """Not sure about this one.
@@ -56,7 +61,6 @@ class BookPublication(BaseAuditable):
     publisher = None  # TODO 2023-12-12
 
 
-# region BookM2M
 class BookXMotionPicture(BaseAuditable):
     """Loose relationship between a book and an adapted film.
 
@@ -78,3 +82,10 @@ class BookXMotionPicture(BaseAuditable):
                 name='unique_book_x_motion_picture'
             )
         ]
+
+    @cached_property
+    def display_name(self) -> str:
+        return (
+            f'{self.book.title} (book) <-> {self.motion_picture.title}'
+            f' ({self.motion_picture.year_produced} film)'
+        )

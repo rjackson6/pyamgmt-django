@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.db.models import (
     CharField, DateField, FileField, ForeignKey, OneToOneField, TimeField,
     TextChoices,
-    CASCADE, PROTECT, SET_NULL,
+    PROTECT, SET_NULL,
     F, Sum,
 )
 
@@ -59,6 +59,7 @@ class PointOfSaleLineItem(BaseAuditable):
     class Subtype(TextChoices):
         CATALOGUE_ITEM = 'CATALOGUE_ITEM', 'CATALOGUE_ITEM'
         NON_CATALOGUE_ITEM = 'NON_CATALOGUE_ITEM', 'NON_CATALOGUE_ITEM'
+
     point_of_sale = ForeignKey(
         PointOfSale, on_delete=PROTECT,
         related_name='line_items'
@@ -69,26 +70,3 @@ class PointOfSaleLineItem(BaseAuditable):
 
     def __str__(self) -> str:
         return f'PointOfSaleLineItem {self.pk}: {self.point_of_sale_id}'
-
-
-class PointOfSaleXTxn(BaseAuditable):
-    """Relates a PointOfSale purchase to its correlated Transaction.
-
-    In a PointOfSale scenario, these are settled paid in-full at the time of
-    purchase.
-    I would think that only one TXN record would relate to one PointOfSale
-    record.
-    By this logic, one of these tables MUST contain a reference to the other;
-    however, this is intentionally modeled as a separate table for consistency
-    and to avoid a refactor for any edge cases.
-    """
-    point_of_sale = OneToOneField(
-        PointOfSale, on_delete=CASCADE,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )  # maybe foreign key?
-    point_of_sale_id: int
-    txn = OneToOneField(
-        'Txn', on_delete=CASCADE,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )  # definitely one-to-one
-    txn_id: int

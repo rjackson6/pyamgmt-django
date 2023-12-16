@@ -1,5 +1,5 @@
 from django.db.models import (
-    CharField, DateField, ForeignKey, OneToOneField,
+    CharField, DateField, FileField, ForeignKey, OneToOneField,
     TextChoices,
     CASCADE, SET_NULL,
 )
@@ -17,6 +17,14 @@ class Invoice(BaseAuditable):
         null=True,
         **default_related_names(__qualname__)
     )
+
+
+class InvoiceDocument(BaseAuditable):
+    invoice = ForeignKey(
+        Invoice, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    document = FileField()
 
 
 class InvoiceLineItem(BaseAuditable):
@@ -53,3 +61,8 @@ class InvoiceLineItemXNonCatalogItem(BaseAuditable):
             f'InvoiceLineItemXNonCatalogItem {self.invoice_line_item_id}:'
             f' {self.non_catalog_item_id}'
         )
+
+
+class InvoiceXTxn(BaseAuditable):
+    invoice = ForeignKey(Invoice, on_delete=CASCADE)
+    txn = ForeignKey('Txn', on_delete=CASCADE)
