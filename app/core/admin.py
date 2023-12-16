@@ -8,14 +8,30 @@ from .models import (
 
 @admin.register(account.Account)
 class AccountAdmin(admin.ModelAdmin):
+    list_display = ('name', 'parent_account', 'subtype')
+    list_select_related = ('parent_account',)
     ordering = ('name',)
 
 
-admin.site.register(account.AccountAsset)
-admin.site.register(account.AccountAssetFinancial)
-admin.site.register(account.AccountAssetReal)
+@admin.register(account.AccountAsset)
+class AccountAssetAdmin(admin.ModelAdmin):
+    list_display = ('display_name', 'subtype')
+    list_select_related = ('account',)
 
-admin.site.register(asset.Asset)
+
+admin.site.register(account.AccountAssetFinancial)
+
+
+@admin.register(account.AccountAssetReal)
+class AccountAssetRealAdmin(admin.ModelAdmin):
+    list_display = ('display_name',)
+
+
+@admin.register(asset.Asset)
+class AssetAdmin(admin.ModelAdmin):
+    list_display = ('id', 'description')
+
+
 admin.site.register(asset.AssetDiscrete)
 admin.site.register(asset.AssetDiscreteCatalogItem)
 admin.site.register(asset.AssetDiscreteVehicle)
@@ -42,7 +58,22 @@ admin.site.register(song.SongXSong)
 admin.site.register(txn.Txn)
 admin.site.register(txn.TxnLineItem)
 
-admin.site.register(vehicle.Vehicle)
+
+@admin.register(vehicle.Vehicle)
+class VehicleAdmin(admin.ModelAdmin):
+    list_display = ('display_name',)
+    list_select_related = (
+        'vehicle_year__vehicle_trim__vehicle_model__vehicle_make',
+    )
+    ordering = (
+        'vehicle_year__vehicle_trim__vehicle_model__vehicle_make__name',
+        'vehicle_year__vehicle_trim__vehicle_model__name',
+        'vehicle_year__vehicle_trim__name',
+        'vehicle_year',
+        'vin'
+    )
+
+
 admin.site.register(vehicle.VehicleMake)
 admin.site.register(vehicle.VehicleMileage)
 admin.site.register(vehicle.VehicleModel)
@@ -51,8 +82,61 @@ admin.site.register(vehicle.VehicleServiceItem)
 admin.site.register(vehicle.VehicleTrim)
 admin.site.register(vehicle.VehicleYear)
 
-admin.site.register(video_game.VideoGame)
-admin.site.register(video_game.VideoGameAddon)
+
+class VideoGameAddonInline(admin.TabularInline):
+    model = video_game.VideoGameAddon
+
+
+class VideoGameEditionInline(admin.TabularInline):
+    model = video_game.VideoGameEdition
+
+
+@admin.register(video_game.VideoGame)
+class VideoGameAdmin(admin.ModelAdmin):
+    inlines = [
+        VideoGameEditionInline,
+        VideoGameAddonInline,
+    ]
+    ordering = ('title',)
+
+
+@admin.register(video_game.VideoGameAddon)
+class VideoGameAddonAdmin(admin.ModelAdmin):
+    list_display = ('display_name', 'release_date')
+    list_select_related = ('video_game',)
+
+
 admin.site.register(video_game.VideoGameEdition)
-admin.site.register(video_game.VideoGamePlatform)
-admin.site.register(video_game.VideoGameSeries)
+
+
+class VideoGamePlatformRegionInline(admin.TabularInline):
+    model = video_game.VideoGamePlatformRegion
+    ordering = ('region',)
+
+
+@admin.register(video_game.VideoGamePlatform)
+class VideoGamePlatformAdmin(admin.ModelAdmin):
+    inlines = [
+        VideoGamePlatformRegionInline,
+    ]
+    ordering = ('name',)
+
+
+@admin.register(video_game.VideoGamePlatformRegion)
+class VideoGamePlatformRegionAdmin(admin.ModelAdmin):
+    list_display = ('display_name', 'release_date')
+    list_select_related = ('video_game_platform',)
+    ordering = ('video_game_platform__name', 'region')
+
+
+class VideoGameInline(admin.TabularInline):
+    model = video_game.VideoGame
+    ordering = ('title',)
+
+
+@admin.register(video_game.VideoGameSeries)
+class VideoGameSeriesAdmin(admin.ModelAdmin):
+    inlines = [
+        VideoGameInline,
+    ]
+    ordering = ('name',)

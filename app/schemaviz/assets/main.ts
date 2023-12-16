@@ -17,9 +17,9 @@ let options: Options = {
                 enabled: true
             }
         },
-        color: {
-            opacity: 0.5
-        },
+        // color: {
+        //     opacity: 0.5
+        // },
         // physics: false,
         // smooth: {
             // enabled: false,  // true

@@ -13,6 +13,12 @@ class Asset(BaseAuditable):
     class Subtype(TextChoices):
         DISCRETE = 'DISCRETE', 'DISCRETE'
         INVENTORY = 'INVENTORY', 'INVENTORY'
+
+    account_asset_real = ForeignKey(
+        'AccountAssetReal', on_delete=SET_NULL, null=True, blank=True,
+        **default_related_names(__qualname__)
+    )
+    account_asset_real_id: int
     description = TextField(null=True, blank=True)
     subtype = CharField(max_length=31, choices=Subtype.choices)
 
@@ -28,6 +34,7 @@ class AssetDiscrete(BaseAuditable):
     class Subtype(TextChoices):
         CATALOG_ITEM = 'CATALOG_ITEM', 'CATALOG_ITEM'
         VEHICLE = 'VEHICLE', 'VEHICLE'
+
     asset = OneToOneField(
         Asset, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)

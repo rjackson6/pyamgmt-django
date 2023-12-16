@@ -1,34 +1,28 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Schema</title>
-  <link rel="icon" href="{% static 'favicon.ico' %}">
-  <style>
-      body {
-          background-color: #555;
-          color: white;
-      }
-      #vis-container {
-          background-color: #CDE;
-          border: 1px solid black;
-          height: 90vh;
-          width: 90vw;
-      }
-  </style>
-  <script type="module" src="{% vite %}"></script>
-</head>
-<body>
 
-<div>
-  <h1>Installed Apps</h1>
-  <div id="vis-container"></div>
-</div>
 
+{% block title %}Schema{% endblock title %}
+
+
+{% block extra_css_style %}
+<style>
+    #vis-container {
+        background-color: #CDE;
+        border: 1px solid black;
+        height: 100%;
+        width: 100%;
+    }
+</style>
+{% endblock extra_css_style %}
+
+
+{% block root_main %}
+<div id="vis-container"></div>
+{% endblock root_main %}
+
+
+{% block javascript %}
 {{ vis_data|json_script:"vis-data" }}
-
 <script type="module" src="{% asset 'schemaviz/assets/main.ts' %}"></script>
-
-</body>
-</html>
+{% endblock javascript %}

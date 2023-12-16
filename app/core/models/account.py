@@ -5,6 +5,7 @@ from django.db.models import (
     CASCADE, PROTECT, SET_NULL,
     Manager,
 )
+from django.utils.functional import cached_property
 
 from django_base.models.models import BaseAuditable
 from django_base.utils import default_related_names, pascal_case_to_snake_case
@@ -105,6 +106,10 @@ class AccountAsset(BaseAuditable):
     class Meta:
         verbose_name_plural = 'Account::Asset'
 
+    @cached_property
+    def display_name(self) -> str:
+        return f'{self.account.name}'
+
 
 class AccountAssetFinancial(BaseAuditable):
     """An asset which is monetary.
@@ -134,19 +139,13 @@ class AccountAssetReal(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     account_asset_id: int
-    # TODO 2023-12-12: Decide if I want `limit_choices_to=` here. If so, needs a
-    #  callback.
-    asset = ForeignKey(
-        'Asset',
-        on_delete=SET_NULL,
-        null=True,
-        blank=True,
-        **default_related_names(__qualname__)
-    )
-    asset_id: int
 
     class Meta:
         verbose_name_plural = 'Account::Asset::Real'
+
+    @cached_property
+    def display_name(self) -> str:
+        return f'{self.account_asset.account.name}'
 
 
 class AccountEquity(BaseAuditable):

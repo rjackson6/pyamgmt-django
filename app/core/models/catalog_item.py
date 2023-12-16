@@ -93,14 +93,16 @@ class CatalogItemMusicAlbumProduction(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     catalog_item_id: int
-    # Does
-    media_format = ForeignKey(
-        'MediaFormat', on_delete=SET_DEFAULT,
-        default=get_default_media_format_audio,
+    # media_format = ForeignKey(
+    #     'MediaFormat', on_delete=SET_DEFAULT,
+    #     default=get_default_media_format_audio,
+    #     **default_related_names(__qualname__)
+    # )
+    # media_format_id: int
+    music_album_production = ForeignKey(
+        'MusicAlbumProduction', on_delete=SET_NULL, null=True, blank=True,
         **default_related_names(__qualname__)
     )
-    media_format_id: int
-    # music_album_production = ForeignKey('MusicAlbumProduction')
 
 
 class CatalogItemXCatalogItem(BaseAuditable):
@@ -183,9 +185,20 @@ class CatalogItemXPointOfSaleLineItem(BaseAuditable):
         return self.quantity * self.unit_price
 
 
+class CatalogItemXVideoGameEdition(BaseAuditable):
+    catalog_item = ForeignKey(
+        CatalogItem, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    video_game_edition = ForeignKey(
+        'VideoGameEdition', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+
 class CatalogItemXVideoGamePlatform(BaseAuditable):
     catalog_item = ForeignKey(
-        'CatalogItem', on_delete=CASCADE,
+        CatalogItem, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
     video_game_platform = ForeignKey(

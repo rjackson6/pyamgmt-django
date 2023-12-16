@@ -123,6 +123,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'pyamgmt.urls'
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = env.SECURE_CROSS_ORIGIN_OPENER_POLICY
+
+if DEBUG:
+    SECURE_REFERRER_POLICY = None
+
 # env
 STATIC_URL = 'static/'
 
@@ -169,7 +174,7 @@ ASSET_URL = env.ASSET_URL
 
 STATIC_RESOURCES = {}
 
-VITE_CLIENT_URL = 'http://localhost:1234/assets/@vite/client' if DEBUG else ''
+VITE_CLIENT_URL = env.VITE_CLIENT_URL if DEBUG else ''
 
 VITE_URL: str = 'assets/'
 

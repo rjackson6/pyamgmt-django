@@ -8,7 +8,7 @@ from django_base.utils import default_related_names, pascal_case_to_snake_case
 
 class Party(BaseAuditable):
     class Subtype(TextChoices):
-        COMPANY = 'BUSINESS'
+        BUSINESS = 'BUSINESS'
         PERSON = 'PERSON'
     name = CharField(max_length=255)
     party_type = ForeignKey(
@@ -26,6 +26,10 @@ class Party(BaseAuditable):
 
 class PartyBusiness(BaseAuditable):
     """A business or corporate entity."""
+    business = OneToOneField(
+        'Business', on_delete=SET_NULL, null=True, blank=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
     party = OneToOneField(
         Party, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
@@ -34,7 +38,7 @@ class PartyBusiness(BaseAuditable):
     trade_name = CharField(max_length=255)
 
     def __str__(self) -> str:
-        return f'PartyCompany {self.pk}: {self.trade_name}'
+        return f'PartyBusiness {self.pk}: {self.trade_name}'
 
 
 class PartyPerson(BaseAuditable):
@@ -49,3 +53,16 @@ class PartyPerson(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     person_id: int
+
+
+class PartyType(BaseAuditable):
+    name = CharField(max_length=255)
+    parent_party_type = ForeignKey(
+        'self',
+        on_delete=SET_NULL,
+        null=True, blank=True,
+        related_name='child_party_types'
+    )
+
+    def __str__(self) -> str:
+        return f'{self.name}'

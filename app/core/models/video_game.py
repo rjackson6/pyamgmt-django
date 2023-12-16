@@ -1,10 +1,13 @@
 from django.db.models import (
     CharField, DateField, ForeignKey,
-    PROTECT, SET_NULL,
+    CASCADE, PROTECT, SET_NULL,
 )
+from django.db.utils import cached_property
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
+
+from . import _enums
 
 
 class VideoGame(BaseAuditable):
@@ -37,6 +40,9 @@ class VideoGame(BaseAuditable):
         **default_related_names(__qualname__)
     )
 
+    def __str__(self):
+        return self.title
+
 
 class VideoGameAddon(BaseAuditable):
     """DLC, Expansion pack, or other additional components that are optional.
@@ -51,6 +57,13 @@ class VideoGameAddon(BaseAuditable):
         VideoGame, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
+
+    def __str__(self):
+        return self.name
+
+    @cached_property
+    def display_name(self):
+        return f'{self.video_game.title}: {self.name}'
 
 
 class VideoGameEdition(BaseAuditable):
@@ -75,9 +88,27 @@ class VideoGamePlatform(BaseAuditable):
         return self.name
 
 
+class VideoGamePlatformRegion(BaseAuditable):
+    Region = _enums.Region
+
+    region = CharField(
+        max_length=2, choices=Region.choices,
+        blank=True, default=''
+    )
+    release_date = DateField(null=True, blank=True)
+    video_game_platform = ForeignKey(
+        VideoGamePlatform, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    @cached_property
+    def display_name(self):
+        return f'{self.video_game_platform.name}: {self.region}'
+
+
 class VideoGameSeries(BaseAuditable):
     """A grouping of related video games."""
-    name = CharField(max_length=63)
+    name = CharField(max_length=63, unique=True)
     parent_series = ForeignKey(
         'self', on_delete=SET_NULL,
         null=True, blank=True,
@@ -86,6 +117,9 @@ class VideoGameSeries(BaseAuditable):
 
     class Meta:
         verbose_name_plural = 'video game series'
+
+    def __str__(self):
+        return self.name
 
 
 # class VideoGameXVideoGamePlatform(BaseAuditable):

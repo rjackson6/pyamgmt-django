@@ -6,6 +6,7 @@ from django.db.models import (
     UniqueConstraint,
     CASCADE, PROTECT, SET_NULL,
 )
+from django.utils.functional import cached_property
 from django.core.validators import MinLengthValidator, MinValueValidator
 
 from django_base.models import BaseAuditable
@@ -15,7 +16,10 @@ from django_base.validators import validate_date_not_future, validate_year_not_f
 
 
 class Vehicle(BaseAuditable):
-    """An individual, uniquely identifiable vehicle."""
+    """An individual, uniquely identifiable vehicle.
+
+    Accounting reached via Vehicle -> Asset -> Account
+    """
     vehicle_year = ForeignKey(
         'VehicleYear', on_delete=PROTECT,
         **default_related_names(__qualname__)
@@ -29,6 +33,15 @@ class Vehicle(BaseAuditable):
 
     def __str__(self) -> str:
         return f'Vehicle {self.pk}: {self.vin}'
+
+    @cached_property
+    def display_name(self) -> str:
+        return (
+            f'{self.vehicle_year.year}'
+            f' {self.vehicle_year.vehicle_trim.vehicle_model.vehicle_make.name}'
+            f' {self.vehicle_year.vehicle_trim.vehicle_model.name}'
+            f' VIN: {self.vin}'
+        )
 
 
 class VehicleMake(BaseAuditable):

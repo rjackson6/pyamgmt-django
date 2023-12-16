@@ -1,9 +1,4 @@
 from .models import (
-    Manufacturer,
-    MediaFormat,
-    PartyType,
-    Payee,
-    Person,
     Seller,
     Unit,
 )
@@ -18,11 +13,22 @@ from .asset import (
 from .book import (
     Book, BookEdition, BookPublication, BookXMotionPicture,
 )
+from .business import (
+    Business,
+)
 from .catalog_item import (
-    CatalogItem, CatalogItemDigitalSong, CatalogItemMusicAlbumProduction,
+    CatalogItem,
+    CatalogItemDigitalSong,
+    CatalogItemMusicAlbumProduction,
 )
 from .invoice import (
     Invoice, InvoiceLineItem, InvoiceLineItemXNonCatalogItem,
+)
+from .manufacturer import (
+    Manufacturer,
+)
+from .media_format import (
+    MediaFormat,
 )
 from .motion_picture import (
     MotionPicture, MotionPictureRecording, MotionPictureXMusicAlbum,
@@ -39,7 +45,13 @@ from .music_artist import (
 from .non_catalog_item import NonCatalogItem
 from .order import Order, OrderLineItem
 from .party import (
-    Party, PartyBusiness, PartyPerson,
+    Party, PartyBusiness, PartyPerson, PartyType,
+)
+from .payee import (
+    Payee,
+)
+from .person import (
+    Person,
 )
 from .point_of_sale import (
     PointOfSale, PointOfSaleDocument, PointOfSaleLineItem, PointOfSaleXTxn
@@ -51,9 +63,12 @@ from .txn import (
     Txn, TxnLineItem,
 )
 from .vehicle import (
-    Vehicle, VehicleMake,
+    Vehicle, VehicleMake, VehicleMileage, VehicleModel, VehicleService,
+    VehicleServiceItem, VehicleTrim, VehicleYear,
 )
 from .video_game import (
-    VideoGame, VideoGameAddon, VideoGameEdition, VideoGameXVideoGamePlatform,
-    VideoGameEditionXVideoGamePlatform, VideoGamePlatform, VideoGameSeries,
+    VideoGame, VideoGameAddon, VideoGameEdition,
+    VideoGameEditionXVideoGamePlatform, VideoGamePlatform,
+    VideoGamePlatformRegion, VideoGameSeries,
+    VideoGameXVideoGamePlatform,
 )

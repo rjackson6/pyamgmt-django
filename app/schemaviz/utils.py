@@ -15,9 +15,19 @@ class Node:
 
 
 @dataclass
+class EdgeColor:
+    color: str = None
+    highlight: str = None
+    hover: str = None
+    inherit: str = None
+    opacity: float = None
+
+
+@dataclass
 class Edge:
     from_: str
     to: str
+    color: EdgeColor | None = None
     label: str = ''
 
 
@@ -29,12 +39,12 @@ class VisNetwork:
     @staticmethod
     def dict_factory(kv_pairs):
         m = {'from_': 'from'}
-        return {m.get(k, k): v for k, v, in kv_pairs}
+        return {m.get(k, k): v for k, v, in kv_pairs if v}
 
 
 # noinspection PyProtectedMember
-def apps_dataset():
-    nodes = {}  # values() can make the list after the fact, I guess
+def apps_dataset() -> dict:
+    nodes = {}
     edges = []
     tos = Counter()
     for mdl in apps.get_models():
@@ -48,11 +58,15 @@ def apps_dataset():
         fields = mdl._meta.get_fields()
         for field in fields:
             if isinstance(field, RelatedField):
+                edge_color = None
+                if field.many_to_many:
+                    edge_color = EdgeColor(opacity=0.2)
                 related_model = field.related_model
                 related_label = related_model._meta.label
                 edge = Edge(
                     from_=label,
-                    to=related_label
+                    to=related_label,
+                    color=edge_color,
                 )
                 edges.append(edge)
                 # Use to_ as the "mass" for the related node

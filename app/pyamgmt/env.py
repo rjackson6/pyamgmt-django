@@ -6,6 +6,7 @@ import typing
 
 TRUE = ('TRUE', 'True', 'true', '1')
 FALSE = ('FALSE', 'False', 'false', '0')
+NONE = ('NULL', 'null',)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -33,6 +34,8 @@ class EnvVar:
                 return self.default
             else:
                 return None
+        if self.value in NONE:
+            return None
         return self.callback(self.value)
 
 
@@ -45,6 +48,8 @@ if not SECRET_KEY.value:
 
 ARANGO_HOST = EnvVar('ARANGO_HOST')
 ARANGO_PORT = EnvVar('ARANGO_PORT')
+ASSET_HOST = EnvVar('ASSET_HOST')
+ASSET_PORT = EnvVar('ASSET_PORT')
 ASSET_URL = EnvVar('ASSET_URL')
 DATABASE_HOST = EnvVar('DATABASE_HOST')
 DATABASE_NAME = EnvVar('DATABASE_NAME')
@@ -58,7 +63,11 @@ DATABASE_PORT = EnvVar('DATABASE_PORT')
 DATABASE_USER = EnvVar('DATABASE_USER')
 REDIS_HOST = EnvVar('REDIS_HOST')
 REDIS_PORT = EnvVar('REDIS_PORT')
-VITE_CLIENT_URL = EnvVar('VITE_CLIENT_URL')
+SECURE_CROSS_ORIGIN_OPENER_POLICY = EnvVar('SECURE_CROSS_ORIGIN_OPENER_POLICY')
+VITE_CLIENT_URL = EnvVar(
+    'VITE_CLIENT_URL',
+    default='http://localhost:1234/assets/@vite/client'
+)
 
 for setting in dir():
     if setting.isupper():
