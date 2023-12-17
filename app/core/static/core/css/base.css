@@ -1,3 +1,12 @@
+a:link,
+a:visited {
+    color: white;
+}
+
+a:hover {
+    outline: 1px dashed white;
+}
+
 #root-main {
     background-color: var(--Gunmetal);
     color: white;
@@ -10,7 +19,7 @@
 }
 
 .sidebar {
-    border-right: 3px ridge var(--Timberwolf);
+    border-right: 3px solid var(--Titanium);
     flex: none;
     overflow: auto;
     min-width: 12rem;

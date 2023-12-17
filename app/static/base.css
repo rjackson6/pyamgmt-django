@@ -159,6 +159,7 @@ td > a {
 /* I'm OK with using IDs here since they uniquely frame the site */
 
 #root {
+    border: 3px solid var(--Titanium);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -166,7 +167,7 @@ td > a {
 
 #root-header {
     background-color: var(--Prussian-blue);
-    border-bottom: 3px solid var(--Timberwolf);
+    border-bottom: 3px solid var(--Titanium);
     color: white;
 }
 
@@ -177,6 +178,6 @@ td > a {
 
 #root-footer {
     background-color: var(--Prussian-blue);
-    border-top: 3px solid var(--Timberwolf);
+    border-top: 3px solid var(--Titanium);
     color: white;
 }

@@ -50,3 +50,8 @@ class Person(BaseAuditable):
         if self.last_name:
             text += f' {self.last_name}'
         return text
+
+
+# class PersonXPerson(BaseAuditable):
+#     """Relationships between people."""
+

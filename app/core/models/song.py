@@ -5,6 +5,7 @@ from django.db.models import (
     TextChoices,
     CASCADE,
 )
+from django.utils.functional import cached_property
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
@@ -51,6 +52,13 @@ class SongRecording(BaseAuditable):
         'MusicArtist', through='MusicArtistXSongRecording',
         related_name='+'
     )
+
+    # def __str__(self) -> str:
+    #     return f'Recording of {self.song.title}'
+
+    @cached_property
+    def display_name(self) -> str:
+        return f'{self.song.title}'
 
 
 class SongXSong(BaseAuditable):

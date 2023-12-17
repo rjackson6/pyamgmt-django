@@ -10,3 +10,6 @@ class Manufacturer(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     name = CharField(max_length=255, unique=True)
+
+    def __str__(self) -> str:
+        return self.name

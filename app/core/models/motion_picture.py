@@ -1,7 +1,7 @@
 from django.db.models import (
     CharField, ForeignKey, PositiveSmallIntegerField,
     UniqueConstraint,
-    CASCADE, PROTECT,
+    CASCADE, PROTECT, SET_NULL,
 )
 
 from django_base.models import BaseAuditable
@@ -11,6 +11,11 @@ from django_base.validators import validate_year_not_future
 
 class MotionPicture(BaseAuditable):
     title = CharField(max_length=255)
+    series = ForeignKey(
+        'MotionPictureSeries', on_delete=SET_NULL,
+        null=True, blank=True,
+        **default_related_names(__qualname__)
+    )
     year_produced = PositiveSmallIntegerField(
         null=True, blank=True,
         validators=[validate_year_not_future]
@@ -36,10 +41,26 @@ class MotionPictureRecording(BaseAuditable):
 
     Takes into account media (digital, DVD, maybe even distributor).
     """
+    # media_format = ForeignKey()
     motion_picture = ForeignKey(
         MotionPicture, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
+
+
+class MotionPictureSeries(BaseAuditable):
+    name = CharField(max_length=63, unique=True)
+    parent_series = ForeignKey(
+        'self', on_delete=SET_NULL,
+        null=True, blank=True,
+        related_name='sub_series',
+    )
+
+    class Meta:
+        verbose_name_plural = 'motion picture series'
+
+    def __str__(self) -> str:
+        return self.name
 
 
 # region MotionPictureM2M

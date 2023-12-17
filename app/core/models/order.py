@@ -1,5 +1,5 @@
 from django.db.models import (
-    CharField, DateField, ForeignKey,
+    CharField, DateField, FileField, ForeignKey,
     TextChoices,
     CASCADE, SET_NULL,
 )
@@ -22,6 +22,14 @@ class Order(BaseAuditable):
 
     def __str__(self) -> str:
         return f'Order {self.pk}: {self.order_number}'
+
+
+class OrderDocument(BaseAuditable):
+    order = ForeignKey(
+        Order, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    document = FileField()
 
 
 class OrderLineItem(BaseAuditable):

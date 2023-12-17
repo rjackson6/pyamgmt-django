@@ -42,3 +42,19 @@ class GeneralModelWithFK(Base):
         on_delete=models.CASCADE,
         **default_related_names(__qualname__)
     )
+
+
+class SymmetricalTestModel(Base):
+    name = models.CharField(max_length=63)
+    m2m = models.ManyToManyField(
+        'self', blank=True
+    )
+
+
+class AsymmetricalTestModel(Base):
+    name = models.CharField(max_length=63)
+    m2m = models.ManyToManyField(
+        'self',
+        blank=True,
+        symmetrical=False
+    )

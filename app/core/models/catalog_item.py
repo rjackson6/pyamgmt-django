@@ -76,6 +76,17 @@ class CatalogItem(BaseAuditable):
         return f'[{self.subtype}] {self.name}'
 
 
+class CatalogItemBookPublication(BaseAuditable):
+    catalog_item = OneToOneField(
+        CatalogItem, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
+    book_publication = ForeignKey(
+        'BookPublication', on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
+
+
 class CatalogItemDigitalSong(BaseAuditable):
     """Digital songs.
 
@@ -88,6 +99,17 @@ class CatalogItemDigitalSong(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     catalog_item_id: int
+
+
+class CatalogItemMotionPictureRecording(BaseAuditable):
+    catalog_item = OneToOneField(
+        CatalogItem, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
+    motion_picture_recording = ForeignKey(
+        'MotionPictureRecording', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
 
 
 class CatalogItemMusicAlbumProduction(BaseAuditable):

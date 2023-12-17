@@ -211,3 +211,10 @@ class MusicArtistXSongRecording(BaseAuditable):
             f'MusicArtistXSongRecording {self.pk}:'
             f' {self.music_artist_id}-{self.song_recording_id}'
         )
+
+    @cached_property
+    def display_name(self) -> str:
+        return (
+            f'{self.song_recording.song.title}'
+            f' : {self.music_artist.name}'
+        )

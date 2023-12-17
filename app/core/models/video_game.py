@@ -40,7 +40,7 @@ class VideoGame(BaseAuditable):
         **default_related_names(__qualname__)
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
 
@@ -58,12 +58,12 @@ class VideoGameAddon(BaseAuditable):
         **default_related_names(__qualname__)
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @cached_property
-    def display_name(self):
-        return f'{self.video_game.title}: {self.name}'
+    def display_name(self) -> str:
+        return f'{self.video_game.title} : {self.name}'
 
 
 class VideoGameEdition(BaseAuditable):
@@ -84,7 +84,7 @@ class VideoGamePlatform(BaseAuditable):
     name = CharField(max_length=31, unique=True)
     short_name = CharField(max_length=15, blank=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -99,7 +99,7 @@ class VideoGamePlatformEdition(BaseAuditable):
         return self.name
 
     @cached_property
-    def display_name(self):
+    def display_name(self) -> str:
         return f'{self.video_game_platform.name} : {self.name}'
 
 
@@ -117,7 +117,7 @@ class VideoGamePlatformRegion(BaseAuditable):
     )
 
     @cached_property
-    def display_name(self):
+    def display_name(self) -> str:
         return f'{self.video_game_platform.name}: {self.region}'
 
 
@@ -127,13 +127,13 @@ class VideoGameSeries(BaseAuditable):
     parent_series = ForeignKey(
         'self', on_delete=SET_NULL,
         null=True, blank=True,
-        related_name='sub_series'
+        related_name='sub_series',
     )
 
     class Meta:
         verbose_name_plural = 'video game series'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 

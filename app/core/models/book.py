@@ -1,7 +1,7 @@
 from django.db.models import (
     CharField, ForeignKey, PositiveSmallIntegerField,
     UniqueConstraint,
-    CASCADE, PROTECT,
+    CASCADE, PROTECT, SET_NULL,
 )
 from django.utils.functional import cached_property
 
@@ -12,6 +12,10 @@ from django_base.utils import default_related_names, ordinal
 class Book(BaseAuditable):
     """Every CRUD app needs a book model."""
     title = CharField(max_length=255)
+    series = ForeignKey(
+        'BookSeries', on_delete=SET_NULL, null=True, blank=True,
+        **default_related_names(__qualname__)
+    )
     # publisher
     # authors
 
@@ -59,6 +63,21 @@ class BookPublication(BaseAuditable):
     )
     format = None  # TODO 2023-12-12
     publisher = None  # TODO 2023-12-12
+
+
+class BookSeries(BaseAuditable):
+    name = CharField(max_length=63, unique=True)
+    parent_series = ForeignKey(
+        'self', on_delete=SET_NULL,
+        null=True, blank=True,
+        related_name='sub_series',
+    )
+
+    class Meta:
+        verbose_name_plural = 'book series'
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class BookXMotionPicture(BaseAuditable):

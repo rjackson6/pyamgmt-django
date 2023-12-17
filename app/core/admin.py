@@ -1,8 +1,9 @@
 from django.contrib import admin
 
 from .models import (
-    account, asset, author, book, catalog_item, invoice, motion_picture,
-    music_album, music_artist, person, song, txn, vehicle, video_game,
+    account, asset, author, book, catalog_item, invoice, manufacturer,
+    motion_picture, music_album, music_artist, person, song, txn, vehicle,
+    video_game,
 )
 
 
@@ -57,12 +58,22 @@ class AccountAssetRealAdmin(admin.ModelAdmin):
 
 @admin.register(asset.Asset)
 class AssetAdmin(admin.ModelAdmin):
-    list_display = ('id', 'description')
+    list_display = ('description', 'subtype')
 
 
-admin.site.register(asset.AssetDiscrete)
+@admin.register(asset.AssetDiscrete)
+class AssetDiscrete(admin.ModelAdmin):
+    list_display = ('display_name', 'date_acquired', 'date_withdrawn')
+
+
 admin.site.register(asset.AssetDiscreteCatalogItem)
-admin.site.register(asset.AssetDiscreteVehicle)
+
+
+@admin.register(asset.AssetDiscreteVehicle)
+class AssetDiscreteVehicleAdmin(admin.ModelAdmin):
+    list_display = ('display_name',)
+    list_select_related = ('asset_discrete__asset', 'vehicle')
+
 
 admin.site.register(author.Author)
 
@@ -82,11 +93,16 @@ class BookXMotionPictureAdmin(admin.ModelAdmin):
 
 
 admin.site.register(catalog_item.CatalogItem)
+admin.site.register(catalog_item.CatalogItemMotionPictureRecording)
+
 
 admin.site.register(invoice.Invoice)
 admin.site.register(invoice.InvoiceLineItem)
 
+admin.site.register(manufacturer.Manufacturer)
+
 admin.site.register(motion_picture.MotionPicture)
+admin.site.register(motion_picture.MotionPictureRecording)
 
 
 @admin.register(music_album.MusicAlbum)
@@ -136,16 +152,33 @@ class MusicArtistXPersonActivityAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(music_artist.MusicArtistXSongRecording)
+class MusicArtistXSongRecordingAdmin(admin.ModelAdmin):
+    list_display = ('display_name',)
+    list_select_related = ('music_artist', 'song_recording__song')
+
+
 @admin.register(person.Person)
 class PersonAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = (
         'full_name', 'is_living', 'date_of_birth', 'date_of_death', 'age',
         'notes',
-    ]
+    )
+    ordering = ('last_name', 'first_name')
 
 
 admin.site.register(song.Song)
-admin.site.register(song.SongRecording)
+
+
+@admin.register(song.SongRecording)
+class SongRecordingAdmin(admin.ModelAdmin):
+    list_display = (
+        'display_name', 'recording_type',
+    )
+    list_select_related = ('song',)
+    ordering = ('song__title',)
+
+
 admin.site.register(song.SongXSong)
 
 admin.site.register(txn.Txn)
@@ -200,6 +233,12 @@ class VideoGamePlatformAdmin(admin.ModelAdmin):
         VideoGamePlatformRegionInline,
     ]
     ordering = ('name',)
+
+
+@admin.register(video_game.VideoGamePlatformEdition)
+class VideoGamePlatformEditionAdmin(admin.ModelAdmin):
+    list_display = ('display_name',)
+    ordering = ('video_game_platform__name', 'name')
 
 
 @admin.register(video_game.VideoGamePlatformRegion)

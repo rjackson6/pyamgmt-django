@@ -14,7 +14,7 @@ class Author(BaseAuditable):
         **default_related_names(__qualname__)
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.pen_name
 
 

@@ -3,6 +3,7 @@ from django.db.models import (
     TextChoices,
     CASCADE, PROTECT, SET_NULL
 )
+from django.utils.functional import cached_property
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names, pascal_case_to_snake_case
@@ -48,6 +49,10 @@ class AssetDiscrete(BaseAuditable):
         verbose_name = 'Asset::Discrete'
         verbose_name_plural = 'Asset::Discrete'
 
+    @cached_property
+    def display_name(self) -> str:
+        return f'{self.asset.description}'
+
 
 class AssetDiscreteCatalogItem(BaseAuditable):
     """A discrete asset that can relate to a CatalogItem."""
@@ -86,6 +91,12 @@ class AssetDiscreteVehicle(BaseAuditable):
 
     def __str__(self) -> str:
         return f'AssetDiscreteVehicle {self.pk}: {self.vehicle_id}'
+
+    def display_name(self) -> str:
+        return (
+            f'{self.asset_discrete.asset.description}'
+            f' : {self.vehicle.vin}'
+        )
 
 
 class AssetInventory(BaseAuditable):
