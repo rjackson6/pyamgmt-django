@@ -35,7 +35,7 @@ class Vehicle(BaseAuditable):
         return f'Vehicle {self.pk}: {self.vin}'
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return (
             f'{self.vehicle_year.year}'
             f' {self.vehicle_year.vehicle_trim.vehicle_model.vehicle_make.name}'

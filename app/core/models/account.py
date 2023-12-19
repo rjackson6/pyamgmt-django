@@ -107,7 +107,7 @@ class AccountAsset(BaseAuditable):
         verbose_name_plural = 'Account::Asset'
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return f'{self.account.name}'
 
 
@@ -144,7 +144,7 @@ class AccountAssetReal(BaseAuditable):
         verbose_name_plural = 'Account::Asset::Real'
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return f'{self.account_asset.account.name}'
 
 

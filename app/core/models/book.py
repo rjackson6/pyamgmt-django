@@ -44,7 +44,7 @@ class BookEdition(BaseAuditable):
         ]
 
     @cached_property
-    def display_name(self):
+    def admin_description(self):
         return f'{self.book.title}, {ordinal(self.edition)} Edition'
 
 
@@ -103,7 +103,7 @@ class BookXMotionPicture(BaseAuditable):
         ]
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return (
             f'{self.book.title} (book) <-> {self.motion_picture.title}'
             f' ({self.motion_picture.year_produced} film)'

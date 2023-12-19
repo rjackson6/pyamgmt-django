@@ -50,7 +50,7 @@ class AssetDiscrete(BaseAuditable):
         verbose_name_plural = 'Asset::Discrete'
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return f'{self.asset.description}'
 
 
@@ -92,7 +92,7 @@ class AssetDiscreteVehicle(BaseAuditable):
     def __str__(self) -> str:
         return f'AssetDiscreteVehicle {self.pk}: {self.vehicle_id}'
 
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return (
             f'{self.asset_discrete.asset.description}'
             f' : {self.vehicle.vin}'

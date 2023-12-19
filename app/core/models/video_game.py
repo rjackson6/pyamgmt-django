@@ -62,7 +62,7 @@ class VideoGameAddon(BaseAuditable):
         return self.name
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return f'{self.video_game.title} : {self.name}'
 
 
@@ -99,7 +99,7 @@ class VideoGamePlatformEdition(BaseAuditable):
         return self.name
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return f'{self.video_game_platform.name} : {self.name}'
 
 
@@ -117,7 +117,7 @@ class VideoGamePlatformRegion(BaseAuditable):
     )
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return f'{self.video_game_platform.name}: {self.region}'
 
 

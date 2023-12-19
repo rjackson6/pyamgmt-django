@@ -3,6 +3,7 @@ from django.db.models import (
     UniqueConstraint,
     CASCADE, PROTECT, SET_NULL,
 )
+from django.utils.functional import cached_property
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
@@ -76,6 +77,10 @@ class MotionPictureXMusicAlbum(BaseAuditable):
         **default_related_names(__qualname__)
     )
     music_album_id: int
+
+    @cached_property
+    def admin_description(self) -> str:
+        return f'{self.motion_picture.title} : {self.music_album.title}'
 
 
 class MotionPictureXSong(BaseAuditable):

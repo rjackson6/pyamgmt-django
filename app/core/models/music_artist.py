@@ -65,7 +65,7 @@ class MusicArtistActivity(BaseAuditable):
         ]
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         text = f'{self.music_artist.name} : {self.year_active}'
         if self.year_inactive:
             text += f' - {self.year_inactive}'
@@ -116,7 +116,7 @@ class MusicArtistXPerson(BaseAuditable):
         )
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return (
             f'{self.music_artist.name} : {self.person.full_name}'
         )
@@ -149,7 +149,7 @@ class MusicArtistXPersonActivity(BaseAuditable):
     )
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return (
             f'{self.music_artist_x_person.music_artist.name}'
             f' : {self.music_artist_x_person.person.full_name}'
@@ -213,7 +213,7 @@ class MusicArtistXSongRecording(BaseAuditable):
         )
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return (
             f'{self.song_recording.song.title}'
             f' : {self.music_artist.name}'

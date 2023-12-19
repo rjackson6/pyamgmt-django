@@ -33,8 +33,6 @@ class MusicAlbum(BaseAuditable):
     # media_format_id: int
     # TODO 2023-12-12: This is a temporary unique constraint
     title = CharField(max_length=255, unique=True)
-    # TODO 2023-12-12: This is really a property
-    total_discs = PositiveSmallIntegerField(default=1)
     year_copyright = PositiveSmallIntegerField(
         null=True, blank=True, validators=[validate_year_not_future]
     )
@@ -101,6 +99,10 @@ class MusicAlbumEdition(BaseAuditable):
         null=True, blank=True, validators=[validate_year_not_future]
     )
 
+    @cached_property
+    def admin_description(self) -> str:
+        return f'{self.music_album.title} ({self.name})'
+
 
 class MusicAlbumEditionXSongRecording(BaseAuditable):
     disc_number = PositiveSmallIntegerField(null=True, blank=True)
@@ -156,7 +158,6 @@ class MusicAlbumProduction(BaseAuditable):
     )
 
 
-# region MusicAlbumM2M
 class MusicAlbumXMusicArtist(BaseAuditable):
     """Relates a MusicAlbum to a MusicArtist; Album Artist.
 
@@ -191,5 +192,26 @@ class MusicAlbumXMusicArtist(BaseAuditable):
             f' {self.music_album_id}-{self.music_artist_id}')
 
     @cached_property
-    def display_name(self) -> str:
+    def admin_description(self) -> str:
         return f'{self.music_artist.name} : {self.music_album.title}'
+
+
+class MusicAlbumXVideoGame(BaseAuditable):
+    music_album = ForeignKey(
+        MusicAlbum, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    video_game = ForeignKey(
+        'VideoGame', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('music_album', 'video_game'),
+                name='unique_music_album_x_video_game')
+        ]
+
+    def admin_description(self) -> str:
+        return f'{self.music_album.title} : {self.video_game.title}'

@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+
+
+{% block extra_css_style %}
+<style>
+  #vis-container {
+    height: 100%;
+    width: 100%;
+  }
+</style>
+{% endblock extra_css_style %}
+
+
+{% block main %}
+<div id="vis-container"></div>
+{% endblock main %}
+
+
+{% block javascript %}
+{{ vis_data|json_script:"vis-data" }}
+<script type="module" src="{% asset 'core/assets/vis.ts' %}"></script>
+{% endblock javascript %}

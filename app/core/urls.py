@@ -16,5 +16,9 @@ urlpatterns = [
         # path('music-album/', views.models.MusicAlbumListView.as_view()),
         path('music-artist/', views.models.MusicArtistListView.as_view()),
         path('vehicle/', views.models.VehicleListView.as_view()),
-    ]))
+    ])),
+    path('networks/', include([
+        path('music-album-x-music-artist/',
+             views.networks.MusicArtistNetworkView.as_view())
+    ])),
 ]

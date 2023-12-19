@@ -35,6 +35,8 @@ class SongRecording(BaseAuditable):
     class RecordingType(TextChoices):
         LIVE = 'LIVE', 'Live Performance'
         STUDIO = 'STUDIO', 'Studio Recording'
+
+    description = CharField(max_length=63, blank=True)
     duration = DurationField(
         null=True, blank=True, validators=[validate_positive_timedelta])
     lyrics = TextField(blank=True, default='')
@@ -53,12 +55,20 @@ class SongRecording(BaseAuditable):
         related_name='+'
     )
 
-    # def __str__(self) -> str:
-    #     return f'Recording of {self.song.title}'
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('description', 'song'),
+                name='unique_song_recording'
+            )
+        ]
 
     @cached_property
-    def display_name(self) -> str:
-        return f'{self.song.title}'
+    def admin_description(self) -> str:
+        text = f'{self.song.title}'
+        if self.description:
+            text += f' - {self.description}'
+        return text
 
 
 class SongXSong(BaseAuditable):

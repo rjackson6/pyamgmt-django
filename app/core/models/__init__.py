@@ -38,7 +38,8 @@ from .motion_picture import (
     MotionPictureXSong,
 )
 from .music_album import (
-    MusicAlbum, MusicAlbumArtwork, MusicAlbumEdition, MusicAlbumProduction,
+    MusicAlbum, MusicAlbumArtwork, MusicAlbumEdition,
+    MusicAlbumEditionXSongRecording, MusicAlbumProduction,
     MusicAlbumXMusicArtist,
 )
 from .music_artist import (

@@ -5,16 +5,38 @@ from django.apps import apps
 from django.db.models.fields.related import RelatedField
 
 
-@dataclass
+@dataclass(kw_only=True)
+class NodeFont:
+    color: str | None = None
+    size: int | None = None
+    face: str | None = None
+    background: str | None = None
+    strokeWidth: int | None = None
+    align: str | None = None
+    vadjust: int | None = None
+    multi: bool | str | None = None
+
+
+@dataclass(kw_only=True)
 class Node:
+    valid_shapes = (
+        'ellipse', 'circle', 'database', 'box', 'text',
+        'image', 'circularImage', 'diamond', 'dot', 'star', 'triangle',
+        'triangleDown', 'hexagon', 'square', 'icon',
+        'custom',
+    )
+
     id: str
     label: str
     group: str = ''
     mass: int = 1  # "count" would help generalize
+    physics: bool | None = None
+    shape: str | None = None
     value: int = 1
+    font: NodeFont | None = None
 
 
-@dataclass
+@dataclass(kw_only=True)
 class EdgeColor:
     color: str = None
     highlight: str = None
@@ -23,12 +45,14 @@ class EdgeColor:
     opacity: float = None
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Edge:
     from_: str
     to: str
     color: EdgeColor | None = None
+    dashes: list | bool | None = None
     label: str = ''
+    physics: bool | None = None
 
 
 @dataclass
@@ -36,10 +60,13 @@ class VisNetwork:
     nodes: list[Node]
     edges: list[Edge]
 
+    def to_dict(self) -> dict:
+        return asdict(self, dict_factory=self.dict_factory)
+
     @staticmethod
     def dict_factory(kv_pairs):
         m = {'from_': 'from'}
-        return {m.get(k, k): v for k, v, in kv_pairs if v}
+        return {m.get(k, k): v for k, v, in kv_pairs if v is not None}
 
 
 # noinspection PyProtectedMember
@@ -76,16 +103,4 @@ def apps_dataset() -> dict:
         nodes[k].value += count
         nodes[k].mass += count
     x = VisNetwork(list(nodes.values()), edges)
-    return asdict(x, dict_factory=VisNetwork.dict_factory)
-
-
-if __name__ == '__main__':
-    import os
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pyamgmt.settings')
-    import django
-    django.setup()
-
-    import pprint
-    d = apps_dataset()
-    pprint.pp(d)
-    pprint.pp(d.get('tos'))
+    return x.to_dict()

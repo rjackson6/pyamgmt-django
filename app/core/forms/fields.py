@@ -1,6 +1,39 @@
-__all__ = ['VehicleYearChoiceField']
+__all__ = [
+    'MusicAlbumEditionChoiceField',
+    'SongRecordingChoiceField',
+    'VehicleYearChoiceField',
+]
 
 from django.forms import ModelChoiceField
+
+
+class MusicAlbumEditionChoiceField(ModelChoiceField):
+    def __init__(self, queryset, **kwargs):
+        if queryset is not None:
+            queryset = (
+                queryset
+                .select_related('music_album')
+            )
+        super().__init__(queryset, **kwargs)
+
+    def label_from_instance(self, obj) -> str:
+        return f'{obj.music_album.title} ({obj.name})'
+
+
+class SongRecordingChoiceField(ModelChoiceField):
+    def __init__(self, queryset, **kwargs):
+        if queryset is not None:
+            queryset = (
+                queryset
+                .select_related('song')
+            )
+        super().__init__(queryset, **kwargs)
+
+    def label_from_instance(self, obj) -> str:
+        label = f'{obj.song.title}'
+        if obj.description:
+            label += f' ({obj.description})'
+        return f'{label} [{obj.recording_type}]'
 
 
 class VehicleYearChoiceField(ModelChoiceField):
