@@ -19,6 +19,7 @@ urlpatterns = [
     ])),
     path('networks/', include([
         path('music-album-x-music-artist/',
-             views.networks.MusicArtistNetworkView.as_view())
+             views.networks.MusicArtistNetworkView.as_view()),
+        path('music-tags/', views.networks.MusicTagNetworkView.as_view())
     ])),
 ]

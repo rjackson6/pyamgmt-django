@@ -1,6 +1,7 @@
 from django.db.models import (
-    CharField, DateField, ForeignKey, PositiveSmallIntegerField, URLField,
+    CharField, ForeignKey, PositiveSmallIntegerField, TextField, URLField,
     CASCADE,
+    TextChoices,
     Manager,
     UniqueConstraint, ManyToManyField,
 )
@@ -11,7 +12,7 @@ from django.utils.functional import cached_property
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
 from django_base.validators import (
-    validate_date_not_future, validate_year_not_future
+    validate_year_not_future
 )
 
 from . import _managers
@@ -19,6 +20,8 @@ from . import _managers
 
 class MusicArtist(BaseAuditable):
     """An individual musician or a group of musicians."""
+    music_artist_activity_set: Manager
+
     name = CharField(max_length=255, unique=True)
     website = URLField(
         null=True, blank=True,
@@ -31,8 +34,21 @@ class MusicArtist(BaseAuditable):
     )
     # songs = ManyXManyField('Song', through='MusicArtistXSong', related_name='+', blank=True)
 
+    objects = Manager()
+    with_related = _managers.MusicArtistManager()
+
     def __str__(self) -> str:
         return f'{self.name}'
+
+    @cached_property
+    def is_active(self) -> bool:
+        activity = self.music_artist_activity_set.all()
+        if not activity:
+            return True
+        if activity[0].year_inactive:
+            return False
+        else:
+            return True
 
     @cached_property
     def total_albums(self) -> int:
@@ -74,6 +90,29 @@ class MusicArtistActivity(BaseAuditable):
         return text
 
 
+class MusicArtistXMusicTag(BaseAuditable):
+    music_artist = ForeignKey(
+        MusicArtist, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    music_tag = ForeignKey(
+        'MusicTag', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('music_artist', 'music_tag'),
+                name='unique_music_artist_x_music_tag'
+            )
+        ]
+
+    @cached_property
+    def admin_description(self) -> str:
+        return f'{self.music_artist.name} : {self.music_tag.name}'
+
+
 class MusicArtistXPerson(BaseAuditable):
     """Relates a MusicArtist to a Person.
 
@@ -81,25 +120,24 @@ class MusicArtistXPerson(BaseAuditable):
     bands, etc.
     These are also optionally bound by time. Band members can leave and re-join
     a group.
-    Only "official" members of a band are considered.
     Solo artist activity considers their timeline as a music artist by
     profession.
     """
+    music_artist_id: int
+    person_id: int
+    music_artist_x_person_activity_set: Manager
+
     music_artist = ForeignKey(
         MusicArtist, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_artist_id: int
     person = ForeignKey(
         'Person', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    person_id: int
 
     objects = Manager()
     with_related = _managers.MusicArtistXPersonManager()
-
-    music_artist_x_person_activity_set: Manager
 
     class Meta:
         constraints = [
@@ -123,38 +161,56 @@ class MusicArtistXPerson(BaseAuditable):
 
     @property
     def is_active(self) -> bool | None:
-        activity = (
-            self.music_artist_x_person_activity_set
-            .order_by('date_active')
-            .first()
-        )
+        if not self.person.is_living:
+            return False
+        if not self.music_artist.is_active:
+            return False
+        activity = self.music_artist_x_person_activity_set.first()
         if activity is None:
             return None
-        if activity.date_inactive is None:
+        if activity.year_inactive is None:
             return True
-        if activity.date_inactive >= timezone.now():
+        if activity.year_inactive <= timezone.now().year:
             return False
 
 
 class MusicArtistXPersonActivity(BaseAuditable):
     """Holds records of when a person was part of a group or act."""
+
+    class ActivityType(TextChoices):
+        OFFICIAL = 'OFFICIAL', 'Official Member'
+        SESSION = 'SESSION', 'Session Musician'
+        TOURING = 'TOURING', 'Touring Member'
+
+    music_artist_x_person_id: int
+
     music_artist_x_person = ForeignKey(
         MusicArtistXPerson, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_artist_x_person_id: int
-    date_active = DateField(validators=[validate_date_not_future])
-    date_inactive = DateField(
-        null=True, blank=True, validators=[validate_date_not_future]
+    # role : vocalist, drummer, guitarist, lead guitarist, lead vocalist...
+    # a person could be multiple roles, guitarist + vocalist
+    # contribution: session vocals, session drums, drummer
+    # date_active = DateField(validators=[validate_date_not_future])
+    # date_inactive = DateField(
+    #     null=True, blank=True, validators=[validate_date_not_future]
+    # )
+    activity_type = CharField(
+        max_length=8, choices=ActivityType.choices, blank=True
     )
+    year_active = PositiveSmallIntegerField(null=True, blank=True)
+    year_inactive = PositiveSmallIntegerField(null=True, blank=True)
 
     @cached_property
     def admin_description(self) -> str:
-        return (
+        text = (
             f'{self.music_artist_x_person.music_artist.name}'
             f' : {self.music_artist_x_person.person.full_name}'
-            f' : {self.date_active}'
+            f' : {self.year_active}'
         )
+        if self.year_inactive:
+            text += f'-{self.year_inactive}'
+        return text
 
 
 class MusicArtistXSong(BaseAuditable):
@@ -185,36 +241,39 @@ class MusicArtistXSong(BaseAuditable):
             f' {self.music_artist_id}-{self.song_id}'
         )
 
+    @cached_property
+    def admin_description(self) -> str:
+        return f'{self.music_artist.name}: {self.song.title}'
 
-class MusicArtistXSongRecording(BaseAuditable):
+
+class MusicArtistXSongPerformance(BaseAuditable):
     music_artist = ForeignKey(
         MusicArtist, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_artist_id: int
-    song_recording = ForeignKey(
-        'SongRecording', on_delete=CASCADE,
+    song_performance = ForeignKey(
+        'SongPerformance', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    song_recording_id: int
+    comments = TextField(blank=True, default='')
 
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=('music_artist', 'song_recording'),
-                name='unique_music_artist_x_song_recording'
+                fields=('music_artist', 'song_performance'),
+                name='unique_music_artist_x_song_performance'
             )
         ]
 
     def __str__(self) -> str:
         return (
-            f'MusicArtistXSongRecording {self.pk}:'
-            f' {self.music_artist_id}-{self.song_recording_id}'
+            f'MusicArtistXSongPerformance {self.pk}:'
+            f' {self.music_artist_id}-{self.song_performance_id}'
         )
 
     @cached_property
     def admin_description(self) -> str:
         return (
-            f'{self.song_recording.song.title}'
+            f'{self.song_performance.song.title}'
             f' : {self.music_artist.name}'
         )

@@ -37,14 +37,22 @@ from .motion_picture import (
     MotionPicture, MotionPictureRecording, MotionPictureXMusicAlbum,
     MotionPictureXSong,
 )
+from .music import (
+    MusicalInstrument, MusicalInstrumentXPerson,
+)
 from .music_album import (
     MusicAlbum, MusicAlbumArtwork, MusicAlbumEdition,
-    MusicAlbumEditionXSongRecording, MusicAlbumProduction,
+    MusicAlbumEditionXSongRecording,
+    MusicAlbumProduction,
     MusicAlbumXMusicArtist,
+    MusicAlbumXMusicTag,
 )
 from .music_artist import (
-    MusicArtist, MusicArtistActivity, MusicArtistXPerson,
-    MusicArtistXPersonActivity, MusicArtistXSong, MusicArtistXSongRecording,
+    MusicArtist, MusicArtistActivity, MusicArtistXMusicTag, MusicArtistXPerson,
+    MusicArtistXPersonActivity, MusicArtistXSong, MusicArtistXSongPerformance,
+)
+from .music_tag import (
+    MusicTag,
 )
 from .non_catalog_item import NonCatalogItem
 from .order import Order, OrderLineItem
@@ -61,7 +69,7 @@ from .point_of_sale import (
     PointOfSale, PointOfSaleDocument, PointOfSaleLineItem,
 )
 from .song import (
-    Song, SongRecording, SongXSong,
+    Song, SongPerformance, SongRecording, SongXSong,
 )
 from .txn import (
     Txn, TxnLineItem,

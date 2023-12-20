@@ -1,5 +1,5 @@
 from collections import Counter
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass, field
 
 from django.apps import apps
 from django.db.models.fields.related import RelatedField
@@ -55,10 +55,10 @@ class Edge:
     physics: bool | None = None
 
 
-@dataclass
+@dataclass(slots=True)
 class VisNetwork:
-    nodes: list[Node]
-    edges: list[Edge]
+    nodes: list[Node] = field(default_factory=list)
+    edges: list[Edge] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return asdict(self, dict_factory=self.dict_factory)

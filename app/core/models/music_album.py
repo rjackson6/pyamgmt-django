@@ -33,12 +33,12 @@ class MusicAlbum(BaseAuditable):
     # media_format_id: int
     # TODO 2023-12-12: This is a temporary unique constraint
     title = CharField(max_length=255, unique=True)
-    year_copyright = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future]
-    )
-    year_produced = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future]
-    )
+    # year_copyright = PositiveSmallIntegerField(
+    #     null=True, blank=True, validators=[validate_year_not_future]
+    # )
+    # year_produced = PositiveSmallIntegerField(
+    #     null=True, blank=True, validators=[validate_year_not_future]
+    # )
     music_artists = ManyToManyField(
         'MusicArtist',
         through='MusicAlbumXMusicArtist',
@@ -194,6 +194,29 @@ class MusicAlbumXMusicArtist(BaseAuditable):
     @cached_property
     def admin_description(self) -> str:
         return f'{self.music_artist.name} : {self.music_album.title}'
+
+
+class MusicAlbumXMusicTag(BaseAuditable):
+    music_album = ForeignKey(
+        MusicAlbum, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    music_tag = ForeignKey(
+        'MusicTag', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('music_album', 'music_tag'),
+                name='unique_music_album_x_music_tag'
+            )
+        ]
+
+    @cached_property
+    def admin_description(self) -> str:
+        return f'{self.music_album.title} : {self.music_tag.name}'
 
 
 class MusicAlbumXVideoGame(BaseAuditable):

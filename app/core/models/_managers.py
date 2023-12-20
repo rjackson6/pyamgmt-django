@@ -1,6 +1,6 @@
 from collections import deque
 
-from django.db.models import Manager, QuerySet
+from django.db.models import Manager, Prefetch, QuerySet
 
 
 # TODO 2023-12-12: This should be a utils.function
@@ -225,6 +225,47 @@ class AccountAssetManagerReal(Manager):
         return super().get_queryset().filter(subtype=self.model.Subtype.REAL)
 
 
+class MusicArtistManager(Manager):
+    def get_queryset(self):
+        from .music_artist import MusicArtistActivity
+
+        return (
+            super().get_queryset()
+            .prefetch_related(
+                Prefetch(
+                    'music_artist_activity_set',
+                    queryset=(
+                        MusicArtistActivity.objects
+                        .order_by('-year_inactive', '-year_active')
+                    )
+                )
+            )
+        )
+
+
 class MusicArtistXPersonManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related('music_artist', 'person')
+        from .music_artist import (
+            MusicArtistActivity, MusicArtistXPersonActivity
+        )
+
+        return (
+            super().get_queryset()
+            .select_related('music_artist', 'person')
+            .prefetch_related(
+                Prefetch(
+                    'music_artist__music_artist_activity_set',
+                    queryset=(
+                        MusicArtistActivity.objects
+                        .order_by('-year_inactive')
+                    )
+                ),
+                Prefetch(
+                    'music_artist_x_person_activity_set',
+                    queryset=(
+                        MusicArtistXPersonActivity.objects
+                        .order_by('-year_active')
+                    )
+                )
+            )
+        )

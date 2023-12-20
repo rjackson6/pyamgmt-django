@@ -1,16 +1,18 @@
 from django.contrib import admin
 
 from core import forms
+from .forms.admin import SongRecordingForm
 from .models import (
     account, asset, author, book, catalog_item, invoice, manufacturer,
-    motion_picture, music_album, music_artist, person, song, txn, vehicle,
-    video_game,
+    motion_picture, music, music_album, music_artist, music_tag, person, song,
+    txn, vehicle, video_game,
 )
 
 
 #########
 # Inlines
 #########
+
 class MusicAlbumEditionInline(admin.TabularInline):
     model = music_album.MusicAlbumEdition
 
@@ -22,19 +24,46 @@ class MusicAlbumEditionXSongRecordingInline(admin.TabularInline):
 
 class MusicAlbumXMusicArtistInline(admin.TabularInline):
     model = music_album.MusicAlbumXMusicArtist
+    extra = 1
+
+
+class MusicAlbumXMusicTagInline(admin.TabularInline):
+    model = music_album.MusicAlbumXMusicTag
+    extra = 2
+    ordering = ('music_tag__name',)
 
 
 class MusicArtistXPersonInline(admin.TabularInline):
     model = music_artist.MusicArtistXPerson
+    extra = 2
 
 
-class MusicArtistXSongRecordingInline(admin.TabularInline):
-    form = forms.admin.MusicArtistXSongRecordingForm
-    model = music_artist.MusicArtistXSongRecording
+class MusicArtistXPersonActivityInline(admin.TabularInline):
+    model = music_artist.MusicArtistXPersonActivity
+    extra = 1
+
+
+class MusicArtistXSongInline(admin.TabularInline):
+    model = music_artist.MusicArtistXSong
+    extra = 1
+
+
+class MusicArtistXSongPerformanceInline(admin.TabularInline):
+    form = forms.admin.MusicArtistXSongPerformanceForm
+    model = music_artist.MusicArtistXSongPerformance
+
+
+class MusicalInstrumentXPersonInline(admin.TabularInline):
+    model = music.MusicalInstrumentXPerson
+
+
+class SongPerformanceInline(admin.TabularInline):
+    model = song.SongPerformance
 
 
 class SongRecordingInline(admin.TabularInline):
     model = song.SongRecording
+    extra = 1
 
 
 class VideoGameAddonInline(admin.TabularInline):
@@ -150,8 +179,9 @@ class MusicAlbumAdmin(admin.ModelAdmin):
     inlines = [
         MusicAlbumEditionInline,
         MusicAlbumXMusicArtistInline,
+        MusicAlbumXMusicTagInline,
     ]
-    list_display = ('title', 'year_produced', 'is_compilation')
+    list_display = ('title', 'is_compilation')
     ordering = ('title',)
     search_fields = ('title',)
 
@@ -200,6 +230,7 @@ class MusicArtistActivityAdmin(admin.ModelAdmin):
 
 @admin.register(music_artist.MusicArtistXPerson)
 class MusicArtistXPersonAdmin(admin.ModelAdmin):
+    inlines = [MusicArtistXPersonActivityInline]
     list_display = ('admin_description',)
     list_select_related = ('music_artist', 'person')
     ordering = ('music_artist__name', 'person__first_name')
@@ -214,15 +245,41 @@ class MusicArtistXPersonActivityAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(music_artist.MusicArtistXSongRecording)
-class MusicArtistXSongRecordingAdmin(admin.ModelAdmin):
-    form = forms.admin.MusicArtistXSongRecordingForm
+@admin.register(music_artist.MusicArtistXSong)
+class MusicArtistXSongAdmin(admin.ModelAdmin):
     list_display = ('admin_description',)
-    list_select_related = ('music_artist', 'song_recording__song')
+    list_select_related = (
+        'music_artist',
+        'song',
+    )
+
+
+@admin.register(music_artist.MusicArtistXSongPerformance)
+class MusicArtistXSongPerformanceAdmin(admin.ModelAdmin):
+    form = forms.admin.MusicArtistXSongPerformanceForm
+    list_display = ('admin_description',)
+    list_select_related = ('music_artist', 'song_performance__song')
+
+
+admin.site.register(music_tag.MusicTag)
+
+
+@admin.register(music.MusicalInstrument)
+class MusicalInstrumentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'section')
+    ordering = ('name',)
+
+
+@admin.register(music.MusicalInstrumentXPerson)
+class MusicalInstrumentXPersonAdmin(admin.ModelAdmin):
+    list_display = ('admin_description',)
+    list_select_related = ('musical_instrument', 'person')
+    ordering = ('musical_instrument__name', 'person__last_name')
 
 
 @admin.register(person.Person)
 class PersonAdmin(admin.ModelAdmin):
+    inlines = [MusicalInstrumentXPersonInline]
     list_display = (
         'full_name', 'is_living', 'date_of_birth', 'date_of_death', 'age',
         'notes',
@@ -234,25 +291,46 @@ class PersonAdmin(admin.ModelAdmin):
 @admin.register(song.Song)
 class SongAdmin(admin.ModelAdmin):
     inlines = [
-        SongRecordingInline
+        MusicArtistXSongInline,
+        SongPerformanceInline,
     ]
+    list_display = ('admin_description', 'is_original')
     ordering = ('title',)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related('music_artists')
 
-@admin.register(song.SongRecording)
-class SongRecordingAdmin(admin.ModelAdmin):
+
+@admin.register(song.SongPerformance)
+class SongPerformanceAdmin(admin.ModelAdmin):
     inlines = [
-        MusicAlbumEditionXSongRecordingInline,
-        MusicArtistXSongRecordingInline,
+        MusicArtistXSongPerformanceInline,
+        SongRecordingInline,
     ]
     list_display = (
-        'admin_description', 'recording_type',
+        'admin_description', 'performance_type',
     )
     list_select_related = ('song',)
     ordering = ('song__title',)
 
 
-admin.site.register(song.SongXSong)
+@admin.register(song.SongRecording)
+class SongRecordingAdmin(admin.ModelAdmin):
+    form = SongRecordingForm
+    list_display = (
+        'admin_description', 'duration',
+    )
+    list_select_related = ('song_performance__song',)
+    ordering = ('song_performance__song__title',)
+
+
+@admin.register(song.SongXSong)
+class SongXSongAdmin(admin.ModelAdmin):
+    form = forms.admin.SongXSongForm
+    list_display = ('song_archetype', 'song_derivative')
+    list_select_related = ('song_archetype', 'song_derivative')
+
 
 admin.site.register(txn.Txn)
 admin.site.register(txn.TxnLineItem)

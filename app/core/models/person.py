@@ -1,12 +1,11 @@
+from dataclasses import dataclass
 import datetime
 
 from django.db.models import (
-    CharField, DateField, OneToOneField, TextField,
-    CASCADE,
+    CharField, DateField, TextField, TextChoices,
 )
 
 from django_base.models import BaseAuditable
-from django_base.utils import pascal_case_to_snake_case
 
 
 class Person(BaseAuditable):
@@ -18,6 +17,9 @@ class Person(BaseAuditable):
     first_name = CharField(max_length=255)
     middle_name = CharField(max_length=255, blank=True)
     last_name = CharField(max_length=255, blank=True)
+    nickname = CharField(max_length=255, blank=True)
+    preferred_name = CharField(max_length=255, blank=True)
+    suffix = CharField(max_length=31, blank=True)
     date_of_birth = DateField(null=True, blank=True)
     date_of_death = DateField(null=True, blank=True)
     notes = TextField(blank=True)
@@ -45,13 +47,37 @@ class Person(BaseAuditable):
         return not self.date_of_death
 
     @property
-    def full_name(self) -> str:
+    def birth_name(self) -> str:
         text = f'{self.first_name}'
+        if self.middle_name:
+            text += f' {self.middle_name}'
         if self.last_name:
             text += f' {self.last_name}'
+        if self.suffix:
+            text += f' {self.suffix}'
+        return text
+
+    @property
+    def full_name(self) -> str:
+        if self.preferred_name:
+            return self.preferred_name
+        text = f'{self.first_name}'
+        if self.nickname:
+            text += f' "{self.nickname}"'
+        if self.middle_name:
+            text += f' {self.middle_name}'
+        if self.last_name:
+            text += f' {self.last_name}'
+        if self.suffix:
+            text += f' {self.suffix}'
         return text
 
 
+# Symmetrical vs. asymmetrical modeling
+# Service-layer logic. If an attribute is symmetrical, create both entries.
+# if an attribute is reflective (father <-> son), create the appropriate
+# entries
+# if an attribute is one-way - which is rare - only make one entry
+# These are just pairs of attributes.
 # class PersonXPerson(BaseAuditable):
 #     """Relationships between people."""
-

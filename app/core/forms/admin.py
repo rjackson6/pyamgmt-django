@@ -6,7 +6,12 @@ https://docs.djangoproject.com/en/5.0/ref/contrib/admin/#django.contrib.admin.Mo
 
 from django.forms import ModelForm
 
-from .fields import MusicAlbumEditionChoiceField, SongRecordingChoiceField
+from .fields import (
+    MusicAlbumEditionChoiceField,
+    SongChoiceField,
+    SongPerformanceChoiceField,
+    SongRecordingChoiceField,
+)
 
 
 class MusicAlbumEditionXSongRecordingForm(ModelForm):
@@ -17,8 +22,23 @@ class MusicAlbumEditionXSongRecordingForm(ModelForm):
         }
 
 
-class MusicArtistXSongRecordingForm(ModelForm):
+class MusicArtistXSongPerformanceForm(ModelForm):
     class Meta:
         field_classes = {
-            'song_recording': SongRecordingChoiceField,
+            'song_performance': SongPerformanceChoiceField,
+        }
+
+
+class SongRecordingForm(ModelForm):
+    class Meta:
+        field_classes = {
+            'song_performance': SongPerformanceChoiceField,
+        }
+
+
+class SongXSongForm(ModelForm):
+    class Meta:
+        field_classes = {
+            'song_archetype': SongChoiceField,
+            'song_derivative': SongChoiceField,
         }

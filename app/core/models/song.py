@@ -1,9 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db.models import (
-    CharField, DurationField, ForeignKey, ManyToManyField, TextField,
-    UniqueConstraint,
+    BooleanField, CharField, DurationField, ForeignKey, ManyToManyField,
+    TextField, UniqueConstraint,
     TextChoices,
-    CASCADE,
+    CASCADE, PROTECT,
 )
 from django.utils.functional import cached_property
 
@@ -25,33 +25,44 @@ class Song(BaseAuditable):
         'MusicArtist', through='MusicArtistXSong',
         related_name='+'
     )
+    is_original = BooleanField(default=True)
 
     def __str__(self) -> str:
         return f'{self.title}'
 
+    @cached_property
+    def admin_description(self) -> str:
+        artists = []
+        for n, artist in enumerate(self.music_artists.all()):
+            artists.append(artist.name)
+            if n > 2:
+                artists.append(', ...')
+                break
+        artists = ', '.join(artists)
+        return f'{self.title} ({artists})'
 
-class SongRecording(BaseAuditable):
+
+class SongPerformance(BaseAuditable):
     """"""
-    class RecordingType(TextChoices):
+    class PerformanceType(TextChoices):
+        DEMO = 'DEMO', 'Demo Recording'
         LIVE = 'LIVE', 'Live Performance'
         STUDIO = 'STUDIO', 'Studio Recording'
 
     description = CharField(max_length=63, blank=True)
-    duration = DurationField(
-        null=True, blank=True, validators=[validate_positive_timedelta])
     lyrics = TextField(blank=True, default='')
     song = ForeignKey(
         Song, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    recording_type = CharField(
+    performance_type = CharField(
         max_length=6,
-        choices=RecordingType.choices,
-        default=RecordingType.STUDIO
+        choices=PerformanceType.choices,
+        default=PerformanceType.STUDIO
     )
     # Relationships
     music_artists = ManyToManyField(
-        'MusicArtist', through='MusicArtistXSongRecording',
+        'MusicArtist', through='MusicArtistXSongPerformance',
         related_name='+'
     )
 
@@ -59,7 +70,7 @@ class SongRecording(BaseAuditable):
         constraints = [
             UniqueConstraint(
                 fields=('description', 'song'),
-                name='unique_song_recording'
+                name='unique_song_performance'
             )
         ]
 
@@ -68,6 +79,37 @@ class SongRecording(BaseAuditable):
         text = f'{self.song.title}'
         if self.description:
             text += f' - {self.description}'
+        return text
+
+
+class SongRecording(BaseAuditable):
+    duration = DurationField(
+        null=True, blank=True,
+        validators=[validate_positive_timedelta],
+    )
+    song_performance = ForeignKey(
+        SongPerformance, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
+    music_album_editions = ManyToManyField(
+        'MusicAlbumEdition',
+        through='MusicAlbumEditionXSongRecording',
+        related_name='+'
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=['duration', 'song_performance'],
+                name='unique_song_recording'
+            )
+        ]
+
+    @cached_property
+    def admin_description(self) -> str:
+        text = f'{self.song_performance.song.title}'
+        if self.song_performance.description:
+            text += f' - {self.song_performance.description}'
         return text
 
 
