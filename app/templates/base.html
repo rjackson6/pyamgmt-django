@@ -31,7 +31,7 @@
     {% block root_header %}
     <nav id="root-header-nav">
       <ol>
-        <li>Header</li>
+        <li>{{ CONFIG.ROOT_HEADER_TEXT }}</li>
       </ol>
     </nav>
     {% endblock root_header %}
@@ -45,9 +45,6 @@
   {% block _root_footer %}
   <footer id="root-footer">
     {% block root_footer %}
-    <div>
-      <p>Some footer content</p>
-    </div>
     {% endblock root_footer %}
   </footer>
   {% endblock _root_footer %}

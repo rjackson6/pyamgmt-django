@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 import datetime
 
 from django.db.models import (
-    CharField, DateField, TextField, TextChoices,
+    CharField, DateField, ForeignKey, TextField,
+    CASCADE, UniqueConstraint
 )
 
 from django_base.models import BaseAuditable
+from django_base.utils import default_related_names
 
 
 class Person(BaseAuditable):
@@ -71,6 +72,25 @@ class Person(BaseAuditable):
         if self.suffix:
             text += f' {self.suffix}'
         return text
+
+
+class PersonXSongPerformance(BaseAuditable):
+    person = ForeignKey(
+        Person, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    song_performance = ForeignKey(
+        'SongPerformance', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('person', 'song_performance'),
+                name='unique_person_x_song_performance'
+            )
+        ]
 
 
 # Symmetrical vs. asymmetrical modeling

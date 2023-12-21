@@ -1,11 +1,3 @@
-__all__ = [
-    'MusicAlbumEditionChoiceField',
-    'SongChoiceField',
-    'SongPerformanceChoiceField',
-    'SongRecordingChoiceField',
-    'VehicleYearChoiceField',
-]
-
 from itertools import islice
 
 from django.forms import ModelChoiceField
@@ -22,6 +14,24 @@ class MusicAlbumEditionChoiceField(ModelChoiceField):
 
     def label_from_instance(self, obj) -> str:
         return f'{obj.music_album.title} ({obj.name})'
+
+
+class MusicArtistXPersonChoiceField(ModelChoiceField):
+    def __init__(self, queryset, **kwargs):
+        if queryset is not None:
+            queryset = (
+                queryset
+                .select_related('music_artist', 'person')
+            )
+        super().__init__(queryset, **kwargs)
+
+    def label_from_instance(self, obj) -> str:
+        return f'{obj.music_artist.name} : {obj.person.full_name}'
+
+
+class PersonChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj) -> str:
+        return obj.full_name
 
 
 class SongChoiceField(ModelChoiceField):
@@ -44,12 +54,12 @@ class SongPerformanceChoiceField(ModelChoiceField):
         if queryset is not None:
             queryset = (
                 queryset
-                .select_related('song')
+                .select_related('song_arrangement')
             )
         super().__init__(queryset, **kwargs)
 
     def label_from_instance(self, obj) -> str:
-        label = f'{obj.song.title}'
+        label = f'{obj.song_arrangement.title}'
         if obj.description:
             label += f' ({obj.description})'
         return f'{label} [{obj.performance_type}]'
@@ -60,12 +70,12 @@ class SongRecordingChoiceField(ModelChoiceField):
         if queryset is not None:
             queryset = (
                 queryset
-                .select_related('song_performance__song')
+                .select_related('song_performance__song_arrangement')
             )
         super().__init__(queryset, **kwargs)
 
     def label_from_instance(self, obj) -> str:
-        label = f'{obj.song_performance.song.title}'
+        label = f'{obj.song_performance.song_arrangement.title}'
         if obj.song_performance.description:
             label += f' ({obj.song_performance.description})'
         return f'{label} [{obj.song_performance.performance_type}]'

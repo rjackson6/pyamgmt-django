@@ -52,6 +52,7 @@ class Edge:
     color: EdgeColor | None = None
     dashes: list | bool | None = None
     label: str = ''
+    length: int | None = None
     physics: bool | None = None
 
 

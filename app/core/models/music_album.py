@@ -2,7 +2,7 @@ from django.db.models import (
     BooleanField, CharField, ForeignKey, ImageField, ManyToManyField,
     PositiveSmallIntegerField,
     CASCADE, PROTECT,
-    UniqueConstraint,
+    UniqueConstraint, TextField,
 )
 from django.utils.functional import cached_property
 
@@ -42,6 +42,16 @@ class MusicAlbum(BaseAuditable):
     music_artists = ManyToManyField(
         'MusicArtist',
         through='MusicAlbumXMusicArtist',
+        related_name='music_albums',
+        blank=True
+    )
+    # TODO 2023-12-20: Personnel would help separate featured musicians from the
+    #  headline artists.
+    #  Also keeps individual music projects separate from contributions and
+    #  collaborations.
+    personnel = ManyToManyField(
+        'Person',
+        through='MusicAlbumXPerson',
         related_name='music_albums',
         blank=True
     )
@@ -158,6 +168,14 @@ class MusicAlbumProduction(BaseAuditable):
     )
 
 
+class MusicAlbumRole(BaseAuditable):
+    """An individual's role for their contribution to a music album.
+
+    E.g., Vocalist, Guitarist, Engineer, Producer
+    """
+    name = CharField(max_length=31, unique=True)
+
+
 class MusicAlbumXMusicArtist(BaseAuditable):
     """Relates a MusicAlbum to a MusicArtist; Album Artist.
 
@@ -217,6 +235,54 @@ class MusicAlbumXMusicTag(BaseAuditable):
     @cached_property
     def admin_description(self) -> str:
         return f'{self.music_album.title} : {self.music_tag.name}'
+
+
+class MusicAlbumXPerson(BaseAuditable):
+    """Personnel credits for a Music Album."""
+    music_album = ForeignKey(
+        MusicAlbum, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    person = ForeignKey(
+        'Person', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    comments = TextField(blank=True, default='')
+    # Can have multiple roles, though
+    # music_album_role = ForeignKey(
+    #     MusicAlbumRole, on_delete=PROTECT,
+    #     **default_related_names(__qualname__)
+    # )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('music_album', 'person'),
+                name='unique_music_album_x_person'
+            )
+        ]
+
+    def admin_description(self) -> str:
+        return f'{self.music_album.title} : {self.person.full_name}'
+
+
+class MusicAlbumXPersonRole(BaseAuditable):
+    music_album_x_person = ForeignKey(
+        MusicAlbumXPerson, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    music_album_role = ForeignKey(
+        MusicAlbumRole, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('music_album_role', 'music_album_x_person'),
+                name='unique_music_album_x_person_role'
+            )
+        ]
 
 
 class MusicAlbumXVideoGame(BaseAuditable):

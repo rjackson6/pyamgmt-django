@@ -13,6 +13,9 @@ from .asset import (
 from .author import (
     Author, AuthorXBook,
 )
+from .beer import (
+    Beer, BeerStyle, Brewery,
+)
 from .book import (
     Book, BookEdition, BookPublication, BookXMotionPicture,
 )
@@ -24,6 +27,8 @@ from .catalog_item import (
     CatalogItemDigitalSong,
     CatalogItemMusicAlbumProduction,
 )
+from .city import USCity
+from .config import Config
 from .invoice import (
     Invoice, InvoiceLineItem, InvoiceLineItemXNonCatalogItem,
 )
@@ -41,15 +46,20 @@ from .music import (
     MusicalInstrument, MusicalInstrumentXPerson,
 )
 from .music_album import (
-    MusicAlbum, MusicAlbumArtwork, MusicAlbumEdition,
+    MusicAlbum,
+    MusicAlbumArtwork,
+    MusicAlbumEdition,
     MusicAlbumEditionXSongRecording,
     MusicAlbumProduction,
     MusicAlbumXMusicArtist,
     MusicAlbumXMusicTag,
+    MusicAlbumXPerson,
+    MusicAlbumXVideoGame,
 )
 from .music_artist import (
     MusicArtist, MusicArtistActivity, MusicArtistXMusicTag, MusicArtistXPerson,
-    MusicArtistXPersonActivity, MusicArtistXSong, MusicArtistXSongPerformance,
+    MusicArtistXPersonActivity,
+    MusicArtistXSong, MusicArtistXSongArrangement, MusicArtistXSongPerformance,
 )
 from .music_tag import (
     MusicTag,
@@ -63,13 +73,17 @@ from .payee import (
     Payee,
 )
 from .person import (
-    Person,
+    Person, PersonXSongPerformance,
 )
 from .point_of_sale import (
     PointOfSale, PointOfSaleDocument, PointOfSaleLineItem,
 )
 from .song import (
-    Song, SongPerformance, SongRecording, SongXSong,
+    Song, SongArrangement,
+    SongPerformance,
+    SongRecording,
+    SongXSong,
+    SongXSongArrangement,
 )
 from .txn import (
     Txn, TxnLineItem,

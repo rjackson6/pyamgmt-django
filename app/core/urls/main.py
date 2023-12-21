@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from . import views
+from .. import views
 
 app_name = 'core'
 
@@ -19,7 +19,8 @@ urlpatterns = [
     ])),
     path('networks/', include([
         path('music-album-x-music-artist/',
-             views.networks.MusicArtistNetworkView.as_view()),
-        path('music-tags/', views.networks.MusicTagNetworkView.as_view())
+             views.networks.MusicArtistDetailedNetworkView.as_view()),
+        path('music-artists/', views.networks.MusicArtistNetworkView.as_view()),
+        path('music-tags/', views.networks.MusicTagNetworkView.as_view()),
     ])),
 ]

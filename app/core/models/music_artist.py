@@ -27,6 +27,7 @@ class MusicArtist(BaseAuditable):
         null=True, blank=True,
         help_text="Website or homepage for this music artist."
     )
+    comments = TextField(blank=True, default='')
     # Relationships
     albums = ManyToManyField(
         'MusicAlbum', through='MusicAlbumXMusicArtist', related_name='+',
@@ -246,6 +247,25 @@ class MusicArtistXSong(BaseAuditable):
         return f'{self.music_artist.name}: {self.song.title}'
 
 
+class MusicArtistXSongArrangement(BaseAuditable):
+    music_artist = ForeignKey(
+        MusicArtist, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    song_arrangement = ForeignKey(
+        'SongArrangement', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('music_artist', 'song_arrangement'),
+                name='unique_music_artist_x_song_arrangement'
+            )
+        ]
+
+
 class MusicArtistXSongPerformance(BaseAuditable):
     music_artist = ForeignKey(
         MusicArtist, on_delete=CASCADE,
@@ -274,6 +294,6 @@ class MusicArtistXSongPerformance(BaseAuditable):
     @cached_property
     def admin_description(self) -> str:
         return (
-            f'{self.song_performance.song.title}'
+            f'{self.song_performance.song_arrangement.title}'
             f' : {self.music_artist.name}'
         )

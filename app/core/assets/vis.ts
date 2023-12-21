@@ -10,9 +10,17 @@ const options = {
     },
     nodes: {
         font: {
-            size: 20,
+            size: 24,
         },
         opacity: 0.8,
+        shape: "box",
     },
+    physics: {
+        barnesHut: {
+            gravitationalConstant: -10000,
+            springLength: 100,
+        },
+    }
 };
+
 new Network(container!, visData, options);
