@@ -38,7 +38,3 @@ class MusicalInstrumentXPerson(BaseAuditable):
                 name='unique_musical_instrument_x_person'
             )
         ]
-
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.musical_instrument.name} : {self.person.full_name}'

@@ -7,6 +7,7 @@ from django.db.models import (
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
+from django_base.validators import validate_date_not_future
 
 
 class Person(BaseAuditable):
@@ -21,8 +22,14 @@ class Person(BaseAuditable):
     nickname = CharField(max_length=255, blank=True)
     preferred_name = CharField(max_length=255, blank=True)
     suffix = CharField(max_length=31, blank=True)
-    date_of_birth = DateField(null=True, blank=True)
-    date_of_death = DateField(null=True, blank=True)
+    date_of_birth = DateField(
+        null=True, blank=True,
+        validators=[validate_date_not_future]
+    )
+    date_of_death = DateField(
+        null=True, blank=True,
+        validators=[validate_date_not_future]
+    )
     notes = TextField(blank=True)
 
     def __str__(self) -> str:

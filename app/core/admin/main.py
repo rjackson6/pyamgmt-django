@@ -98,6 +98,7 @@ admin.site.register(manufacturer.Manufacturer)
 
 @admin.register(motion_picture.MotionPicture)
 class MotionPictureAdmin(admin.ModelAdmin):
+    inlines = [inlines.MotionPictureXMusicAlbumInline]
     ordering = ('title', 'year_produced')
 
 
@@ -178,7 +179,10 @@ class MusicArtistAdmin(admin.ModelAdmin):
         inlines.MusicArtistActivityInline,
         inlines.MusicArtistXPersonInline,
     ]
-    list_display = ('name', '_album_count', '_arrangement_count', 'website')
+    list_display = (
+        'name', '_album_count', '_arrangement_count', '_people_count',
+        'website',
+    )
     ordering = ('name',)
     search_fields = ('name',)
 
@@ -187,8 +191,9 @@ class MusicArtistAdmin(admin.ModelAdmin):
         return (
             qs
             .annotate(
-                Count('music_albums', distinct=True),
                 Count('arrangements', distinct=True),
+                Count('music_albums', distinct=True),
+                Count('people', distinct=True),
             )
         )
 
@@ -199,6 +204,10 @@ class MusicArtistAdmin(admin.ModelAdmin):
     @staticmethod
     def _arrangement_count(obj):
         return obj.arrangements__count
+
+    @staticmethod
+    def _people_count(obj):
+        return obj.people__count
 
 
 @admin.register(music_artist.MusicArtistActivity)
@@ -261,9 +270,13 @@ class MusicalInstrumentAdmin(admin.ModelAdmin):
 
 @admin.register(music.MusicalInstrumentXPerson)
 class MusicalInstrumentXPersonAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
+    list_display = ('_description',)
     list_select_related = ('musical_instrument', 'person')
     ordering = ('musical_instrument__name', 'person__last_name')
+
+    @staticmethod
+    def _description(obj) -> str:
+        return f'{obj.musical_instrument.name} : {obj.person.full_name}'
 
 
 @admin.register(person.Person)
@@ -428,6 +441,7 @@ class VideoGameAdmin(admin.ModelAdmin):
         inlines.VideoGameAddonInline,
         inlines.MusicAlbumXVideoGameInline,
     ]
+    list_display = ('title', 'series')
     ordering = ('title',)
 
 

@@ -22,7 +22,8 @@ class MusicArtist(BaseAuditable):
     """An individual musician or a group of musicians."""
     music_artist_activity_set: Manager
 
-    name = CharField(max_length=255, unique=True)
+    name = CharField(max_length=255)
+    disambiguator = CharField(max_length=255, blank=True)
     website = URLField(
         null=True, blank=True,
         help_text="Website or homepage for this music artist."
@@ -31,6 +32,11 @@ class MusicArtist(BaseAuditable):
     # Relationships
     music_albums = ManyToManyField(
         'MusicAlbum', through='MusicAlbumXMusicArtist',
+        related_name='+',
+        blank=True,
+    )
+    people = ManyToManyField(
+        'Person', through='MusicArtistXPerson',
         related_name='+',
         blank=True,
     )
@@ -52,6 +58,14 @@ class MusicArtist(BaseAuditable):
 
     objects = Manager()
     with_related = _managers.MusicArtistManager()
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('name', 'disambiguator'),
+                name='unique_music_artist'
+            )
+        ]
 
     def __str__(self) -> str:
         return f'{self.name}'

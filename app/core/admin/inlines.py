@@ -4,6 +4,11 @@ from .. import forms
 from .. import models
 
 
+class MotionPictureXMusicAlbumInline(admin.TabularInline):
+    model = models.MotionPictureXMusicAlbum
+    extra = 1
+
+
 class MusicAlbumEditionInline(admin.TabularInline):
     model = models.MusicAlbumEdition
     extra = 1
