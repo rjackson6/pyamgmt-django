@@ -23,6 +23,9 @@ class Asset(BaseAuditable):
     description = TextField(null=True, blank=True)
     subtype = CharField(max_length=31, choices=Subtype.choices)
 
+    class Meta:
+        verbose_name_plural = 'Asset'
+
     def __str__(self) -> str:
         return f'Asset {self.pk}'
 

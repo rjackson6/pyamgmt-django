@@ -54,6 +54,7 @@ class Edge:
     label: str = ''
     length: int | None = None
     physics: bool | None = None
+    smooth: dict | bool | None = None
 
 
 @dataclass(slots=True)
@@ -87,14 +88,20 @@ def apps_dataset() -> dict:
         for field in fields:
             if isinstance(field, RelatedField):
                 edge_color = None
+                length = None
+                smooth = None
                 if field.many_to_many:
                     edge_color = EdgeColor(opacity=0.2)
+                    length = 300
+                    smooth = False
                 related_model = field.related_model
                 related_label = related_model._meta.label
                 edge = Edge(
                     from_=label,
                     to=related_label,
                     color=edge_color,
+                    length=length,
+                    smooth=smooth,
                 )
                 edges.append(edge)
                 # Use to_ as the "mass" for the related node

@@ -11,7 +11,7 @@ from .models import (
     MusicArtistXPerson,
     MusicArtistXSongPerformance,
 )
-from ..models import MusicArtistXSong, SongXSong
+from ..models import MusicArtistXSong
 
 
 class MusicNetworkView(TemplateView):
@@ -280,26 +280,6 @@ class MusicArtistDetailedNetworkView(TemplateView):
                     to=song_key,
                 ))
                 artist_to_song_arrangement_set.add(t)
-        # Song <-> Song
-        qs = (
-            SongXSong.objects
-            .select_related('song_archetype', 'song_derivative')
-        )
-        for edge in qs:
-            a = edge.song_archetype
-            d = edge.song_derivative
-            for x in (a, d):
-                song_key = f'song-{x.pk}'
-                if song_key not in nodes:
-                    nodes[song_key] = Node(
-                        id=song_key,
-                        label=x.title,
-                        group='song',
-                    )
-            edges.append(Edge(
-                from_=f'song-{a.pk}',
-                to=f'song-{d.pk}',
-            ))
         vis_data = VisNetwork(list(nodes.values()), edges)
         context.update({
             'vis_data': vis_data.to_dict(),

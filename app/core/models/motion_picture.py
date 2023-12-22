@@ -12,6 +12,7 @@ from django_base.validators import validate_year_not_future
 
 class MotionPicture(BaseAuditable):
     title = CharField(max_length=255)
+    disambiguator = CharField(max_length=255, blank=True)
     series = ForeignKey(
         'MotionPictureSeries', on_delete=SET_NULL,
         null=True, blank=True,
@@ -25,14 +26,16 @@ class MotionPicture(BaseAuditable):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['title', 'year_produced'],
+                fields=('title', 'disambiguator'),
                 name='unique_motion_picture'
             )
         ]
 
     def __str__(self) -> str:
         text = f'{self.title}'
-        if self.year_produced:
+        if self.disambiguator:
+            text += f' [{self.disambiguator}]'
+        elif self.year_produced:
             text += f' ({self.year_produced})'
         return text
 

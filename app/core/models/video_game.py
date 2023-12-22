@@ -1,6 +1,6 @@
 from django.db.models import (
     CharField, DateField, ForeignKey,
-    CASCADE, PROTECT, SET_NULL,
+    CASCADE, PROTECT, SET_NULL, UniqueConstraint,
 )
 from django.db.utils import cached_property
 
@@ -29,8 +29,9 @@ class VideoGame(BaseAuditable):
     Not every game is regionalized right? NTSC / PAL / JP was common for
     consoles. Region # is a thing for media.
 
-    Video Games also are released under different editions
-    Sometimes editions are just bundles that include add-ons
+    Video Games also are released under different editions.
+    Sometimes editions are just bundles that include add-ons.
+    Editions should not be used for remakes or remasters.
     """
     title = CharField(max_length=100)
     # platforms = ManyToManyField()
@@ -58,6 +59,14 @@ class VideoGameAddon(BaseAuditable):
         **default_related_names(__qualname__)
     )
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('name', 'video_game'),
+                name='unique_video_game_addon',
+            )
+        ]
+
     def __str__(self) -> str:
         return self.name
 
@@ -67,12 +76,33 @@ class VideoGameAddon(BaseAuditable):
 
 
 class VideoGameEdition(BaseAuditable):
+    """Deluxe, Supporters, Limited, etc.
+
+    Some games that were released cross-platform have platform-specific content,
+    like Soul Calibur and Terraria. These should be their own edition, e.g.,
+    "Terraria PC Edition".
+    """
     name = CharField(max_length=100)
     release_date = DateField(null=True, blank=True)
     video_game = ForeignKey(
         VideoGame, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('name', 'video_game'),
+                name='unique_video_game_edition',
+            )
+        ]
+
+    def __str__(self) -> str:
+        return self.name
+
+    @cached_property
+    def admin_description(self) -> str:
+        return f'{self.video_game.title} : {self.name}'
 
 
 class VideoGamePlatform(BaseAuditable):

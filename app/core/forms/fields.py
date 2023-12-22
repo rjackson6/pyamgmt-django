@@ -76,9 +76,16 @@ class SongRecordingChoiceField(ModelChoiceField):
 
     def label_from_instance(self, obj) -> str:
         label = f'{obj.song_performance.song_arrangement.title}'
+        if obj.song_performance.song_arrangement.is_original:
+            label += f' [ORIGINAL]'
+        else:
+            label += f' [{obj.song_performance.song_arrangement.description}]'
         if obj.song_performance.description:
-            label += f' ({obj.song_performance.description})'
-        return f'{label} [{obj.song_performance.performance_type}]'
+            label += f' [{obj.song_performance.description}]'
+        return (
+            f'{label} [{obj.song_performance.performance_type}]'
+            f' : {obj.duration}'
+        )
 
 
 class VehicleYearChoiceField(ModelChoiceField):

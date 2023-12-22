@@ -50,6 +50,9 @@ class Account(BaseAuditable):
     incomes = _managers.AccountManagerIncome()
     expenses = _managers.AccountManagerExpense()
 
+    class Meta:
+        verbose_name_plural = 'Account'
+
     def __str__(self) -> str:
         return f'{self.name}'
 

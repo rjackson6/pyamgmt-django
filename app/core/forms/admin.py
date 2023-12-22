@@ -50,11 +50,3 @@ class SongRecordingForm(ModelForm):
         field_classes = {
             'song_performance': SongPerformanceChoiceField,
         }
-
-
-class SongXSongForm(ModelForm):
-    class Meta:
-        field_classes = {
-            'song_archetype': SongChoiceField,
-            'song_derivative': SongChoiceField,
-        }

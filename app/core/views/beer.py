@@ -39,6 +39,7 @@ class BeerNetworkView(TemplateView):
                         from_=beer_style_key,
                         to=beer_key,
                         dashes=True,
+                        length=500,
                     ))
             if brewery_key not in nodes:
                 nodes[brewery_key] = Node(
@@ -58,7 +59,8 @@ class BeerNetworkView(TemplateView):
                         from_=state_key,
                         to=brewery_key,
                         dashes=True,
-                        length=500,
+                        length=1000,
+                        smooth=False,
                     ))
             edges.append(Edge(
                 from_=brewery_key,

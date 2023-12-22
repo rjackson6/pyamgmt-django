@@ -29,11 +29,26 @@ class MusicArtist(BaseAuditable):
     )
     comments = TextField(blank=True, default='')
     # Relationships
-    albums = ManyToManyField(
-        'MusicAlbum', through='MusicAlbumXMusicArtist', related_name='+',
+    music_albums = ManyToManyField(
+        'MusicAlbum', through='MusicAlbumXMusicArtist',
+        related_name='+',
         blank=True,
     )
-    # songs = ManyXManyField('Song', through='MusicArtistXSong', related_name='+', blank=True)
+    songs = ManyToManyField(
+        'Song', through='MusicArtistXSong',
+        related_name='+',
+        blank=True,
+    )
+    arrangements = ManyToManyField(
+        'SongArrangement', through='MusicArtistXSongArrangement',
+        related_name='+',
+        blank=True,
+    )
+    performances = ManyToManyField(
+        'SongPerformance', through='MusicArtistXSongPerformance',
+        related_name='+',
+        blank=True,
+    )
 
     objects = Manager()
     with_related = _managers.MusicArtistManager()

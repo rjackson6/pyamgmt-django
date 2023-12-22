@@ -14,13 +14,7 @@ from ._utils import get_default_media_format_audio
 
 
 class MusicAlbum(BaseAuditable):
-    """An individual Music album production."""
-    # TODO 2023-12-12: MusicAlbums can also have different "editions", like
-    #  special or remastered.
-    #  They would still group together under the same title.
-    #  Usually they share tracks.
-    # TODO 2023-12-12: Move media format? Or would be treat albums as being
-    #  different productions?
+    """An individual Music album."""
     is_compilation = BooleanField(
         default=False,
         help_text=(
@@ -28,36 +22,27 @@ class MusicAlbum(BaseAuditable):
             " album."
         )
     )
-    # TODO 2023-12-12
-    # media_format = ForeignKey(MediaFormat, on_delete=SET_DEFAULT, default=get_default_media_format_audio)
-    # media_format_id: int
-    # TODO 2023-12-12: This is a temporary unique constraint
-    title = CharField(max_length=255, unique=True)
-    # year_copyright = PositiveSmallIntegerField(
-    #     null=True, blank=True, validators=[validate_year_not_future]
-    # )
-    # year_produced = PositiveSmallIntegerField(
-    #     null=True, blank=True, validators=[validate_year_not_future]
-    # )
+    title = CharField(max_length=255)
+    disambiguator = CharField(max_length=255, blank=True)
     music_artists = ManyToManyField(
         'MusicArtist',
         through='MusicAlbumXMusicArtist',
-        related_name='music_albums',
         blank=True
     )
-    # TODO 2023-12-20: Personnel would help separate featured musicians from the
-    #  headline artists.
-    #  Also keeps individual music projects separate from contributions and
-    #  collaborations.
     personnel = ManyToManyField(
         'Person',
         through='MusicAlbumXPerson',
         related_name='music_albums',
         blank=True
     )
-    # song_recordings = ManyXManyField(
-    #     'SongRecording', through='MusicAlbumXSongRecording',
-    #     blank=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('title', 'disambiguator'),
+                name='music_album_unique'
+            )
+        ]
 
     def __str__(self) -> str:
         return f'{self.title}'
@@ -99,7 +84,7 @@ class MusicAlbumEdition(BaseAuditable):
         MusicAlbum, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    name = CharField(max_length=31, blank=True)
+    name = CharField(max_length=63, blank=True)
     # TODO 2023-12-12: likely a property
     total_discs = PositiveSmallIntegerField(default=1)
     year_copyright = PositiveSmallIntegerField(
@@ -168,12 +153,15 @@ class MusicAlbumProduction(BaseAuditable):
     )
 
 
-class MusicAlbumRole(BaseAuditable):
+class MusicRole(BaseAuditable):
     """An individual's role for their contribution to a music album.
 
     E.g., Vocalist, Guitarist, Engineer, Producer
     """
     name = CharField(max_length=31, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class MusicAlbumXMusicArtist(BaseAuditable):
@@ -208,10 +196,6 @@ class MusicAlbumXMusicArtist(BaseAuditable):
         return (
             f'MusicAlbumXMusicArtist {self.pk}:'
             f' {self.music_album_id}-{self.music_artist_id}')
-
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.music_artist.name} : {self.music_album.title}'
 
 
 class MusicAlbumXMusicTag(BaseAuditable):
@@ -248,11 +232,6 @@ class MusicAlbumXPerson(BaseAuditable):
         **default_related_names(__qualname__)
     )
     comments = TextField(blank=True, default='')
-    # Can have multiple roles, though
-    # music_album_role = ForeignKey(
-    #     MusicAlbumRole, on_delete=PROTECT,
-    #     **default_related_names(__qualname__)
-    # )
 
     class Meta:
         constraints = [
@@ -271,15 +250,15 @@ class MusicAlbumXPersonRole(BaseAuditable):
         MusicAlbumXPerson, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_album_role = ForeignKey(
-        MusicAlbumRole, on_delete=CASCADE,
+    music_role = ForeignKey(
+        MusicRole, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
 
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=('music_album_role', 'music_album_x_person'),
+                fields=('music_role', 'music_album_x_person'),
                 name='unique_music_album_x_person_role'
             )
         ]
@@ -303,4 +282,4 @@ class MusicAlbumXVideoGame(BaseAuditable):
         ]
 
     def admin_description(self) -> str:
-        return f'{self.music_album.title} : {self.video_game.title}'
+        return f'{self.video_game.title} : {self.music_album.title}'

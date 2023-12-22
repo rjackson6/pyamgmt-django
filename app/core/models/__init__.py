@@ -54,6 +54,7 @@ from .music_album import (
     MusicAlbumXMusicArtist,
     MusicAlbumXMusicTag,
     MusicAlbumXPerson,
+    MusicAlbumXPersonRole,
     MusicAlbumXVideoGame,
 )
 from .music_artist import (
@@ -73,16 +74,17 @@ from .payee import (
     Payee,
 )
 from .person import (
-    Person, PersonXSongPerformance,
+    Person, PersonXSong, PersonXSongArrangement, PersonXSongPerformance,
 )
 from .point_of_sale import (
     PointOfSale, PointOfSaleDocument, PointOfSaleLineItem,
 )
 from .song import (
-    Song, SongArrangement,
+    Song,
+    SongArrangement,
+    SongDisambiguator,
     SongPerformance,
     SongRecording,
-    SongXSong,
     SongXSongArrangement,
 )
 from .txn import (

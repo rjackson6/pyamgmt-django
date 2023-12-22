@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Count
 
 from . import inlines
 from .. import forms
@@ -134,22 +135,40 @@ class MusicAlbumEditionAdmin(admin.ModelAdmin):
     inlines = [
         inlines.MusicAlbumEditionXSongRecordingInline
     ]
-    list_display = ('admin_description',)
+    list_display = ('admin_description', 'year_produced')
     list_select_related = ('music_album',)
     ordering = ('music_album__title', 'name')
+    search_fields = ('music_album__title', 'name')
+
+
+@admin.register(music_album.MusicRole)
+class MusicRoleAdmin(admin.ModelAdmin):
+    ordering = ('name',)
 
 
 @admin.register(music_album.MusicAlbumXMusicArtist)
 class MusicAlbumXMusicArtistAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
+    list_display = ('_description',)
     list_select_related = ('music_album', 'music_artist')
     ordering = ('music_artist__name', 'music_album__title')
+
+    @staticmethod
+    def _description(obj) -> str:
+        return f'{obj.music_artist.name} : {obj.music_album.title}'
+
+
+@admin.register(music_album.MusicAlbumXPerson)
+class MusicAlbumXPersonAdmin(admin.ModelAdmin):
+    inlines = [inlines.MusicAlbumXPersonRoleInline]
+    list_display = ('admin_description',)
+    list_select_related = ('music_album', 'person')
 
 
 @admin.register(music_album.MusicAlbumXVideoGame)
 class MusicAlbumXVideoGameAdmin(admin.ModelAdmin):
     list_display = ('admin_description',)
     list_select_related = ('music_album', 'video_game')
+    ordering = ('video_game__title', 'music_album__title')
 
 
 @admin.register(music_artist.MusicArtist)
@@ -159,9 +178,27 @@ class MusicArtistAdmin(admin.ModelAdmin):
         inlines.MusicArtistActivityInline,
         inlines.MusicArtistXPersonInline,
     ]
-    list_display = ('name', 'website')
+    list_display = ('name', '_album_count', '_arrangement_count', 'website')
     ordering = ('name',)
     search_fields = ('name',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return (
+            qs
+            .annotate(
+                Count('music_albums', distinct=True),
+                Count('arrangements', distinct=True),
+            )
+        )
+
+    @staticmethod
+    def _album_count(obj):
+        return obj.music_albums__count
+
+    @staticmethod
+    def _arrangement_count(obj):
+        return obj.arrangements__count
 
 
 @admin.register(music_artist.MusicArtistActivity)
@@ -232,6 +269,7 @@ class MusicalInstrumentXPersonAdmin(admin.ModelAdmin):
 @admin.register(person.Person)
 class PersonAdmin(admin.ModelAdmin):
     inlines = [
+        inlines.MusicAlbumXPersonInline,
         inlines.MusicArtistXPersonInline,
         inlines.MusicalInstrumentXPersonInline,
     ]
@@ -243,18 +281,47 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ('first_name', 'last_name')
 
 
+@admin.register(song.SongDisambiguator)
+class SongDisambiguatorAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(song.Song)
 class SongAdmin(admin.ModelAdmin):
     inlines = [
         inlines.MusicArtistXSongInline,
+        inlines.PersonXSongInline,
         inlines.SongXSongArrangementInline,
     ]
-    list_display = ('admin_description',)
+    list_display = (
+        '_description',
+        'disambiguator',
+        '_arrangement_count',
+    )
     ordering = ('title',)
+    search_fields = ('title',)
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs.prefetch_related('music_artists')
+        return (
+            super().get_queryset(request)
+            .prefetch_related('music_artists')
+            .annotate(Count('arrangements'))
+        )
+
+    @staticmethod
+    def _description(obj) -> str:
+        artists = []
+        for n, artist in enumerate(obj.music_artists.all()):
+            artists.append(artist.name)
+            if n > 2:
+                artists.append(', ...')
+                break
+        artists = ', '.join(artists)
+        return f'{obj.title} [{artists}]'
+
+    @staticmethod
+    def _arrangement_count(obj) -> int:
+        return obj.arrangements__count
 
 
 @admin.register(song.SongArrangement)
@@ -262,10 +329,25 @@ class SongArrangementAdmin(admin.ModelAdmin):
     inlines = [
         inlines.SongXSongArrangementInline,
         inlines.MusicArtistXSongArrangementInline,
+        inlines.PersonXSongArrangementInline,
         inlines.SongPerformanceInline,
     ]
-    list_display = ('title', 'is_original', 'description')
+    list_display = (
+        'title', 'disambiguator', '_performance_count', 'is_original',
+        'description'
+    )
     ordering = ('title', '-is_original', 'description')
+
+    def get_queryset(self, request):
+        return (
+            super().get_queryset(request)
+            .prefetch_related('song_performance_set')
+            .annotate(Count('song_performance'))
+        )
+
+    @staticmethod
+    def _performance_count(obj) -> int:
+        return obj.song_performance__count
 
 
 @admin.register(song.SongPerformance)
@@ -276,27 +358,39 @@ class SongPerformanceAdmin(admin.ModelAdmin):
         inlines.SongRecordingInline,
     ]
     list_display = (
-        'admin_description', 'performance_type',
+        '_description', 'performance_type',
     )
     list_select_related = ('song_arrangement',)
     ordering = ('song_arrangement__title',)
+
+    @staticmethod
+    def _description(obj) -> str:
+        text = f'{obj.song_arrangement.title}'
+        if obj.song_arrangement.disambiguator:
+            text += f' [{obj.song_arrangement.disambiguator}]'
+        if obj.song_arrangement.description:
+            text += f' [{obj.song_arrangement.description}]'
+        if obj.description:
+            text += f' - {obj.description}'
+        return text
 
 
 @admin.register(song.SongRecording)
 class SongRecordingAdmin(admin.ModelAdmin):
     form = forms.admin.SongRecordingForm
+    inlines = [inlines.MusicAlbumEditionXSongRecordingInline]
     list_display = (
-        'admin_description', 'duration',
+        '_description', 'duration',
     )
     list_select_related = ('song_performance__song_arrangement',)
     ordering = ('song_performance__song_arrangement__title',)
 
-
-@admin.register(song.SongXSong)
-class SongXSongAdmin(admin.ModelAdmin):
-    form = forms.admin.SongXSongForm
-    list_display = ('song_archetype', 'song_derivative')
-    list_select_related = ('song_archetype', 'song_derivative')
+    @staticmethod
+    def _description(obj) -> str:
+        text = f'{obj.song_performance.song_arrangement.title}'
+        if obj.song_performance.description:
+            text += f' - {obj.song_performance.description}'
+        return text
 
 
 admin.site.register(txn.Txn)
@@ -332,6 +426,7 @@ class VideoGameAdmin(admin.ModelAdmin):
     inlines = [
         inlines.VideoGameEditionInline,
         inlines.VideoGameAddonInline,
+        inlines.MusicAlbumXVideoGameInline,
     ]
     ordering = ('title',)
 
@@ -342,7 +437,11 @@ class VideoGameAddonAdmin(admin.ModelAdmin):
     list_select_related = ('video_game',)
 
 
-admin.site.register(video_game.VideoGameEdition)
+@admin.register(video_game.VideoGameEdition)
+class VideoGameEditionAdmin(admin.ModelAdmin):
+    inlines = [inlines.VideoGameEditionXVideoGamePlatformInline]
+    list_display = ('admin_description',)
+    list_select_related = ('video_game',)
 
 
 @admin.register(video_game.VideoGamePlatform)

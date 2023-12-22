@@ -11,6 +11,7 @@
 
 {% block root_main %}
 <div class="main-wrapper">
+  {% block _sidebar %}
   <div class="sidebar">
     {% block sidebar %}
     <nav>
@@ -24,6 +25,7 @@
     </nav>
     {% endblock sidebar %}
   </div>
+  {% endblock _sidebar %}
   <div class="main">
     {% block main %}{% lorem %}{% endblock main %}
   </div>

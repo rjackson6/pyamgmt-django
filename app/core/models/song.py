@@ -1,12 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.db.models import (
-    BooleanField, CharField, DurationField, ForeignKey, ManyToManyField,
-    TextField, UniqueConstraint,
+    BooleanField, CharField, CheckConstraint, DurationField, F, ForeignKey,
+    ManyToManyField, TextField, UniqueConstraint, Q,
     TextChoices,
-    CASCADE, PROTECT,
+    CASCADE, PROTECT, SET_NULL,
     Manager,
 )
-from django.utils.functional import cached_property
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
@@ -29,6 +28,13 @@ from . import _managers
 #  The recordings capture the performances
 
 
+class SongDisambiguator(BaseAuditable):
+    key = CharField(max_length=255, unique=True)
+
+    def __str__(self) -> str:
+        return self.key
+
+
 class Song(BaseAuditable):
     """A particular rendition of a song.
 
@@ -36,35 +42,48 @@ class Song(BaseAuditable):
     or derivative works.
     """
     title = CharField(max_length=255)
-    music_artists = ManyToManyField(
-        'MusicArtist', through='MusicArtistXSong',
-        related_name='+'
+    disambiguator = ForeignKey(
+        SongDisambiguator, on_delete=SET_NULL,
+        null=True, blank=True,
+        **default_related_names(__qualname__)
     )
     lyrics = TextField(blank=True, default='')
+    arrangements = ManyToManyField(
+        'SongArrangement', through='SongXSongArrangement',
+        related_name='+',
+    )
+    music_artists = ManyToManyField(
+        'MusicArtist', through='MusicArtistXSong',
+        related_name='+',
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('title', 'disambiguator'),
+                name='unique_song',
+                nulls_distinct=False,
+            )
+        ]
 
     def __str__(self) -> str:
         return f'{self.title}'
 
-    @cached_property
-    def admin_description(self) -> str:
-        artists = []
-        for n, artist in enumerate(self.music_artists.all()):
-            artists.append(artist.name)
-            if n > 2:
-                artists.append(', ...')
-                break
-        artists = ', '.join(artists)
-        return f'{self.title} ({artists})'
-
 
 class SongArrangement(BaseAuditable):
     """Original, mix, cover, or other variation on one or more songs."""
+
     title = CharField(max_length=255)
+    disambiguator = ForeignKey(
+        SongDisambiguator, on_delete=SET_NULL,
+        null=True, blank=True,
+        **default_related_names(__qualname__)
+    )
     description = CharField(max_length=255, blank=True)
     is_original = BooleanField(default=True)
     songs = ManyToManyField(
         Song, through='SongXSongArrangement',
-        related_name='arrangements',
+        related_name='+',
     )
 
     objects = Manager()
@@ -73,8 +92,12 @@ class SongArrangement(BaseAuditable):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=('title', 'description'),
+                fields=('title', 'disambiguator', 'description'),
                 name='unique_song_arrangement',
+            ),
+            CheckConstraint(
+                check=Q(is_original=False) | Q(description=''),
+                name='check_song_arrangement_original'
             )
         ]
 
@@ -133,15 +156,6 @@ class SongPerformance(BaseAuditable):
             )
         ]
 
-    @cached_property
-    def admin_description(self) -> str:
-        text = f'{self.song_arrangement.title}'
-        if self.song_arrangement.description:
-            text += f' ({self.song_arrangement.description})'
-        if self.description:
-            text += f' - {self.description}'
-        return text
-
 
 class SongRecording(BaseAuditable):
     """Capture of a performance to any persistent media."""
@@ -166,58 +180,6 @@ class SongRecording(BaseAuditable):
                 name='unique_song_recording'
             )
         ]
-
-    @cached_property
-    def admin_description(self) -> str:
-        text = f'{self.song_performance.song_arrangement.title}'
-        if self.song_performance.description:
-            text += f' - {self.song_performance.description}'
-        return text
-
-
-class SongXSong(BaseAuditable):
-    """Many to many for Songs.
-
-    Includes covers, arrangements, or other derivative works.
-    """
-    # relationship: enum or foreign key lookup
-    # tagging may play a part in this too (acoustic, instrumental)
-    class SongRelationship(TextChoices):
-        ARRANGEMENT = 'ARRANGEMENT'
-        # COMPILATION = 'COMPILATION'
-        COVER = 'COVER'
-        # EDIT = 'EDIT'
-        INSTRUMENTAL = 'INSTRUMENTAL'
-        OVERTURE = 'OVERTURE'
-        MASHUP = 'MASHUP', 'Mash-up'
-        # REMASTER = 'REMASTER'
-        REMIX = 'REMIX'
-
-    song_archetype = ForeignKey(
-        Song, on_delete=CASCADE,
-        related_name='+'
-    )
-    song_archetype_id: int
-    song_derivative = ForeignKey(
-        Song, on_delete=CASCADE,
-        related_name='+'
-    )
-    song_derivative_id: int
-    song_relationship = CharField(
-        max_length=15, choices=SongRelationship.choices
-    )
-
-    class Meta:
-        constraints = [
-            UniqueConstraint(
-                fields=('song_archetype', 'song_derivative'),
-                name='unique_song_x_song'
-            )
-        ]
-
-    def clean(self) -> None:
-        if self.song_archetype == self.song_derivative:
-            raise ValidationError("Original and derivative must be different.")
 
 
 class SongXSongArrangement(BaseAuditable):

@@ -12,6 +12,7 @@ class MusicAlbumEditionInline(admin.TabularInline):
 class MusicAlbumEditionXSongRecordingInline(admin.TabularInline):
     form = forms.admin.MusicAlbumEditionXSongRecordingForm
     model = models.MusicAlbumEditionXSongRecording
+    extra = 2
 
 
 class MusicAlbumXMusicArtistInline(admin.TabularInline):
@@ -33,6 +34,16 @@ class MusicAlbumXPersonInline(admin.TabularInline):
         return (
             qs.select_related('music_album', 'person')
         )
+
+
+class MusicAlbumXPersonRoleInline(admin.TabularInline):
+    model = models.MusicAlbumXPersonRole
+    extra = 1
+
+
+class MusicAlbumXVideoGameInline(admin.TabularInline):
+    model = models.MusicAlbumXVideoGame
+    extra = 1
 
 
 class MusicArtistActivityInline(admin.TabularInline):
@@ -83,6 +94,24 @@ class MusicalInstrumentXPersonInline(admin.TabularInline):
     model = models.MusicalInstrumentXPerson
 
 
+class PersonXSongInline(admin.TabularInline):
+    model = models.PersonXSong
+    extra = 1
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('person', 'song')
+
+
+class PersonXSongArrangementInline(admin.TabularInline):
+    model = models.PersonXSongArrangement
+    extra = 1
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('person', 'song_arrangement')
+
+
 class PersonXSongPerformanceInline(admin.TabularInline):
     model = models.PersonXSongPerformance
     extra = 1
@@ -118,17 +147,26 @@ class SongXSongArrangementInline(admin.TabularInline):
 
 class VideoGameAddonInline(admin.TabularInline):
     model = models.VideoGameAddon
+    extra = 1
 
 
 class VideoGameEditionInline(admin.TabularInline):
     model = models.VideoGameEdition
+    extra = 1
+
+
+class VideoGameEditionXVideoGamePlatformInline(admin.TabularInline):
+    model = models.VideoGameEditionXVideoGamePlatform
+    extra = 1
 
 
 class VideoGamePlatformRegionInline(admin.TabularInline):
     model = models.VideoGamePlatformRegion
     ordering = ('region',)
+    extra = 1
 
 
 class VideoGameInline(admin.TabularInline):
     model = models.VideoGame
     ordering = ('title',)
+    extra = 1

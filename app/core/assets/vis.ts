@@ -18,7 +18,7 @@ const options = {
     physics: {
         barnesHut: {
             gravitationalConstant: -10000,
-            springLength: 100,
+            springLength: 200,
         },
     }
 };

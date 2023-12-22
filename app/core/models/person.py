@@ -74,6 +74,44 @@ class Person(BaseAuditable):
         return text
 
 
+class PersonXSong(BaseAuditable):
+    person = ForeignKey(
+        Person, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    song = ForeignKey(
+        'Song', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('person', 'song'),
+                name='unique_person_x_song'
+            )
+        ]
+
+
+class PersonXSongArrangement(BaseAuditable):
+    person = ForeignKey(
+        Person, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    song_arrangement = ForeignKey(
+        'SongArrangement', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('person', 'song_arrangement'),
+                name='unique_person_x_song_arrangement'
+            )
+        ]
+
+
 class PersonXSongPerformance(BaseAuditable):
     person = ForeignKey(
         Person, on_delete=CASCADE,
