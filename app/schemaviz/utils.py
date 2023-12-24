@@ -90,7 +90,9 @@ def apps_dataset() -> dict:
                 edge_color = None
                 length = None
                 smooth = None
-                if field.many_to_many:
+                if field.one_to_one:
+                    edge_color = EdgeColor(color='CC5555', opacity=0.9)
+                elif field.many_to_many:
                     edge_color = EdgeColor(color='8888FF', opacity=0.6)
                     length = 400
                     smooth = False

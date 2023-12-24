@@ -50,11 +50,15 @@ class Song(BaseAuditable):
     lyrics = TextField(blank=True, default='')
     arrangements = ManyToManyField(
         'SongArrangement', through='SongXSongArrangement',
-        related_name='+',
+        related_name='+', blank=True,
     )
     music_artists = ManyToManyField(
         'MusicArtist', through='MusicArtistXSong',
-        related_name='+',
+        related_name='+', blank=True,
+    )
+    people = ManyToManyField(
+        'Person', through='PersonXSong',
+        related_name='+', blank=True,
     )
 
     class Meta:
@@ -81,9 +85,13 @@ class SongArrangement(BaseAuditable):
     )
     description = CharField(max_length=255, blank=True)
     is_original = BooleanField(default=True)
+    music_artists = ManyToManyField(
+        'MusicArtist', through='MusicArtistXSongArrangement',
+        related_name='+', blank=True,
+    )
     songs = ManyToManyField(
         Song, through='SongXSongArrangement',
-        related_name='+',
+        related_name='+', blank=True,
     )
 
     objects = Manager()
@@ -94,6 +102,7 @@ class SongArrangement(BaseAuditable):
             UniqueConstraint(
                 fields=('title', 'disambiguator', 'description'),
                 name='unique_song_arrangement',
+                nulls_distinct=True,
             ),
             CheckConstraint(
                 check=Q(is_original=False) | Q(description=''),
@@ -141,11 +150,11 @@ class SongPerformance(BaseAuditable):
     # Relationships
     music_artists = ManyToManyField(
         'MusicArtist', through='MusicArtistXSongPerformance',
-        related_name='+',
+        related_name='+', blank=True,
     )
     personnel = ManyToManyField(
         'Person', through='PersonXSongPerformance',
-        related_name='+',
+        related_name='+', blank=True,
     )
 
     class Meta:
@@ -170,7 +179,7 @@ class SongRecording(BaseAuditable):
     music_album_editions = ManyToManyField(
         'MusicAlbumEdition',
         through='MusicAlbumEditionXSongRecording',
-        related_name='+'
+        related_name='+', blank=True,
     )
 
     class Meta:

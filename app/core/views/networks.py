@@ -31,6 +31,10 @@ class MusicNetworkView(TemplateView):
 
 
 class MusicArtistNetworkView(TemplateView):
+    """Explores edges that relate Music Artists to people.
+
+    Factors out specific albums and songs from display to reduce rendering.
+    """
     template_name = 'core/music-artist-network.html'
 
     def get_context_data(self, **kwargs) -> dict:

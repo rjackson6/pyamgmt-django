@@ -26,6 +26,10 @@ class MotionPicture(BaseAuditable):
         'MusicAlbum', through='MotionPictureXMusicAlbum',
         related_name='+', blank=True,
     )
+    songs = ManyToManyField(
+        'Song', through='MotionPictureXSong',
+        related_name='+', blank=True,
+    )
 
     class Meta:
         constraints = [
@@ -71,19 +75,19 @@ class MotionPictureSeries(BaseAuditable):
         return self.name
 
 
-# region MotionPictureM2M
 class MotionPictureXMusicAlbum(BaseAuditable):
     """Relates a motion picture to its soundtrack and/or score."""
+    motion_picture_id: int
+    music_album_id: int
+
     motion_picture = ForeignKey(
         MotionPicture, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    motion_picture_id: int
     music_album = ForeignKey(
         'MusicAlbum', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_album_id: int
 
     @cached_property
     def admin_description(self) -> str:
@@ -98,13 +102,14 @@ class MotionPictureXSong(BaseAuditable):
     Motion Picture" sometimes imply different meanings. I don't know if
     soundtracks or film scores are always published, either.
     """
+    motion_picture_id: int
+    song_id: int
+
     motion_picture = ForeignKey(
         MotionPicture, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    motion_picture_id: int
     song = ForeignKey(
         'Song', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    song_id: int

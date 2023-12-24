@@ -1,6 +1,6 @@
 from django.db.models import (
     CharField, DateField, ForeignKey,
-    CASCADE, PROTECT, SET_NULL, UniqueConstraint,
+    CASCADE, PROTECT, SET_NULL, UniqueConstraint, ManyToManyField,
 )
 from django.db.utils import cached_property
 
@@ -39,6 +39,10 @@ class VideoGame(BaseAuditable):
         'VideoGameSeries', on_delete=SET_NULL,
         null=True, blank=True,
         **default_related_names(__qualname__)
+    )
+    music_albums = ManyToManyField(
+        'MusicAlbum', through='MusicAlbumXVideoGame',
+        related_name='+', blank=True,
     )
 
     def __str__(self) -> str:

@@ -32,28 +32,27 @@ class MusicArtist(BaseAuditable):
     # Relationships
     music_albums = ManyToManyField(
         'MusicAlbum', through='MusicAlbumXMusicArtist',
-        related_name='+',
-        blank=True,
+        related_name='+', blank=True,
     )
     people = ManyToManyField(
         'Person', through='MusicArtistXPerson',
-        related_name='+',
-        blank=True,
+        related_name='+', blank=True,
     )
     songs = ManyToManyField(
         'Song', through='MusicArtistXSong',
-        related_name='+',
-        blank=True,
+        related_name='+', blank=True,
     )
     arrangements = ManyToManyField(
         'SongArrangement', through='MusicArtistXSongArrangement',
-        related_name='+',
-        blank=True,
+        related_name='+', blank=True,
     )
     performances = ManyToManyField(
         'SongPerformance', through='MusicArtistXSongPerformance',
-        related_name='+',
-        blank=True,
+        related_name='+', blank=True,
+    )
+    tags = ManyToManyField(
+        'MusicTag', through='MusicArtistXMusicTag',
+        related_name='+', blank=True,
     )
 
     objects = Manager()

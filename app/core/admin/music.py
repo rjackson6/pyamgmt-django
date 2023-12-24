@@ -84,8 +84,8 @@ class MusicArtistAdmin(admin.ModelAdmin):
         _inlines.MusicArtistXPersonInline,
     ]
     list_display = (
-        'name', '_album_count', '_arrangement_count', '_people_count',
-        'website',
+        'name', 'disambiguator', '_album_count', '_arrangement_count',
+        '_people_count', 'website',
     )
     ordering = ('name',)
     search_fields = ('name',)
