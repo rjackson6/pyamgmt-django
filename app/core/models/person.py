@@ -2,7 +2,7 @@ import datetime
 
 from django.db.models import (
     CharField, DateField, ForeignKey, TextField,
-    CASCADE, UniqueConstraint
+    CASCADE, UniqueConstraint, ManyToManyField
 )
 
 from django_base.models import BaseAuditable
@@ -31,6 +31,11 @@ class Person(BaseAuditable):
         validators=[validate_date_not_future]
     )
     notes = TextField(blank=True)
+
+    musical_instruments = ManyToManyField(
+        'MusicalInstrument', through='MusicalInstrumentXPerson',
+        related_name='+', blank=True,
+    )
 
     def __str__(self) -> str:
         return f'{self.full_name}'

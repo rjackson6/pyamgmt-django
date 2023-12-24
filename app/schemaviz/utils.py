@@ -91,8 +91,8 @@ def apps_dataset() -> dict:
                 length = None
                 smooth = None
                 if field.many_to_many:
-                    edge_color = EdgeColor(opacity=0.2)
-                    length = 300
+                    edge_color = EdgeColor(color='8888FF', opacity=0.6)
+                    length = 400
                     smooth = False
                 related_model = field.related_model
                 related_label = related_model._meta.label

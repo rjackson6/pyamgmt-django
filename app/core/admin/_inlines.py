@@ -41,8 +41,8 @@ class MusicAlbumXPersonInline(admin.TabularInline):
         )
 
 
-class MusicAlbumXPersonRoleInline(admin.TabularInline):
-    model = models.MusicAlbumXPersonRole
+class MusicAlbumXPersonXMusicRoleInline(admin.TabularInline):
+    model = models.MusicAlbumXPersonXMusicRole
     extra = 1
 
 

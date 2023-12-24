@@ -1,7 +1,7 @@
 from django.db.models import (
     CharField, ForeignKey, PositiveSmallIntegerField,
     UniqueConstraint,
-    CASCADE, PROTECT, SET_NULL,
+    CASCADE, PROTECT, SET_NULL, ManyToManyField,
 )
 from django.utils.functional import cached_property
 
@@ -21,6 +21,10 @@ class MotionPicture(BaseAuditable):
     year_produced = PositiveSmallIntegerField(
         null=True, blank=True,
         validators=[validate_year_not_future]
+    )
+    music_albums = ManyToManyField(
+        'MusicAlbum', through='MotionPictureXMusicAlbum',
+        related_name='+', blank=True,
     )
 
     class Meta:

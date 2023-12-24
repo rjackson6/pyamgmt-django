@@ -1,10 +1,31 @@
 from django.db.models import (
     CharField, ForeignKey, CASCADE, TextChoices, UniqueConstraint
 )
-from django.utils.functional import cached_property
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
+
+
+class MusicRole(BaseAuditable):
+    """An individual's role for their contribution to a music album.
+
+    E.g., Vocalist, Guitarist, Engineer, Producer
+    """
+    name = CharField(max_length=31, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class MusicRoleXPersonXSong(BaseAuditable):
+    music_role = ForeignKey(
+        'MusicRole', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    person_x_song = ForeignKey(
+        'PersonXSong', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
 
 
 class MusicalInstrument(BaseAuditable):

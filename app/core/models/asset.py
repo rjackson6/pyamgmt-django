@@ -27,7 +27,7 @@ class Asset(BaseAuditable):
         verbose_name_plural = 'Asset'
 
     def __str__(self) -> str:
-        return f'Asset {self.pk}'
+        return f'Asset {self.pk}: {self.description[:30]}'
 
 
 class AssetDiscrete(BaseAuditable):
@@ -57,24 +57,6 @@ class AssetDiscrete(BaseAuditable):
         return f'{self.asset.description}'
 
 
-class AssetDiscreteCatalogItem(BaseAuditable):
-    """A discrete asset that can relate to a CatalogItem."""
-    asset_discrete = OneToOneField(
-        AssetDiscrete, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    asset_discrete_id: int
-    catalog_item = ForeignKey(
-        'CatalogItem', on_delete=PROTECT,
-        **default_related_names(__qualname__)
-    )
-    catalog_item_id: int
-
-    class Meta:
-        verbose_name = 'Asset::Discrete::CatalogItem'
-        verbose_name_plural = 'Asset::Discrete::CatalogItem'
-
-
 class AssetDiscreteVehicle(BaseAuditable):
     """A discrete asset that can be associated with a unique vehicle."""
     asset_discrete = OneToOneField(
@@ -100,6 +82,24 @@ class AssetDiscreteVehicle(BaseAuditable):
             f'{self.asset_discrete.asset.description}'
             f' : {self.vehicle.vin}'
         )
+
+
+class AssetDiscreteXCatalogItem(BaseAuditable):
+    """A discrete asset that can relate to a CatalogItem."""
+    asset_discrete = ForeignKey(
+        AssetDiscrete, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    asset_discrete_id: int
+    catalog_item = ForeignKey(
+        'CatalogItem', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    catalog_item_id: int
+
+    class Meta:
+        verbose_name = 'Asset::Discrete::CatalogItem'
+        verbose_name_plural = 'Asset::Discrete::CatalogItem'
 
 
 class AssetInventory(BaseAuditable):

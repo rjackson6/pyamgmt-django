@@ -153,17 +153,6 @@ class MusicAlbumProduction(BaseAuditable):
     )
 
 
-class MusicRole(BaseAuditable):
-    """An individual's role for their contribution to a music album.
-
-    E.g., Vocalist, Guitarist, Engineer, Producer
-    """
-    name = CharField(max_length=31, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
 class MusicAlbumXMusicArtist(BaseAuditable):
     """Relates a MusicAlbum to a MusicArtist; Album Artist.
 
@@ -245,13 +234,13 @@ class MusicAlbumXPerson(BaseAuditable):
         return f'{self.music_album.title} : {self.person.full_name}'
 
 
-class MusicAlbumXPersonRole(BaseAuditable):
+class MusicAlbumXPersonXMusicRole(BaseAuditable):
     music_album_x_person = ForeignKey(
         MusicAlbumXPerson, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
     music_role = ForeignKey(
-        MusicRole, on_delete=CASCADE,
+        'MusicRole', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
 

@@ -99,6 +99,10 @@ class CatalogItemDigitalSong(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     catalog_item_id: int
+    song_recording = OneToOneField(
+        'SongRecording', on_delete=CASCADE, null=True, blank=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
 
 
 class CatalogItemMotionPictureRecording(BaseAuditable):

@@ -84,3 +84,6 @@ class TxnLineItem(BaseAuditable):
 
     def __str__(self) -> str:
         return f'TxnLineItem {self.pk}: {self.txn_id}'
+
+    def polarity(self):
+        return self.account.debit_polarity(self.debit)
