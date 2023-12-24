@@ -14,9 +14,27 @@ class MusicAlbumAdmin(admin.ModelAdmin):
         _inlines.MusicAlbumXMusicTagInline,
         _inlines.MusicAlbumXPersonInline,
     ]
-    list_display = ('title', 'is_compilation')
+    list_display = ('title', '_music_artists', 'is_compilation')
     ordering = ('title',)
     search_fields = ('title',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return (
+            qs
+            .prefetch_related('music_artists')
+        )
+
+    @staticmethod
+    def _music_artists(obj) -> str:
+        artists = []
+        for n, artist in enumerate(obj.music_artists.all()):
+            artists.append(artist.name)
+            if n > 2:
+                artists.append('...')
+                break
+        artists = ', '.join(artists)
+        return artists
 
 
 admin.site.register(music_album.MusicAlbumArtwork)

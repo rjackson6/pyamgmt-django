@@ -1,1 +1,1 @@
-from . import account, asset, main, music, song
+from . import account, asset, main, music, record, song

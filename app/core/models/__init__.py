@@ -112,6 +112,9 @@ from .point_of_sale import (
     PointOfSaleDocument,
     PointOfSaleLineItem,
 )
+from .record import (
+    RecordLabel,
+)
 from .song import (
     Song,
     SongArrangement,

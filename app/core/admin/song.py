@@ -39,7 +39,7 @@ class SongAdmin(admin.ModelAdmin):
         for n, artist in enumerate(obj.music_artists.all()):
             artists.append(artist.name)
             if n > 2:
-                artists.append(', ...')
+                artists.append('...')
                 break
         artists = ', '.join(artists)
         return f'{obj.title} [{artists}]'
@@ -52,10 +52,10 @@ class SongAdmin(admin.ModelAdmin):
 @admin.register(song.SongArrangement)
 class SongArrangementAdmin(admin.ModelAdmin):
     inlines = [
+        _inlines.SongPerformanceInline,
         _inlines.SongXSongArrangementInline,
         _inlines.MusicArtistXSongArrangementInline,
         _inlines.PersonXSongArrangementInline,
-        _inlines.SongPerformanceInline,
     ]
     list_display = (
         'title', 'disambiguator', '_performance_count', 'is_original',

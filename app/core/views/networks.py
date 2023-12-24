@@ -68,44 +68,7 @@ class MusicArtistNetworkView(TemplateView):
                 to=music_artist_key,
                 dashes=dashes,
             ))
-        # Album <-> Artist
-        qs = (
-            MusicAlbumXMusicArtist.objects
-            .select_related(
-                'music_album',
-                'music_artist',
-            )
-        )
-        for edge in qs:
-            music_album = edge.music_album
-            music_artist = edge.music_artist
-            music_album_key = f'music_album-{music_album.pk}'
-            music_artist_key = f'music_artist-{music_artist.pk}'
-            if music_artist_key not in nodes:
-                nodes[music_artist_key] = Node(
-                    id=music_artist_key,
-                    label=music_artist.name,
-                    group='music_artist',
-                    font=NodeFont(size=30),
-                )
-            album_to_artist_map[music_album_key].append(music_artist_key)
-        # Album <-> Song
-        qs = (
-            MusicAlbumEditionXSongRecording.objects
-            .select_related(
-                'music_album_edition__music_album',
-                'song_recording__song_performance__song_arrangement',
-            )
-        )
-        for edge in qs:
-            music_album = edge.music_album_edition.music_album
-            song_arrangement = edge.song_recording.song_performance.song_arrangement
-            music_album_key = f'music_album-{music_album.pk}'
-            song_arrangement_key = f'song_arrangement-{song_arrangement.pk}'
-            music_artist_keys = album_to_artist_map.get(music_album_key, [])
-            for music_artist_key in music_artist_keys:
-                t = music_artist_key, song_arrangement_key
-                artist_to_song_arrangement_set.add(t)
+
         vis_data = VisNetwork(list(nodes.values()), edges)
         context.update({'vis_data': vis_data.to_dict()})
         return context
