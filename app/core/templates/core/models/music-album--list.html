@@ -7,12 +7,20 @@
   <thead>
   <tr>
     <th></th>
+    <th>Title</th>
+    <th>Artist(s)</th>
   </tr>
   </thead>
   <tbody>
   {% for obj in object_list %}
   <tr>
-    <td>{{ obj }}</td>
+    <td>{{ forloop.counter }}</td>
+    <td>
+      <a href="{% url 'core:music-album:detail' obj.pk %}">
+        {{ obj.title }}
+      </a>
+    </td>
+    <td>{{ obj.music_artists.all|join:", " }}</td>
   </tr>
   {% endfor %}
   </tbody>

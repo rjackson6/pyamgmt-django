@@ -2,5 +2,8 @@
 
 
 {% block main %}
-<a href="{% url 'core:music-album:list' %}">Music Albums</a>
+<ul>
+  <li><a href="{% url 'core:music-album:list' %}">Music Albums</a></li>
+  <li><a href="{% url 'core:music-artist:list' %}">Music Artists</a></li>
+</ul>
 {% endblock main %}

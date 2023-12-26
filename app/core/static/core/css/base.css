@@ -7,6 +7,22 @@ a:hover {
     outline: 1px dashed white;
 }
 
+table {
+    border: 1px solid var(--Titanium);
+}
+
+td {
+    background-color: initial;
+    border: 1px solid var(--Titanium);
+    color: inherit;
+}
+
+th {
+    background-color: initial;
+    border: 1px solid var(--Titanium);
+    color: inherit;
+}
+
 #root-main {
     background-color: var(--Gunmetal);
     color: white;

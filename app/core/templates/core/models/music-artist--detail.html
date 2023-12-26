@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+
+
+{% block main %}
+<h1>Music Artist</h1>
+<h2>{{ object.name }}</h2>
+
+{% with personnel=object.personnel.all %}
+{% if personnel %}
+<h3>Personnel</h3>
+<ul>
+  {% for person in personnel %}
+  <li>
+    <a href="{% url 'core:person:detail' person.pk %}">
+      {{ person }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+{% endblock main %}

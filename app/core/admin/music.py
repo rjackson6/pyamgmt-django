@@ -85,7 +85,7 @@ class MusicArtistAdmin(admin.ModelAdmin):
     ]
     list_display = (
         'name', 'disambiguator', '_album_count', '_arrangement_count',
-        '_people_count', 'website',
+        '_personnel_count', 'website',
     )
     ordering = ('name',)
     search_fields = ('name',)
@@ -97,7 +97,7 @@ class MusicArtistAdmin(admin.ModelAdmin):
             .annotate(
                 Count('arrangements', distinct=True),
                 Count('music_albums', distinct=True),
-                Count('people', distinct=True),
+                Count('personnel', distinct=True),
             )
         )
 
@@ -110,8 +110,8 @@ class MusicArtistAdmin(admin.ModelAdmin):
         return obj.arrangements__count
 
     @staticmethod
-    def _people_count(obj):
-        return obj.people__count
+    def _personnel_count(obj):
+        return obj.personnel__count
 
 
 @admin.register(music_artist.MusicArtistActivity)
@@ -119,6 +119,7 @@ class MusicArtistActivityAdmin(admin.ModelAdmin):
     list_display = ('_description',)
     list_select_related = ('music_artist',)
     ordering = ('music_artist__name', 'year_active', 'year_inactive')
+    search_fields = ('music_artist__name',)
 
     @staticmethod
     def _description(obj) -> str:

@@ -45,7 +45,10 @@ class MusicAlbum(BaseAuditable):
         ]
 
     def __str__(self) -> str:
-        return f'{self.title}'
+        text = f'{self.title}'
+        if self.disambiguator:
+            text += f' [{self.disambiguator}]'
+        return text
 
     # @cached_property
     # def duration(self):

@@ -2,17 +2,29 @@
 
 
 {% block main %}
-<h1>Music Albums</h1>
+<h1>Music Artists</h1>
 <table>
   <thead>
   <tr>
-    <th></th>
+    <th>Name</th>
+    <th>Active</th>
+    <th>Active Members</th>
   </tr>
   </thead>
   <tbody>
   {% for obj in object_list %}
   <tr>
-    <td>{{ obj }}</td>
+    <td>
+      <a href="{% url 'core:music-artist:detail' obj.pk %}">
+        {{ obj.name }}
+      </a>
+    </td>
+    <td>{{ obj.is_active }}</td>
+    {% if obj.is_active %}
+    <td>{{ obj.active_members|join:", " }}</td>
+    {% else %}
+    <td></td>
+    {% endif %}
   </tr>
   {% endfor %}
   </tbody>

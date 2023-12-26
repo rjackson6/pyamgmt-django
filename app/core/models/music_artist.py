@@ -34,7 +34,7 @@ class MusicArtist(BaseAuditable):
         'MusicAlbum', through='MusicAlbumXMusicArtist',
         related_name='+', blank=True,
     )
-    people = ManyToManyField(
+    personnel = ManyToManyField(
         'Person', through='MusicArtistXPerson',
         related_name='+', blank=True,
     )
@@ -99,7 +99,8 @@ class MusicArtistActivity(BaseAuditable):
         validators=[validate_year_not_future]
     )
     year_inactive = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future]
+        null=True, blank=True,
+        validators=[validate_year_not_future]
     )
 
     class Meta:

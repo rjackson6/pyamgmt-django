@@ -21,6 +21,10 @@ class Person(BaseAuditable):
     last_name = CharField(max_length=255, blank=True)
     nickname = CharField(max_length=255, blank=True)
     preferred_name = CharField(max_length=255, blank=True)
+    prefix = CharField(
+        max_length=31, blank=True,
+        help_text="Title or Salutation"
+    )
     suffix = CharField(max_length=31, blank=True)
     date_of_birth = DateField(
         null=True, blank=True,
