@@ -60,6 +60,10 @@ class SongPerformanceChoiceField(ModelChoiceField):
 
     def label_from_instance(self, obj) -> str:
         label = f'{obj.song_arrangement.title}'
+        if obj.song_arrangement.is_original:
+            label += f' [ORIGINAL]'
+        else:
+            label += f' [{obj.song_arrangement.description}]'
         if obj.description:
             label += f' ({obj.description})'
         return f'{label} [{obj.performance_type}]'

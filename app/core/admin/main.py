@@ -84,7 +84,7 @@ class PersonAdmin(admin.ModelAdmin):
         'notes',
     )
     ordering = ('last_name', 'first_name')
-    search_fields = ('first_name', 'last_name')
+    search_fields = ('first_name', 'last_name', 'preferred_name', 'nickname')
 
 
 admin.site.register(txn.Txn)

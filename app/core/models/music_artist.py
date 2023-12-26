@@ -109,15 +109,6 @@ class MusicArtistActivity(BaseAuditable):
                 name='unique_music_artist_activity')
         ]
 
-    @cached_property
-    def admin_description(self) -> str:
-        text = f'{self.music_artist.name} : {self.year_active}'
-        if self.year_inactive:
-            text += f' - {self.year_inactive}'
-        else:
-            text += f' - Present'
-        return text
-
 
 class MusicArtistXMusicTag(BaseAuditable):
     music_artist = ForeignKey(
@@ -182,12 +173,6 @@ class MusicArtistXPerson(BaseAuditable):
             f' {self.music_artist_id}-{self.person_id}'
         )
 
-    @cached_property
-    def admin_description(self) -> str:
-        return (
-            f'{self.music_artist.name} : {self.person.full_name}'
-        )
-
     @property
     def is_active(self) -> bool | None:
         if not self.person.is_living:
@@ -230,30 +215,20 @@ class MusicArtistXPersonActivity(BaseAuditable):
     year_active = PositiveSmallIntegerField(null=True, blank=True)
     year_inactive = PositiveSmallIntegerField(null=True, blank=True)
 
-    @cached_property
-    def admin_description(self) -> str:
-        text = (
-            f'{self.music_artist_x_person.music_artist.name}'
-            f' : {self.music_artist_x_person.person.full_name}'
-            f' : {self.year_active}'
-        )
-        if self.year_inactive:
-            text += f'-{self.year_inactive}'
-        return text
-
 
 class MusicArtistXSong(BaseAuditable):
     """Relates a MusicArtist to a Song"""
+    music_artist_id: int
+    song_id: int
+
     music_artist = ForeignKey(
         MusicArtist, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_artist_id: int
     song = ForeignKey(
         'Song', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    song_id: int
     # TODO 2023-12-12: role for how an artist contributed to the song
     #  e.g., guitarist, vocalist, engineer
 
@@ -269,10 +244,6 @@ class MusicArtistXSong(BaseAuditable):
             f'MusicArtistXSong {self.pk}:'
             f' {self.music_artist_id}-{self.song_id}'
         )
-
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.music_artist.name}: {self.song.title}'
 
 
 class MusicArtistXSongArrangement(BaseAuditable):
@@ -317,11 +288,4 @@ class MusicArtistXSongPerformance(BaseAuditable):
         return (
             f'MusicArtistXSongPerformance {self.pk}:'
             f' {self.music_artist_id}-{self.song_performance_id}'
-        )
-
-    @cached_property
-    def admin_description(self) -> str:
-        return (
-            f'{self.song_performance.song_arrangement.title}'
-            f' : {self.music_artist.name}'
         )

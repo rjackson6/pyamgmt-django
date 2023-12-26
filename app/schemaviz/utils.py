@@ -55,6 +55,7 @@ class Edge:
     length: int | None = None
     physics: bool | None = None
     smooth: dict | bool | None = None
+    width: int | None = None
 
 
 @dataclass(slots=True)

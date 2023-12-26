@@ -1,6 +1,5 @@
-from django.core.exceptions import ValidationError
 from django.db.models import (
-    BooleanField, CharField, CheckConstraint, DurationField, F, ForeignKey,
+    BooleanField, CharField, CheckConstraint, DurationField, ForeignKey,
     ManyToManyField, TextField, UniqueConstraint, Q,
     TextChoices,
     CASCADE, PROTECT, SET_NULL,
@@ -56,7 +55,7 @@ class Song(BaseAuditable):
         'MusicArtist', through='MusicArtistXSong',
         related_name='+', blank=True,
     )
-    people = ManyToManyField(
+    personnel = ManyToManyField(
         'Person', through='PersonXSong',
         related_name='+', blank=True,
     )
@@ -87,6 +86,10 @@ class SongArrangement(BaseAuditable):
     is_original = BooleanField(default=True)
     music_artists = ManyToManyField(
         'MusicArtist', through='MusicArtistXSongArrangement',
+        related_name='+', blank=True,
+    )
+    personnel = ManyToManyField(
+        'Person', through='PersonXSongArrangement',
         related_name='+', blank=True,
     )
     songs = ManyToManyField(

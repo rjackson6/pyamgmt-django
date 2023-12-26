@@ -2,16 +2,19 @@ from collections import defaultdict
 
 from django_ccbv.views import TemplateView
 
-from schemaviz import Edge, Node, NodeFont, VisNetwork
+from schemaviz import Edge, EdgeColor, Node, NodeFont, VisNetwork
 
-from .models import (
+from ..models import (
     MusicAlbumXMusicArtist,
     MusicAlbumXMusicTag,
+    MusicAlbumXPerson,
     MusicAlbumEditionXSongRecording,
     MusicArtistXPerson,
+    MusicArtistXSong,
     MusicArtistXSongPerformance,
+    PersonXSong,
+    PersonXSongPerformance,
 )
-from ..models import MusicArtistXSong
 
 
 class MusicNetworkView(TemplateView):
@@ -39,11 +42,9 @@ class MusicArtistNetworkView(TemplateView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
-        album_to_artist_map = defaultdict(list)
-        artist_to_artist_set = set()
-        artist_to_song_arrangement_set = set()
         nodes = {}
         edges = []
+        edge_set = set()
         # Artist <-> Person
         qs = MusicArtistXPerson.with_related.all()
         for edge in qs:
@@ -67,12 +68,147 @@ class MusicArtistNetworkView(TemplateView):
             dashes = None
             if edge.is_active is False:
                 dashes = True
-            edges.append(Edge(
-                from_=person_key,
-                to=music_artist_key,
-                dashes=dashes,
-            ))
-
+            edge_key = (person_key, music_artist_key)
+            if edge_key not in edge_set:
+                edge_set.add(edge_key)
+                edges.append(Edge(
+                    from_=person_key,
+                    to=music_artist_key,
+                    dashes=dashes,
+                    width=3,
+                ))
+        # MusicAlbum traversal
+        album_to_person_map = defaultdict(list)
+        qs = (
+            MusicAlbumXPerson.objects
+            .select_related('music_album', 'person')
+        )
+        for edge in qs:
+            album_to_person_map[edge.music_album.pk].append(edge.person)
+        qs = (
+            MusicAlbumXMusicArtist.objects
+            .select_related('music_album', 'music_artist')
+            .filter(music_album_id__in=album_to_person_map.keys())
+        )
+        for edge in qs:
+            music_artist = edge.music_artist
+            music_artist_key = f'music_artist-{music_artist.pk}'
+            if music_artist_key not in nodes:
+                nodes[music_artist_key] = Node(
+                    id=music_artist_key,
+                    label=music_artist.name,
+                    group='music_artist',
+                    font=NodeFont(size=30),
+                )
+            for person in album_to_person_map.get(edge.music_album.pk, []):
+                person_key = f'person-{person.pk}'
+                if person_key not in nodes:
+                    nodes[person_key] = Node(
+                        id=person_key,
+                        label=person.full_name,
+                        group='person'
+                    )
+                edge_key = (person_key, music_artist_key)
+                if edge_key not in edge_set:
+                    edge_set.add(edge_key)
+                    edges.append(Edge(
+                        from_=person_key,
+                        to=music_artist_key,
+                        color=EdgeColor(
+                            color='66FF66'
+                        ),
+                        length=600,
+                    ))
+        # Song traversal
+        song_to_person_map = defaultdict(list)
+        qs = (
+            PersonXSong.objects
+            .select_related('person', 'song')
+        )
+        for edge in qs:
+            song_to_person_map[edge.song.pk].append(edge.person)
+        qs = (
+            MusicArtistXSong.objects
+            .select_related('music_artist', 'song')
+            .filter(song_id__in=song_to_person_map.keys())
+        )
+        for edge in qs:
+            music_artist = edge.music_artist
+            music_artist_key = f'music_artist-{music_artist.pk}'
+            if music_artist_key not in nodes:
+                nodes[music_artist_key] = Node(
+                    id=music_artist_key,
+                    label=music_artist.name,
+                    group='music_artist',
+                    font=NodeFont(size=30),
+                )
+            for person in song_to_person_map.get(edge.song.pk, []):
+                person_key = f'person-{person.pk}'
+                if person_key not in nodes:
+                    nodes[person_key] = Node(
+                        id=person_key,
+                        label=person.full_name,
+                        group='person'
+                    )
+                edge_key = (person_key, music_artist_key)
+                if edge_key not in edge_set:
+                    edge_set.add(edge_key)
+                    edges.append(Edge(
+                        from_=person_key,
+                        to=music_artist_key,
+                        color=EdgeColor(
+                            color='2266FF'
+                        ),
+                        length=600,
+                    ))
+        # SongPerformance traversal
+        song_performance_to_person_map = defaultdict(list)
+        qs = (
+            PersonXSongPerformance.objects
+            .select_related('person', 'song_performance')
+        )
+        for edge in qs:
+            (
+                song_performance_to_person_map[edge.song_performance.pk]
+                .append(edge.person)
+            )
+        qs = (
+            MusicArtistXSongPerformance.objects
+            .select_related('music_artist', 'song_performance')
+            .filter(
+                song_performance_id__in=song_performance_to_person_map.keys()
+            )
+        )
+        for edge in qs:
+            music_artist = edge.music_artist
+            music_artist_key = f'music_artist-{music_artist.pk}'
+            if music_artist_key not in nodes:
+                nodes[music_artist_key] = Node(
+                    id=music_artist_key,
+                    label=music_artist.name,
+                    group='music_artist',
+                    font=NodeFont(size=30),
+                )
+            persons = song_performance_to_person_map.get(
+                edge.song_performance.pk, [])
+            for person in persons:
+                person_key = f'person-{person.pk}'
+                if person_key not in nodes:
+                    nodes[person_key] = Node(
+                        id=person_key,
+                        label=person.full_name,
+                        group='person'
+                    )
+                edge_key = (person_key, music_artist_key)
+                if edge_key not in edge_set:
+                    edge_set.add(edge_key)
+                    edges.append(Edge(
+                        from_=person_key,
+                        to=music_artist_key,
+                        color=EdgeColor(
+                            color='6688FF',
+                        ),
+                    ))
         vis_data = VisNetwork(list(nodes.values()), edges)
         context.update({'vis_data': vis_data.to_dict()})
         return context

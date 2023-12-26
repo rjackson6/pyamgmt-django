@@ -15,9 +15,12 @@ const options = {
         opacity: 0.8,
         shape: "box",
     },
+    edges: {
+        smooth: false,
+    },
     physics: {
         barnesHut: {
-            gravitationalConstant: -5000,
+            gravitationalConstant: -30000,
             springLength: 300,
         },
     }
