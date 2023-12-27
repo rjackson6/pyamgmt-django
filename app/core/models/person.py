@@ -1,8 +1,19 @@
 import datetime
 
 from django.db.models import (
-    CharField, DateField, ForeignKey, TextField,
-    CASCADE, UniqueConstraint, ManyToManyField
+    CASCADE,
+    CharField,
+    CheckConstraint,
+    DateField,
+    F,
+    ForeignKey,
+    ManyToManyField,
+    PositiveSmallIntegerField,
+    PROTECT,
+    Q,
+    TextChoices,
+    TextField,
+    UniqueConstraint,
 )
 
 from django_base.models import BaseAuditable
@@ -16,11 +27,11 @@ class Person(BaseAuditable):
     Maybe a personal acquaintance, and/or a notable individual with some level
     of fame.
     """
-    first_name = CharField(max_length=255)
+    preferred_name = CharField(max_length=255)
+    first_name = CharField(max_length=255, blank=True)
     middle_name = CharField(max_length=255, blank=True)
     last_name = CharField(max_length=255, blank=True)
     nickname = CharField(max_length=255, blank=True)
-    preferred_name = CharField(max_length=255, blank=True)
     prefix = CharField(
         max_length=31, blank=True,
         help_text="Title or Salutation"
@@ -94,6 +105,120 @@ class Person(BaseAuditable):
         return text
 
 
+class PersonXPersonRelation(BaseAuditable):
+    """Hereditary relationships; permanent."""
+    class Relation(TextChoices):
+        BROTHER = 'BROTHER'
+        CHILD = 'CHILD'
+        DAUGHTER = 'DAUGHTER'
+        FATHER = 'FATHER'
+        FRIEND = 'FRIEND'
+        GRANDCHILD = 'GRANDCHILD'
+        GRANDDAUGHTER = 'GRANDDAUGHTER'
+        GRANDFATHER = 'GRANDFATHER'
+        GRANDMOTHER = 'GRANDMOTHER'
+        GRANDPARENT = 'GRANDPARENT'
+        GRANDSON = 'GRANDSON'
+        MOTHER = 'MOTHER'
+        SIBLING = 'SIBLING'
+        SISTER = 'SISTER'
+        SON = 'SON'
+    person_a = ForeignKey(
+        Person, on_delete=CASCADE,
+        related_name='+'
+    )
+    person_b = ForeignKey(
+        Person, on_delete=CASCADE,
+        related_name='+'
+    )
+    relation = CharField(
+        max_length=13, choices=Relation.choices,
+        help_text=(
+            f"Relation FROM Person A TO Person B."
+            f" Person A is Person B's ..."
+        )
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('person_a', 'person_b'),
+                name='unique_person_x_person_relation'
+            ),
+            CheckConstraint(
+                check=~Q(person_a=F('person_b')),
+                name='person_x_person_relation_not_self'
+            )
+        ]
+
+
+class PersonXPersonRelationship(BaseAuditable):
+    class Relationship(TextChoices):
+        HUSBAND = 'HUSBAND'
+        INSTRUCTOR = 'INSTRUCTOR'
+        PARTNER = 'PARTNER'
+        SPOUSE = 'SPOUSE'
+        STUDENT = 'STUDENT'
+        TEACHER = 'TEACHER'
+        WIFE = 'WIFE'
+
+    person_a = ForeignKey(
+        Person, on_delete=CASCADE,
+        related_name='+'
+    )
+    person_b = ForeignKey(
+        Person, on_delete=CASCADE,
+        related_name='+'
+    )
+    relationship = CharField(
+        max_length=10, choices=Relationship.choices, blank=True,
+        help_text=(
+            f"The relationship FROM person A TO person B."
+            f" Person A is Person B's ..."
+        )
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('person_a', 'person_b'),
+                name='unique_person_x_person_relationship'
+            ),
+            CheckConstraint(
+                check=~Q(person_a=F('person_b')),
+                name='person_x_person_relationship_not_self'
+            )
+        ]
+
+
+class PersonXPersonRelationshipActivity(BaseAuditable):
+    person_x_person_relationship = ForeignKey(
+        PersonXPersonRelationship, on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
+    from_year = PositiveSmallIntegerField()
+    until_year = PositiveSmallIntegerField(null=True, blank=True)
+
+
+class PersonXPhoto(BaseAuditable):
+    person = ForeignKey(
+        Person, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    photo = ForeignKey(
+        'Photo', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('person', 'photo'),
+                name='unique_person_x_photo'
+            )
+        ]
+
+
 class PersonXSong(BaseAuditable):
     person = ForeignKey(
         Person, on_delete=CASCADE,
@@ -149,13 +274,3 @@ class PersonXSongPerformance(BaseAuditable):
                 name='unique_person_x_song_performance'
             )
         ]
-
-
-# Symmetrical vs. asymmetrical modeling
-# Service-layer logic. If an attribute is symmetrical, create both entries.
-# if an attribute is reflective (father <-> son), create the appropriate
-# entries
-# if an attribute is one-way - which is rare - only make one entry
-# These are just pairs of attributes.
-# class PersonXPerson(BaseAuditable):
-#     """Relationships between people."""

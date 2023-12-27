@@ -193,6 +193,9 @@ class SongRecording(BaseAuditable):
             )
         ]
 
+    def get_title(self) -> str:
+        return f'{self.song_performance.song_arrangement.title}'
+
 
 class SongXSongArrangement(BaseAuditable):
     song = ForeignKey(

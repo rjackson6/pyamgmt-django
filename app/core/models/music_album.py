@@ -1,8 +1,8 @@
 from django.db.models import (
-    BooleanField, CharField, ForeignKey, ImageField, ManyToManyField,
+    BooleanField, CharField, ForeignKey, ImageField, Manager, ManyToManyField,
     PositiveSmallIntegerField,
     CASCADE, PROTECT,
-    UniqueConstraint, TextField,
+    UniqueConstraint, TextField, QuerySet,
 )
 from django.utils.functional import cached_property
 
@@ -83,11 +83,13 @@ class MusicAlbumEdition(BaseAuditable):
      Although formats are sometimes linked to editions. "DigiPak", "Bonus track"
      Remastered albums contain remastered tracks, maybe bonuses
     """
+    music_album_edition_x_song_recording_set: Manager
+
     music_album = ForeignKey(
         MusicAlbum, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    name = CharField(max_length=63, blank=True)
+    name = CharField(max_length=63)
     # TODO 2023-12-12: likely a property
     total_discs = PositiveSmallIntegerField(default=1)
     year_copyright = PositiveSmallIntegerField(
@@ -97,23 +99,36 @@ class MusicAlbumEdition(BaseAuditable):
         null=True, blank=True, validators=[validate_year_not_future]
     )
 
+    def __str__(self) -> str:
+        return self.name
+
     @cached_property
     def admin_description(self) -> str:
         return f'{self.music_album.title} ({self.name})'
 
+    @cached_property
+    def tracks(self) -> QuerySet:
+        return (
+            self.music_album_edition_x_song_recording_set
+            .select_related(
+                'song_recording__song_performance__song_arrangement')
+            .order_by('track_number')
+        )
+
 
 class MusicAlbumEditionXSongRecording(BaseAuditable):
-    disc_number = PositiveSmallIntegerField(null=True, blank=True)
+    music_album_edition_id: int
+    song_recording_id: int
+
     music_album_edition = ForeignKey(
         MusicAlbumEdition, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_album_edition_id: int
     song_recording = ForeignKey(
         'SongRecording', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    song_recording_id: int
+    disc_number = PositiveSmallIntegerField(null=True, blank=True)
     track_number = PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:

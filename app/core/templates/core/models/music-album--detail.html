@@ -35,4 +35,37 @@
 {% endif %}
 {% endwith %}
 
+{% with editions=object.music_album_edition_set.all %}
+{% if editions %}
+<h3>Editions</h3>
+{% for edition in editions %}
+<h4>{{ edition }}</h4>
+{% if edition.tracks %}
+<table>
+  <thead>
+  <tr>
+    <th>Disc</th>
+    <th>Track</th>
+    <th>Title</th>
+    <th>Duration</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for track in edition.tracks %}
+  {% with recording=track.song_recording %}
+  <tr>
+    <td>{{ track.disc_number }}</td>
+    <td>{{ track.track_number }}</td>
+    <td>{{ recording.get_title }}</td>
+    <td>{{ recording.duration }}</td>
+  </tr>
+  {% endwith %}
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 {% endblock main %}

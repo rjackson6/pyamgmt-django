@@ -103,9 +103,16 @@ from .payee import (
 )
 from .person import (
     Person,
+    PersonXPersonRelation,
+    PersonXPersonRelationship,
+    PersonXPersonRelationshipActivity,
+    PersonXPhoto,
     PersonXSong,
     PersonXSongArrangement,
     PersonXSongPerformance,
+)
+from .photo import (
+    Photo
 )
 from .point_of_sale import (
     PointOfSale,

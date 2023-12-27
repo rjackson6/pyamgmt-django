@@ -100,6 +100,18 @@ class MusicalInstrumentXPersonInline(admin.TabularInline):
     model = models.MusicalInstrumentXPerson
 
 
+class PersonXPersonRelationInline(admin.TabularInline):
+    model = models.PersonXPersonRelation
+    fk_name = 'person_a'
+    extra = 1
+
+
+class PersonXPersonRelationshipInline(admin.TabularInline):
+    model = models.PersonXPersonRelationship
+    fk_name = 'person_a'
+    extra = 1
+
+
 class PersonXSongInline(admin.TabularInline):
     model = models.PersonXSong
     extra = 1
