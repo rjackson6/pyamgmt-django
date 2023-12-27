@@ -168,6 +168,9 @@ class SongPerformance(BaseAuditable):
             )
         ]
 
+    def get_title(self) -> str:
+        return f'{self.song_arrangement.title}'
+
 
 class SongRecording(BaseAuditable):
     """Capture of a performance to any persistent media."""

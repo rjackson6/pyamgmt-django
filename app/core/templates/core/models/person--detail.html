@@ -1,11 +1,22 @@
-{% extends 'core/base.html' %}
+{% extends 'core/model-detail.html' %}
 
 
-{% block main %}
+{% block info_card %}
+<div>Name: {{ person.birth_name }}</div>
+{% if person.date_of_death %}
+<div>Born: {{ person.date_of_birth }}</div>
+<div>Died: {{ person.date_of_death }} (age {{ person.age }})</div>
+{% else %}
+<div>Born: {{ person.date_of_birth }} (age {{ person.age }})</div>
+{% endif %}
+{% endblock info_card %}
+
+
+{% block content %}
 <h1>Person</h1>
-<h2>{{ object.full_name }}</h2>
+<h2>{{ person.preferred_name }}</h2>
 
-{% with music_artists=object.music_artists.all %}
+{% with music_artists=person.music_artists.all %}
 {% if music_artists %}
 <h3>Music Artists</h3>
 <ul>
@@ -20,4 +31,32 @@
 {% endif %}
 {% endwith %}
 
-{% endblock main %}
+{% with music_albums=person.music_albums.all %}
+{% if music_albums %}
+<h3>Music Albums</h3>
+<ul>
+  {% for music_album in music_albums %}
+  <li>
+    <a href="{% url 'core:music-album:detail' music_album.pk %}">
+      {{ music_album }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+{% with song_performances=person.song_performances.all %}
+{% if song_performances %}
+<h3>Performances</h3>
+<ul>
+  {% for song_performance in song_performances %}
+  <li>
+    {{ song_performance.get_title }}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+{% endblock content %}

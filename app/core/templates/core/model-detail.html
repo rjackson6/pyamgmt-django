@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+
+
+{% block main %}
+<div class="info-card">
+  {% block info_card %}{% endblock info_card %}
+</div>
+<main class="content">
+  {% block content %}{% lorem %}{% endblock content %}
+</main>
+{% endblock main %}

@@ -32,7 +32,7 @@ class MusicAlbum(BaseAuditable):
     personnel = ManyToManyField(
         'Person',
         through='MusicAlbumXPerson',
-        related_name='music_albums',
+        related_name='+',
         blank=True
     )
 

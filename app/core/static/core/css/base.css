@@ -53,3 +53,11 @@ th {
     margin: 8px;
     overflow: auto;
 }
+
+.info-card {
+    border-left: 3px solid var(--Titanium);
+    border-bottom: 3px solid var(--Titanium);
+    float: right;
+    min-width: 18rem;
+    padding: 1rem;
+}

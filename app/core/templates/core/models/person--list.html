@@ -12,7 +12,11 @@
   <tbody>
   {% for obj in object_list %}
   <tr>
-    <td>{{ obj.preferred_name }}</td>
+    <td>
+      <a href="{% url 'core:person:detail' obj.pk %}">
+        {{ obj.preferred_name }}
+      </a>
+    </td>
   </tr>
   {% endfor %}
   </tbody>

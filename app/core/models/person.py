@@ -47,6 +47,10 @@ class Person(BaseAuditable):
     )
     notes = TextField(blank=True)
 
+    music_albums = ManyToManyField(
+        'MusicAlbum', through='MusicAlbumXPerson',
+        related_name='+', blank=True,
+    )
     music_artists = ManyToManyField(
         'MusicArtist', through='MusicArtistXPerson',
         related_name='+', blank=True,
@@ -55,9 +59,13 @@ class Person(BaseAuditable):
         'MusicalInstrument', through='MusicalInstrumentXPerson',
         related_name='+', blank=True,
     )
+    song_performances = ManyToManyField(
+        'SongPerformance', through='PersonXSongPerformance',
+        related_name='+', blank=True
+    )
 
     def __str__(self) -> str:
-        return f'{self.full_name}'
+        return f'{self.preferred_name}'
 
     @property
     def age(self) -> int | None:
@@ -91,9 +99,13 @@ class Person(BaseAuditable):
 
     @property
     def full_name(self) -> str:
-        if self.preferred_name:
+        if not any((self.first_name, self.middle_name, self.last_name)):
             return self.preferred_name
-        text = f'{self.first_name}'
+        text = ''
+        if self.prefix:
+            text += f'{self.prefix}'
+        if self.first_name:
+            text += f'{self.first_name}'
         if self.nickname:
             text += f' "{self.nickname}"'
         if self.middle_name:
