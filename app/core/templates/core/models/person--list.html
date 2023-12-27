@@ -1,4 +1,20 @@
 {% extends 'core/base.html' %}
 
 
-
+{% block main %}
+<h1>People</h1>
+<table>
+  <thead>
+  <tr>
+    
+  </tr>
+  </thead>
+  <tbody>
+  {% for obj in object_list %}
+  <tr>
+    <td>{{ obj.preferred_name }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock main %}

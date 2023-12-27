@@ -16,11 +16,7 @@
     {% block sidebar %}
     <nav>
       {% block sidebar__nav-list %}
-      {% comment %}
-      <ul class="sidebar__nav-list">
-        <li>Nav Item</li>
-      </ul>
-      {% endcomment %}
+      {% include 'core/_sidebar__nav-list.html' %}
       {% endblock sidebar__nav-list %}
     </nav>
     {% endblock sidebar %}
