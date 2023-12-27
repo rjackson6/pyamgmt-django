@@ -8,6 +8,7 @@ from django.forms import ModelForm
 
 from .fields import (
     MusicAlbumEditionChoiceField,
+    MusicArtistChoiceField,
     MusicArtistXPersonChoiceField,
     PersonChoiceField,
     SongChoiceField,
@@ -27,6 +28,7 @@ class MusicAlbumEditionXSongRecordingForm(ModelForm):
 class MusicArtistXPersonForm(ModelForm):
     class Meta:
         field_classes = {
+            'music_artist': MusicArtistChoiceField,
             'person': PersonChoiceField,
         }
 

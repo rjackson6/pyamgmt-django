@@ -57,6 +57,7 @@ class MusicArtistActivityInline(admin.TabularInline):
 
 
 class MusicArtistXPersonInline(admin.TabularInline):
+    form = forms.admin.MusicArtistXPersonForm
     model = models.MusicArtistXPerson
     extra = 2
 

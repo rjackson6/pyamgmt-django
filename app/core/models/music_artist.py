@@ -67,7 +67,10 @@ class MusicArtist(BaseAuditable):
         ]
 
     def __str__(self) -> str:
-        return f'{self.name}'
+        text = f'{self.name}'
+        if self.disambiguator:
+            text += f' [{self.disambiguator}]'
+        return text
 
     @cached_property
     def is_active(self) -> bool:

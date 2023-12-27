@@ -16,6 +16,14 @@ class MusicAlbumEditionChoiceField(ModelChoiceField):
         return f'{obj.music_album.title} ({obj.name})'
 
 
+class MusicArtistChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj) -> str:
+        text = f'{obj.name}'
+        if obj.disambiguator:
+            text += f' [{obj.disambiguator}]'
+        return text
+
+
 class MusicArtistXPersonChoiceField(ModelChoiceField):
     def __init__(self, queryset, **kwargs):
         if queryset is not None:
