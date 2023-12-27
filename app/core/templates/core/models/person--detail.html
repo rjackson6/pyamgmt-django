@@ -5,6 +5,19 @@
 <h1>Person</h1>
 <h2>{{ object.full_name }}</h2>
 
+{% with music_artists=object.music_artists.all %}
+{% if music_artists %}
 <h3>Music Artists</h3>
+<ul>
+  {% for music_artist in music_artists %}
+  <li>
+    <a href="{% url 'core:music-artist:detail' music_artist.pk %}">
+      {{ music_artist }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
 
 {% endblock main %}

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from itertools import combinations
 
 from django_ccbv.views import TemplateView
 
@@ -77,11 +78,36 @@ class MusicArtistNetworkView(TemplateView):
                     dashes=dashes,
                     width=3,
                 ))
-        # MusicAlbum traversal
+        # MusicAlbum - Artist traversal
+        # These artists should link to each other.
+        album_to_artist_map = defaultdict(list)
+        qs = (
+            MusicAlbumXMusicArtist.objects
+            .select_related('music_album', 'music_artist')
+            .order_by('music_artist_id')
+        )
+        for edge in qs:
+            album_to_artist_map[edge.music_album.pk].append(edge.music_artist)
+        for album, artists in album_to_artist_map.items():
+            # These are combinations between the artists
+            artist_combinations = combinations(artists, 2)
+            for artist_a, artist_b in artist_combinations:
+                key_a = f'music_artist-{artist_a.pk}'
+                key_b = f'music_artist-{artist_b.pk}'
+                edge_key = (key_a, key_b)
+                if edge_key not in edge_set:
+                    edge_set.add(edge_key)
+                    edges.append(Edge(
+                        from_=key_a,
+                        to=key_b,
+                        width=2,
+                    ))
+        # MusicAlbum - Person traversal
         album_to_person_map = defaultdict(list)
         qs = (
             MusicAlbumXPerson.objects
             .select_related('music_album', 'person')
+            .order_by('person_id')
         )
         for edge in qs:
             album_to_person_map[edge.music_album.pk].append(edge.person)

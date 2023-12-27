@@ -36,6 +36,10 @@ class Person(BaseAuditable):
     )
     notes = TextField(blank=True)
 
+    music_artists = ManyToManyField(
+        'MusicArtist', through='MusicArtistXPerson',
+        related_name='+', blank=True,
+    )
     musical_instruments = ManyToManyField(
         'MusicalInstrument', through='MusicalInstrumentXPerson',
         related_name='+', blank=True,

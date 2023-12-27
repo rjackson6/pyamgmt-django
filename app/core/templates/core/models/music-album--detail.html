@@ -10,7 +10,11 @@
 <h3>Artists</h3>
 <ul>
   {% for music_artist in music_artists %}
-  <li>{{ music_artist }}</li>
+  <li>
+    <a href="{% url 'core:music-artist:detail' music_artist.pk %}">
+      {{ music_artist }}
+    </a>
+  </li>
   {% endfor %}
 </ul>
 {% endif %}

@@ -20,4 +20,19 @@
 {% endif %}
 {% endwith %}
 
+{% with music_albums=object.music_albums.all %}
+{% if music_albums %}
+<h3>Albums</h3>
+<ul>
+  {% for music_album in music_albums %}
+  <li>
+    <a href="{% url 'core:music-album:detail' music_album.pk %}">
+      {{ music_album }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
 {% endblock main %}
