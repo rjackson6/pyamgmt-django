@@ -61,3 +61,7 @@ th {
     min-width: 18rem;
     padding: 1rem;
 }
+
+.info-card__featured-photo {
+    max-width: 12rem;
+}

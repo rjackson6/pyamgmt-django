@@ -103,7 +103,7 @@ LOGGING = {
 LOGIN_REDIRECT_URL = '/'
 
 # env
-MEDIA_ROOT = BASE_DIR / 'var' / 'media'
+MEDIA_ROOT = Path.home() / 'var' / 'www' / 'pyamgmt' / 'media'
 
 # env
 MEDIA_URL = '/media/'

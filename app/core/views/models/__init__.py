@@ -2,6 +2,7 @@ from .main import (
     AccountListView,
     MusicAlbumDetailView,
     MusicAlbumListView,
+    MusicAlbumEditionDetailView,
     PersonDetailView,
     PersonListView,
     VehicleListView,

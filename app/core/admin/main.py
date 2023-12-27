@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from ..models import (
     author, beer, book, catalog_item, city, config, invoice,
-    manufacturer, motion_picture, txn, vehicle, video_game,
+    manufacturer, motion_picture, photo, txn, vehicle, video_game,
 )
 from . import _inlines
 
@@ -71,6 +71,7 @@ class MotionPictureXMusicAlbumAdmin(admin.ModelAdmin):
 
 admin.site.register(motion_picture.MotionPictureXSong)
 
+admin.site.register(photo.Photo)
 
 admin.site.register(txn.Txn)
 

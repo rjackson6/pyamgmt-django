@@ -112,6 +112,11 @@ class PersonXPersonRelationshipInline(admin.TabularInline):
     extra = 1
 
 
+class PersonXPhotoInline(admin.TabularInline):
+    model = models.PersonXPhoto
+    extra = 1
+
+
 class PersonXSongInline(admin.TabularInline):
     model = models.PersonXSong
     extra = 1

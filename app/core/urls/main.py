@@ -11,6 +11,14 @@ _music_album_urls = ([
     ])),
 ], app_name)
 
+_music_album_edition_urls = ([
+    path('<int:pk>/', include([
+        path('',
+             views.models.MusicAlbumEditionDetailView.as_view(),
+             name='detail')
+    ])),
+], app_name)
+
 _music_artist_urls = ([
     path('', views.models.MusicArtistListView.as_view(), name='list'),
     path('<int:pk>/', include([
@@ -31,6 +39,9 @@ urlpatterns = [
         path('account/', views.models.AccountListView.as_view()),
         path('music-album/',
              include(_music_album_urls, namespace='music-album')),
+        path('music-album-edition/',
+             include(_music_album_edition_urls,
+                     namespace='music-album-edition')),
         path('music-artist/',
              include(_music_artist_urls, namespace='music-artist')),
         path('person/',

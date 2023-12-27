@@ -1,8 +1,24 @@
 from collections import Counter
 from dataclasses import asdict, dataclass, field
+from typing import Protocol, Self
 
 from django.apps import apps
 from django.db.models.fields.related import RelatedField
+
+
+class MusicArtist(Protocol):
+    pk: int
+    name: str
+
+
+class Person(Protocol):
+    pk: int
+    preferred_name: str
+
+
+class Song(Protocol):
+    pk: int
+    title: str
 
 
 @dataclass(kw_only=True)
@@ -35,6 +51,34 @@ class Node:
     value: int = 1
     font: NodeFont | None = None
 
+    @classmethod
+    def from_music_artist(cls, music_artist: MusicArtist, **kwargs) -> Self:
+        return cls(
+            id=f'music_artist-{music_artist.pk}',
+            label=music_artist.name,
+            group='music_artist',
+            font=NodeFont(size=30),
+            **kwargs
+        )
+
+    @classmethod
+    def from_person(cls, person: Person, **kwargs) -> Self:
+        return cls(
+            id=f'person-{person.pk}',
+            label=person.preferred_name,
+            group='person',
+            **kwargs
+        )
+
+    @classmethod
+    def from_song(cls, song: Song, **kwargs) -> Self:
+        return cls(
+            id=f'song-{song.pk}',
+            label=song.title,
+            group='song',
+            **kwargs
+        )
+
 
 @dataclass(kw_only=True)
 class EdgeColor:
@@ -60,14 +104,45 @@ class Edge:
 
 @dataclass(slots=True)
 class VisNetwork:
-    nodes: list[Node] = field(default_factory=list)
+    nodes: dict[str, Node] = field(default_factory=dict)
     edges: list[Edge] = field(default_factory=list)
+    _node_set: set[tuple[str, str]] = field(default_factory=set, init=False)
+    _edge_set: set[tuple[str, str]] = field(default_factory=set, init=False)
+
+    def extend(
+            self,
+            network: Self,
+            duplicate_edges: bool = False,
+            overwrite_nodes: bool = False,
+    ) -> None:
+        if overwrite_nodes:
+            self.nodes.update(network.nodes)
+        else:
+            network.nodes.update(self.nodes)
+            self.nodes = network.nodes
+        if duplicate_edges:
+            self.edges.extend(network.edges)
+        else:
+            self.edges.extend(
+                x for x in network.edges
+                if (x.from_, x.to) not in self._edge_set
+            )
+        self._node_set.update(network._node_set)
+        self._edge_set.update(network._edge_set)
 
     def to_dict(self) -> dict:
         return asdict(self, dict_factory=self.dict_factory)
 
+    def to_json(self) -> dict:
+        data = {
+            k: v for k, v in self.to_dict().items()
+            if not k.startswith('_')
+        }
+        data['nodes'] = list(data['nodes'].values())
+        return data
+
     @staticmethod
-    def dict_factory(kv_pairs):
+    def dict_factory(kv_pairs) -> dict:
         m = {'from_': 'from'}
         return {m.get(k, k): v for k, v, in kv_pairs if v is not None}
 
@@ -86,18 +161,18 @@ def apps_dataset() -> dict:
         )
         nodes[label] = node
         fields = mdl._meta.get_fields()
-        for field in fields:
-            if isinstance(field, RelatedField):
+        for field_ in fields:
+            if isinstance(field_, RelatedField):
                 edge_color = None
                 length = None
                 smooth = None
-                if field.one_to_one:
+                if field_.one_to_one:
                     edge_color = EdgeColor(color='CC5555', opacity=0.9)
-                elif field.many_to_many:
+                elif field_.many_to_many:
                     edge_color = EdgeColor(color='8888FF', opacity=0.6)
                     length = 400
                     smooth = False
-                related_model = field.related_model
+                related_model = field_.related_model
                 related_label = related_model._meta.label
                 edge = Edge(
                     from_=label,
@@ -113,5 +188,5 @@ def apps_dataset() -> dict:
     for k, count in tos.items():
         nodes[k].value += count
         nodes[k].mass += count
-    x = VisNetwork(list(nodes.values()), edges)
-    return x.to_dict()
+    x = VisNetwork(nodes, edges)
+    return x.to_json()

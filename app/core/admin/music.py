@@ -14,7 +14,9 @@ class MusicAlbumAdmin(admin.ModelAdmin):
         _inlines.MusicAlbumXMusicTagInline,
         _inlines.MusicAlbumXPersonInline,
     ]
-    list_display = ('title', '_music_artists', 'is_compilation')
+    list_display = (
+        'title', '_music_artists', '_edition_count', 'is_compilation'
+    )
     ordering = ('title',)
     search_fields = ('title', 'music_artists__name')
 
@@ -23,6 +25,9 @@ class MusicAlbumAdmin(admin.ModelAdmin):
         return (
             qs
             .prefetch_related('music_artists')
+            .annotate(
+                Count('music_album_edition', distinct=True),
+            )
         )
 
     @staticmethod
@@ -36,6 +41,10 @@ class MusicAlbumAdmin(admin.ModelAdmin):
         artists = ', '.join(artists)
         return artists
 
+    @staticmethod
+    def _edition_count(obj) -> int:
+        return obj.music_album_edition__count
+
 
 admin.site.register(music_album.MusicAlbumArtwork)
 
@@ -45,10 +54,14 @@ class MusicAlbumEditionAdmin(admin.ModelAdmin):
     inlines = [
         _inlines.MusicAlbumEditionXSongRecordingInline
     ]
-    list_display = ('admin_description', 'year_produced')
+    list_display = ('_description', 'year_produced')
     list_select_related = ('music_album',)
     ordering = ('music_album__title', 'name')
     search_fields = ('music_album__title', 'name')
+
+    @staticmethod
+    def _description(obj) -> str:
+        return f'{obj.music_album.title} [{obj.name}]'
 
 
 @admin.register(music_album.MusicAlbumXMusicArtist)

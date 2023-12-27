@@ -2,11 +2,21 @@
 
 
 {% block info_card %}
+{% if person.featured_photo %}
+<div>
+  <img
+      class="info-card__featured-photo"
+      src="{{ person.featured_photo.photo.image.url }}"
+      alt="Featured photo">
+</div>
+{% endif %}
 <div>Name: {{ person.birth_name }}</div>
-{% if person.date_of_death %}
+{% if person.date_of_death and person.date_of_birth %}
 <div>Born: {{ person.date_of_birth }}</div>
 <div>Died: {{ person.date_of_death }} (age {{ person.age }})</div>
-{% else %}
+{% elif person.date_of_death %}
+<div>Died: {{ person.date_of_death }}</div>
+{% elif person.date_of_birth %}
 <div>Born: {{ person.date_of_birth }} (age {{ person.age }})</div>
 {% endif %}
 {% endblock info_card %}

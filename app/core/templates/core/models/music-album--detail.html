@@ -39,7 +39,7 @@
 {% if editions %}
 <h3>Editions</h3>
 {% for edition in editions %}
-<h4>{{ edition }}</h4>
+<h4><a href="{% url 'core:music-album-edition:detail' edition.pk %}">{{ edition }}</a></h4>
 {% if edition.tracks %}
 <table>
   <thead>

@@ -102,9 +102,8 @@ class MusicAlbumEdition(BaseAuditable):
     def __str__(self) -> str:
         return self.name
 
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.music_album.title} ({self.name})'
+    def get_title(self) -> str:
+        return f'{self.music_album.title} [{self.name}]'
 
     @cached_property
     def tracks(self) -> QuerySet:

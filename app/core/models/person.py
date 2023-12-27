@@ -11,6 +11,7 @@ from django.db.models import (
     PositiveSmallIntegerField,
     PROTECT,
     Q,
+    SET_NULL,
     TextChoices,
     TextField,
     UniqueConstraint,
@@ -46,6 +47,11 @@ class Person(BaseAuditable):
         validators=[validate_date_not_future]
     )
     notes = TextField(blank=True)
+    featured_photo = ForeignKey(
+        'PersonXPhoto', on_delete=SET_NULL,
+        null=True, blank=True,
+        related_name='+',
+    )
 
     music_albums = ManyToManyField(
         'MusicAlbum', through='MusicAlbumXPerson',

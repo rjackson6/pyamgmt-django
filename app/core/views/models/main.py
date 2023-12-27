@@ -24,13 +24,23 @@ class MusicAlbumDetailView(DetailView):
     template_name = 'core/models/music-album--detail.html'
 
 
+class MusicAlbumEditionDetailView(DetailView):
+    model = MusicAlbumEdition
+    template_name = 'core/models/music-album-edition--detail.html'
+
+
 class PersonListView(ListView):
     model = Person
+    ordering = ('preferred_name',)
     template_name = 'core/models/person--list.html'
 
 
 class PersonDetailView(DetailView):
     model = Person
+    queryset = (
+        Person.objects
+        .select_related('featured_photo__photo')
+    )
     template_name = 'core/models/person--detail.html'
 
 
