@@ -83,6 +83,7 @@ class SongArrangement(BaseAuditable):
         **default_related_names(__qualname__)
     )
     description = CharField(max_length=255, blank=True)
+    lyrics = TextField(blank=True, default='')
     is_original = BooleanField(default=True)
     music_artists = ManyToManyField(
         'MusicArtist', through='MusicArtistXSongArrangement',
@@ -140,7 +141,6 @@ class SongPerformance(BaseAuditable):
         STUDIO = 'STUDIO', 'Studio Recording'
 
     description = CharField(max_length=63, blank=True)
-    lyrics = TextField(blank=True, default='')
     song_arrangement = ForeignKey(
         SongArrangement, on_delete=CASCADE,
         **default_related_names(__qualname__)

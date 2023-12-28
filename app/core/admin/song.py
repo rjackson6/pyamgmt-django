@@ -58,8 +58,8 @@ class SongArrangementAdmin(admin.ModelAdmin):
         _inlines.PersonXSongArrangementInline,
     ]
     list_display = (
-        'title', 'disambiguator', '_performance_count', 'is_original',
-        'description'
+        'title', 'disambiguator', 'is_original', 'description',
+        '_performance_count',
     )
     ordering = ('title', '-is_original', 'description')
 

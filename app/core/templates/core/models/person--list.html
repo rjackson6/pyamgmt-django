@@ -6,12 +6,14 @@
 <table>
   <thead>
   <tr>
-    
+    <th></th>
+    <th>Preferred Name</th>
   </tr>
   </thead>
   <tbody>
   {% for obj in object_list %}
   <tr>
+    <td>{{ forloop.counter }}</td>
     <td>
       <a href="{% url 'core:person:detail' obj.pk %}">
         {{ obj.preferred_name }}

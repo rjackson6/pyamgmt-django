@@ -33,6 +33,14 @@ _person_urls = ([
     ])),
 ], app_name)
 
+_song_performance_urls = ([
+    path('<int:pk>/', include([
+        path('',
+             views.models.SongPerformanceDetailView.as_view(),
+             name='detail')
+    ]))
+], app_name)
+
 urlpatterns = [
     path('', views.main.index, name='index'),
     path('models/', include([
@@ -46,6 +54,8 @@ urlpatterns = [
              include(_music_artist_urls, namespace='music-artist')),
         path('person/',
              include(_person_urls, namespace='person')),
+        path('song-performance/',
+             include(_song_performance_urls, namespace='song-performance')),
         path('vehicle/', views.models.VehicleListView.as_view()),
     ])),
     path('networks/', include([

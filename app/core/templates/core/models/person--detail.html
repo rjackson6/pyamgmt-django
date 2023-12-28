@@ -3,10 +3,10 @@
 
 {% block info_card %}
 {% if person.featured_photo %}
-<div>
+<div class="info-card__photo-wrapper">
   <img
       class="info-card__featured-photo"
-      src="{{ person.featured_photo.photo.image.url }}"
+      src="{{ person.featured_photo.photo.image_medium.url }}"
       alt="Featured photo">
 </div>
 {% endif %}
@@ -62,7 +62,9 @@
 <ul>
   {% for song_performance in song_performances %}
   <li>
-    {{ song_performance.get_title }}
+    <a href="{% url 'core:song-performance:detail' song_performance.pk %}">
+      {{ song_performance.get_title }}
+    </a>
   </li>
   {% endfor %}
 </ul>

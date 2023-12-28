@@ -5,6 +5,7 @@ from .main import (
     MusicAlbumEditionDetailView,
     PersonDetailView,
     PersonListView,
+    SongPerformanceDetailView,
     VehicleListView,
 )
 from .music_artist import (

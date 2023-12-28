@@ -16,10 +16,10 @@ class PersonAdmin(admin.ModelAdmin):
         _inlines.MusicalInstrumentXPersonInline,
     ]
     list_display = (
-        'image_tag', 'full_name', 'is_living', 'date_of_birth', 'date_of_death', 'age',
-        'notes',
+        'image_tag', 'preferred_name', 'full_name', 'is_living',
+        'date_of_birth', 'date_of_death', 'age', 'notes',
     )
-    list_display_links = ('full_name',)
+    list_display_links = ('preferred_name', 'full_name',)
     list_select_related = ('featured_photo__photo',)
     ordering = ('preferred_name', 'first_name', 'last_name',)
     search_fields = ('first_name', 'last_name', 'nickname', 'preferred_name',)
@@ -30,5 +30,5 @@ class PersonAdmin(admin.ModelAdmin):
             return ''
         return format_html(
             '<img src="{}">',
-            obj.featured_photo.photo.thumbnail.url,
+            obj.featured_photo.photo.image_thumbnail.url,
         )

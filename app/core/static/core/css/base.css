@@ -62,6 +62,11 @@ th {
     padding: 1rem;
 }
 
+.info-card__photo-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
 .info-card__featured-photo {
     max-width: 12rem;
 }

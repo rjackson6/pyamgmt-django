@@ -66,6 +66,6 @@ class BeerNetworkView(TemplateView):
                 from_=brewery_key,
                 to=beer_key,
             ))
-        vis_data = VisNetwork(list(nodes.values()), edges)
-        context['vis_data'] = vis_data.to_dict()
+        vis_data = VisNetwork(nodes, edges)
+        context['vis_data'] = vis_data.to_json()
         return context
