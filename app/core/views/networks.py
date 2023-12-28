@@ -40,16 +40,11 @@ class MusicArtistNetworkView(TemplateView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
-        artist_to_person_network = network.music_artist_x_person()
-        album_to_artist_network = network.music_album_x_music_artist()
-        album_to_person_network = network.music_album_x_person()
-        person_to_song_network = network.person_x_song()
-
-        vis_data = network.person_x_song_performance()
-        vis_data.extend(artist_to_person_network)
-        vis_data.extend(album_to_artist_network)
-        vis_data.extend(album_to_person_network)
-        vis_data.extend(person_to_song_network)
+        vis_data = network.music_artist_x_person()
+        vis_data.extend(network.music_album_x_music_artist())
+        vis_data.extend(network.music_album_x_person())
+        vis_data.extend(network.person_x_song())
+        vis_data.extend(network.person_x_song_performance())
         context.update({'vis_data': vis_data.to_json()})
         return context
 

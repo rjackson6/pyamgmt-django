@@ -36,22 +36,23 @@ class Photo(BaseAuditable):
         ext = ext[1:].lower()
         if ext == 'jpg':
             ext = 'jpeg'
-        resizes = []
         for size in self.ImageSize:
+            file_to_save = self.image_full
+            resize = False
             w, h = size.value
             if width > w or height > h:
-                resizes.append(size)
-        if resizes:
+                resize = True
             with Image.open(self.image_full) as image_full:
-                for size in resizes:
-                    size_name = size.name.lower()
+                size_name = size.name.lower()
+                if resize:
                     new_image = BytesIO()
                     t = ImageOps.contain(image_full, size.value)
                     t.save(new_image, ext)
-                    field = getattr(self, f'image_{size_name}')
-                    field.save(
-                        f'{name}--{size_name}.{ext}',
-                        File(new_image),
-                        save=False
-                    )
+                    file_to_save = new_image
+            field = getattr(self, f'image_{size_name}')
+            field.save(
+                f'{name}--{size_name}.{ext}',
+                File(file_to_save),
+                save=False
+            )
         super().save(*args, **kwargs)

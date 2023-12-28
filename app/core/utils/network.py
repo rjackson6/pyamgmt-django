@@ -103,8 +103,10 @@ def music_artist_x_person() -> VisNetwork:
         if person_node.id not in nodes:
             nodes[person_node.id] = person_node
         dashes = None
+        width = 3
         if edge.is_active is False:
             dashes = True
+            width = 1
         edge_key = (person_node.id, music_artist_node.id)
         if edge_key not in edge_set:
             edge_set.add(edge_key)
@@ -112,7 +114,7 @@ def music_artist_x_person() -> VisNetwork:
                 from_=person_node.id,
                 to=music_artist_node.id,
                 dashes=dashes,
-                width=3,
+                width=width,
             ))
     return VisNetwork(nodes, edges)
 
