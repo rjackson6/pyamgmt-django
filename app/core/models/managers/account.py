@@ -2,7 +2,7 @@ from collections import deque
 
 from django.db.models import Manager
 
-from .._managers import traverse_depth
+from .._utils import traverse_depth
 
 
 class AccountManager(Manager):
@@ -119,3 +119,34 @@ class AccountManager(Manager):
             WHERE core_account.id IN cte;
         """)
         return self.raw(query, params)
+
+
+class AccountManagerAsset(Manager):
+    def get_queryset(self):
+        return (
+            super().get_queryset()
+            .filter(subtype=self.model.Subtype.ASSET)
+        )
+
+
+class AccountManagerLiability(Manager):
+    def get_queryset(self):
+        return (
+            super().get_queryset()
+            .filter(subtype=self.model.Subtype.LIABILITY)
+        )
+
+
+class AccountManagerEquity(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.EQUITY)
+
+
+class AccountManagerIncome(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.INCOME)
+
+
+class AccountManagerExpense(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(subtype=self.model.Subtype.EXPENSE)

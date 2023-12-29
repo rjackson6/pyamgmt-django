@@ -9,6 +9,7 @@ from . import _inlines
 @admin.register(music_album.MusicAlbum)
 class MusicAlbumAdmin(admin.ModelAdmin):
     inlines = [
+        _inlines.MusicAlbumArtworkInline,
         _inlines.MusicAlbumEditionInline,
         _inlines.MusicAlbumXMusicArtistInline,
         _inlines.MusicAlbumXMusicTagInline,
@@ -207,12 +208,16 @@ class MusicArtistXSongPerformanceAdmin(admin.ModelAdmin):
         'music_artist',
         'song_performance__song_arrangement',
     )
+    ordering = (
+        'music_artist__name',
+        'song_performance__song_arrangement__title',
+    )
 
     @staticmethod
     def _description(obj) -> str:
         return (
-            f'{obj.song_performance.song_arrangement.title}'
-            f' : {obj.music_artist.name}'
+            f'{obj.music_artist.name}'
+            f' : {obj.song_performance.song_arrangement.title}'
         )
 
 

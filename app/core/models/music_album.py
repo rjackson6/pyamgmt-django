@@ -1,3 +1,6 @@
+import enum
+import hashlib
+
 from django.db.models import (
     BooleanField, CharField, ForeignKey, ImageField, Manager, ManyToManyField,
     PositiveSmallIntegerField,
@@ -10,7 +13,7 @@ from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
 from django_base.validators import validate_year_not_future
 
-from ._utils import get_default_media_format_audio
+from ._utils import get_default_media_format_audio, resize_image
 
 
 class MusicAlbum(BaseAuditable):
@@ -62,18 +65,47 @@ class MusicAlbum(BaseAuditable):
 
 class MusicAlbumArtwork(BaseAuditable):
     """Holds zero or many images relating to a MusicAlbum."""
+
+    class ImageSize(enum.Enum):
+        THUMBNAIL = (100, 100)
+        SMALL = (250, 250)
+        MEDIUM = (640, 640)
+        LARGE = (1280, 1280)
+
+    music_album_id: int
+
     music_album = ForeignKey(
         MusicAlbum, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_album_id: int
-    image = ImageField()
+    short_description = CharField(max_length=255, blank=True)
+    image_full = ImageField()
+    # Programmatic fields
+    image_full_sha256 = CharField(
+        max_length=64, unique=True, null=True, editable=False
+    )
+    image_large = ImageField(null=True, blank=True, editable=False)
+    image_medium = ImageField(null=True, blank=True, editable=False)
+    image_small = ImageField(null=True, blank=True, editable=False)
+    image_thumbnail = ImageField(null=True, blank=True, editable=False)
 
     class Meta:
         verbose_name_plural = 'music album artwork'
 
     def __str__(self) -> str:
         return f'MusicAlbumArtwork {self.pk}: {self.music_album_id}'
+
+    def save(self, *args, **kwargs) -> None:
+        image_file = self.image_full.open()
+        self.image_full_sha256 = (
+            hashlib.file_digest(image_file, 'sha256')
+            .hexdigest()
+        )
+        images = resize_image(self.image_full, self.ImageSize)
+        for field_name, file in images.items():
+            field = getattr(self, field_name)
+            field.save(file[0], file[1], save=False)
+        super().save(*args, **kwargs)
 
 
 class MusicAlbumEdition(BaseAuditable):

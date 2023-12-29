@@ -78,6 +78,8 @@ urlpatterns = [
         path('', views.networks.NetworkIndex.as_view(), name='index'),
         path('music-album-x-music-artist/',
              views.networks.MusicArtistDetailedNetworkView.as_view()),
+        path('film-games-and-music/',
+             views.networks.FilmGamesAndMusicNetworkView.as_view()),
         path('music-artists/', views.networks.MusicArtistNetworkView.as_view()),
         path('music-tags/', views.networks.MusicTagNetworkView.as_view()),
         path('person/', views.networks.PersonRelationView.as_view()),

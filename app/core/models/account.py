@@ -11,7 +11,6 @@ from django.utils.functional import cached_property
 from django_base.models.models import BaseAuditable
 from django_base.utils import default_related_names, pascal_case_to_snake_case
 
-from . import _managers
 from . import managers
 
 
@@ -48,11 +47,11 @@ class Account(BaseAuditable):
     )
 
     objects = managers.account.AccountManager()
-    assets = _managers.AccountManagerAsset()
-    liabilities = _managers.AccountManagerLiability()
-    equities = _managers.AccountManagerEquity()
-    incomes = _managers.AccountManagerIncome()
-    expenses = _managers.AccountManagerExpense()
+    assets = managers.account.AccountManagerAsset()
+    liabilities = managers.account.AccountManagerLiability()
+    equities = managers.account.AccountManagerEquity()
+    incomes = managers.account.AccountManagerIncome()
+    expenses = managers.account.AccountManagerExpense()
 
     class Meta:
         verbose_name_plural = 'Account'
@@ -109,8 +108,8 @@ class AccountAsset(BaseAuditable):
     )
 
     objects = Manager()
-    financials = _managers.AccountAssetManagerFinancial()
-    real = _managers.AccountAssetManagerReal()
+    financials = managers.account_asset.AccountAssetManagerFinancial()
+    real = managers.account_asset.AccountAssetManagerReal()
 
     class Meta:
         verbose_name_plural = 'Account::Asset'

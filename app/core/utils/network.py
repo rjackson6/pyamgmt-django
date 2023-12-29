@@ -1,9 +1,11 @@
 from collections import defaultdict
 import itertools
+from typing import Callable
 
 from schemaviz.utils import Edge, EdgeColor, Node, VisNetwork
 
 from core.models import (
+    MotionPictureXPerson,
     MusicAlbumXMusicArtist,
     MusicAlbumXPerson,
     MusicArtistXPerson,
@@ -13,11 +15,53 @@ from core.models import (
     PersonXPersonRelationship,
     PersonXSong,
     PersonXSongPerformance,
+    PersonXVideoGame, MusicAlbumXVideoGame,
 )
 
 
-def music_album_x_music_artist() -> VisNetwork:
+def resolve_edge_kwargs(
+        edge_kwargs: dict | Callable = None,
+        edge=None):
+    if callable(edge_kwargs):
+        return edge_kwargs(edge)
+    else:
+        return edge_kwargs
+
+
+def motion_picture_x_person(edge_kwargs: dict | Callable = None) -> VisNetwork:
+    edge_kwargs = edge_kwargs or {}
+    nodes = {}
+    edges = []
+    edge_set = set()
+    qs = (
+        MotionPictureXPerson.objects
+        .select_related('motion_picture', 'person')
+    )
+    for edge in qs:
+        motion_picture = edge.motion_picture
+        motion_picture_node = Node.from_motion_picture(motion_picture)
+        if motion_picture_node.id not in nodes:
+            nodes[motion_picture_node.id] = motion_picture_node
+        person = edge.person
+        person_node = Node.from_person(person)
+        if person_node.id not in nodes:
+            nodes[person_node.id] = person_node
+        edge_key = (motion_picture_node.id, person_node.id)
+        if edge_key not in edge_set:
+            kwargs = resolve_edge_kwargs(edge_kwargs, edge)
+            edge_set.add(edge_key)
+            edges.append(Edge(
+                from_=person_node.id,
+                to=motion_picture_node.id,
+                **kwargs
+            ))
+    return VisNetwork(nodes, edges)
+
+
+def music_album_x_music_artist(
+        edge_kwargs: dict | Callable = None) -> VisNetwork:
     """Networks where two or more artists worked on an album together."""
+    edge_kwargs = edge_kwargs or {}
     album_to_artist_map = defaultdict(list)
     nodes = {}
     edges = []
@@ -41,16 +85,18 @@ def music_album_x_music_artist() -> VisNetwork:
                 nodes[node_b.id] = node_b
             edge_key = (node_a.id, node_b.id)
             if edge_key not in edge_set:
+                kwargs = resolve_edge_kwargs(edge_kwargs)
                 edge_set.add(edge_key)
                 edges.append(Edge(
                     from_=node_a.id,
                     to=node_b.id,
-                    width=2,
+                    **kwargs
                 ))
     return VisNetwork(nodes, edges)
 
 
-def music_album_x_person() -> VisNetwork:
+def music_album_x_person(edge_kwargs: dict = None) -> VisNetwork:
+    edge_kwargs = edge_kwargs or {}
     album_to_person_map = defaultdict(list)
     nodes = {}
     edges = []
@@ -82,15 +128,52 @@ def music_album_x_person() -> VisNetwork:
                 edges.append(Edge(
                     from_=person_node.id,
                     to=music_artist_node.id,
-                    color=EdgeColor(
-                        color='66FF66'
-                    ),
-                    length=600,
+                    **edge_kwargs
                 ))
     return VisNetwork(nodes, edges)
 
 
-def music_artist_x_person() -> VisNetwork:
+def music_album_x_video_game(
+        edge_kwargs: dict | Callable = None) -> VisNetwork:
+    edge_kwargs = edge_kwargs or {}
+    album_to_video_game_map = defaultdict(list)
+    nodes = {}
+    edges = []
+    edge_set = set()
+    qs = (
+        MusicAlbumXVideoGame.objects
+        .select_related('music_album', 'video_game')
+    )
+    for edge in qs:
+        album_to_video_game_map[edge.music_album.pk].append(edge.video_game)
+    qs = (
+        MusicAlbumXMusicArtist.objects
+        .select_related('music_album', 'music_artist')
+        .filter(music_album_id__in=album_to_video_game_map.keys())
+    )
+    for edge in qs:
+        music_artist = edge.music_artist
+        music_artist_node = Node.from_music_artist(music_artist)
+        if music_artist_node.id not in nodes:
+            nodes[music_artist_node.id] = music_artist_node
+        for video_game in album_to_video_game_map.get(edge.music_album.pk, []):
+            video_game_node = Node.from_video_game(video_game)
+            if video_game_node.id not in nodes:
+                nodes[video_game_node.id] = video_game_node
+            edge_key = (music_artist_node.id, video_game_node.id)
+            if edge_key not in edge_set:
+                kwargs = resolve_edge_kwargs(edge_kwargs, edge)
+                edge_set.add(edge_key)
+                edges.append(Edge(
+                    from_=music_artist_node.id,
+                    to=video_game_node.id,
+                    **kwargs
+                ))
+    return VisNetwork(nodes, edges)
+
+
+def music_artist_x_person(edge_kwargs: dict | Callable = None) -> VisNetwork:
+    edge_kwargs = edge_kwargs or {}
     nodes = {}
     edges = []
     edge_set = set()
@@ -104,24 +187,20 @@ def music_artist_x_person() -> VisNetwork:
         person_node = Node.from_person(person)
         if person_node.id not in nodes:
             nodes[person_node.id] = person_node
-        dashes = None
-        width = 3
-        if edge.is_active is False:
-            dashes = True
-            width = 1
         edge_key = (person_node.id, music_artist_node.id)
         if edge_key not in edge_set:
+            kwargs = resolve_edge_kwargs(edge_kwargs, edge)
             edge_set.add(edge_key)
             edges.append(Edge(
                 from_=person_node.id,
                 to=music_artist_node.id,
-                dashes=dashes,
-                width=width,
+                **kwargs
             ))
     return VisNetwork(nodes, edges)
 
 
-def person_x_person(queryset, edge_kwargs: dict = None) -> VisNetwork:
+def person_x_person(
+        queryset, edge_kwargs: dict | Callable = None) -> VisNetwork:
     edge_kwargs = edge_kwargs or {}
     nodes = {}
     edges = []
@@ -137,17 +216,18 @@ def person_x_person(queryset, edge_kwargs: dict = None) -> VisNetwork:
             nodes[person_b_node.id] = person_b_node
         edge_key = (person_a_node.id, person_b_node.id)
         if edge_key not in edge_set:
+            kwargs = resolve_edge_kwargs(edge_kwargs, edge)
             edges.append(Edge(
                 from_=person_a_node.id,
                 to=person_b_node.id,
-                **edge_kwargs,
+                **kwargs,
             ))
     return VisNetwork(nodes, edges)
 
 
 def person_x_person_relation(
         queryset=None,
-        edge_kwargs: dict = None) -> VisNetwork:
+        edge_kwargs: dict | Callable = None) -> VisNetwork:
     if not queryset:
         queryset = (
             PersonXPersonRelation.objects
@@ -158,7 +238,7 @@ def person_x_person_relation(
 
 def person_x_person_relationship(
         queryset=None,
-        edge_kwargs: dict = None) -> VisNetwork:
+        edge_kwargs: dict | Callable = None) -> VisNetwork:
     if not queryset:
         queryset = (
             PersonXPersonRelationship.objects
@@ -167,7 +247,8 @@ def person_x_person_relationship(
     return person_x_person(queryset, edge_kwargs)
 
 
-def person_x_song() -> VisNetwork:
+def person_x_song(edge_kwargs: dict | Callable = None) -> VisNetwork:
+    edge_kwargs = edge_kwargs or {}
     song_to_person_map = defaultdict(list)
     nodes = {}
     edges = []
@@ -194,19 +275,19 @@ def person_x_song() -> VisNetwork:
                 nodes[person_node.id] = person_node
             edge_key = (person_node.id, music_artist_node.id)
             if edge_key not in edge_set:
+                kwargs = resolve_edge_kwargs(edge_kwargs, edge)
                 edge_set.add(edge_key)
                 edges.append(Edge(
                     from_=person_node.id,
                     to=music_artist_node.id,
-                    color=EdgeColor(
-                        color='2266FF'
-                    ),
-                    length=600,
+                    **kwargs
                 ))
     return VisNetwork(nodes, edges)
 
 
-def person_x_song_performance() -> VisNetwork:
+def person_x_song_performance(
+        edge_kwargs: dict | Callable = None) -> VisNetwork:
+    edge_kwargs = edge_kwargs or {}
     song_performance_to_person_map = defaultdict(list)
     nodes = {}
     edges = []
@@ -240,12 +321,41 @@ def person_x_song_performance() -> VisNetwork:
                 nodes[person_node.id] = person_node
             edge_key = (person_node.id, music_artist_node.id)
             if edge_key not in edge_set:
+                kwargs = resolve_edge_kwargs(edge_kwargs, edge)
                 edge_set.add(edge_key)
                 edges.append(Edge(
                     from_=person_node.id,
                     to=music_artist_node.id,
-                    color=EdgeColor(
-                        color='6688FF',
-                    ),
+                    **kwargs
                 ))
+    return VisNetwork(nodes, edges)
+
+
+def person_x_video_game(edge_kwargs: dict | Callable = None) -> VisNetwork:
+    edge_kwargs = edge_kwargs or {}
+    nodes = {}
+    edges = []
+    edge_set = set()
+    qs = (
+        PersonXVideoGame.objects
+        .select_related('person', 'video_game')
+    )
+    for edge in qs:
+        person = edge.person
+        person_node = Node.from_person(person)
+        if person_node.id not in nodes:
+            nodes[person_node.id] = person_node
+        video_game = edge.video_game
+        video_game_node = Node.from_video_game(video_game)
+        if video_game_node.id not in nodes:
+            nodes[video_game_node.id] = video_game_node
+        edge_key = (person_node.id, video_game_node.id)
+        if edge_key not in edge_set:
+            kwargs = resolve_edge_kwargs(edge_kwargs, edge)
+            edge_set.add(edge_key)
+            edges.append(Edge(
+                from_=person_node.id,
+                to=video_game_node.id,
+                **kwargs
+            ))
     return VisNetwork(nodes, edges)

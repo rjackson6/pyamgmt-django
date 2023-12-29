@@ -2,13 +2,11 @@ from collections import defaultdict
 
 from django_ccbv.views import TemplateView
 
-from schemaviz import Edge, EdgeColor, Node, NodeFont, VisNetwork
+from schemaviz import Edge, EdgeColor, Node, VisNetwork
 
 from ..models import (
-    MusicAlbumXMusicArtist,
     MusicAlbumXMusicTag,
     MusicAlbumEditionXSongRecording,
-    MusicArtistXPerson,
     MusicArtistXSong,
     MusicArtistXSongPerformance,
 )
@@ -35,6 +33,23 @@ class MusicNetworkView(TemplateView):
         return context
 
 
+class FilmGamesAndMusicNetworkView(TemplateView):
+    template_name = 'core/network.html'
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        vis_data = network.motion_picture_x_person()
+        vis_data.extend(network.music_artist_x_person())
+        vis_data.extend(network.music_album_x_music_artist())
+        vis_data.extend(network.music_album_x_person())
+        vis_data.extend(network.music_album_x_video_game())
+        vis_data.extend(network.person_x_song())
+        vis_data.extend(network.person_x_song_performance())
+        vis_data.extend(network.person_x_video_game())
+        context.update({'vis_data': vis_data.to_json()})
+        return context
+
+
 class MusicArtistNetworkView(TemplateView):
     """Explores edges that relate Music Artists to people.
 
@@ -42,13 +57,45 @@ class MusicArtistNetworkView(TemplateView):
     """
     template_name = 'core/music-artist-network.html'
 
+    @staticmethod
+    def get_music_artist_x_person_edge_kwargs(edge) -> dict:
+        dashes = None
+        width = 3
+        if edge.is_active is False:
+            dashes = True
+            width = 1
+        return {
+            'dashes': dashes,
+            'width': width
+        }
+
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
-        vis_data = network.music_artist_x_person()
-        vis_data.extend(network.music_album_x_music_artist())
-        vis_data.extend(network.music_album_x_person())
-        vis_data.extend(network.person_x_song())
-        vis_data.extend(network.person_x_song_performance())
+        vis_data = network.music_artist_x_person(
+            edge_kwargs=self.get_music_artist_x_person_edge_kwargs
+        )
+        vis_data.extend(network.music_album_x_music_artist(
+            edge_kwargs={
+                'width': 2,
+            }
+        ))
+        vis_data.extend(network.music_album_x_person(
+            edge_kwargs={
+                'color': EdgeColor(color='66FF66'),
+                'length': 600,
+            }
+        ))
+        vis_data.extend(network.person_x_song(
+            edge_kwargs={
+                'color': EdgeColor(color='2266FF'),
+                'length': 600,
+            }
+        ))
+        vis_data.extend(network.person_x_song_performance(
+            edge_kwargs={
+                'color': EdgeColor(color='6688FF'),
+            }
+        ))
         context.update({'vis_data': vis_data.to_json()})
         return context
 
@@ -58,72 +105,14 @@ class MusicArtistDetailedNetworkView(TemplateView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
+        vis_data = network.music_artist_x_person()
         album_to_artist_map = defaultdict(list)
         artist_to_song_arrangement_set = set()
         nodes = {}
         edges = []
-        # Generalizing this would need a from_attr, to_attr, and a handler
-        # for connected foreign keys, as well as labels and keys.
-        # Artist <-> Person
-        qs = MusicArtistXPerson.with_related.all()
-        for edge in qs:
-            music_artist = edge.music_artist
-            person = edge.person
-            music_artist_key = f'music_artist-{music_artist.pk}'
-            person_key = f'person-{person.pk}'
-            if music_artist_key not in nodes:
-                nodes[music_artist_key] = Node(
-                    id=music_artist_key,
-                    label=music_artist.name,
-                    group='music_artist',
-                    font=NodeFont(size=30),
-                )
-            if person_key not in nodes:
-                nodes[person_key] = Node(
-                    id=person_key,
-                    label=edge.person.full_name,
-                    group='person',
-                )
-            dashes = None
-            if edge.is_active is False:
-                dashes = True
-            edges.append(Edge(
-                from_=person_key,
-                to=music_artist_key,
-                dashes=dashes,
-                length=600,
-            ))
-        # Album <-> Artist
-        qs = (
-            MusicAlbumXMusicArtist.objects
-            .select_related(
-                'music_album',
-                'music_artist',
-            )
-        )
-        for edge in qs:
-            music_album = edge.music_album
-            music_artist = edge.music_artist
-            music_album_key = f'music_album-{music_album.pk}'
-            music_artist_key = f'music_artist-{music_artist.pk}'
-            if music_album_key not in nodes:
-                nodes[music_album_key] = Node(
-                    id=music_album_key,
-                    label=music_album.title,
-                    group='music_album',
-                )
-            if music_artist_key not in nodes:
-                nodes[music_artist_key] = Node(
-                    id=music_artist_key,
-                    label=music_artist.name,
-                    group='music_artist',
-                    font=NodeFont(size=30),
-                )
-            edges.append(Edge(
-                from_=music_album_key,
-                to=music_artist_key,
-            ))
-            album_to_artist_map[music_album_key].append(music_artist_key)
+
+        vis_data.extend(network.music_album_x_music_artist())
+
         # Album <-> Song
         # If Artist connects through a song, ignore additional edges
         # later on
@@ -257,18 +246,43 @@ class MusicTagNetworkView(TemplateView):
 class PersonRelationView(TemplateView):
     template_name = 'core/network.html'
 
+    @staticmethod
+    def get_person_x_person_relation_edge_kwargs(edge) -> dict:
+        color = EdgeColor(color='#4488FF')
+        width = 3
+        length = None
+        if edge.relation in edge.Relation.get_sibling_members():
+            color = EdgeColor(color='#BB0000')
+            width = 2
+            length = 600
+        return {
+            'color': color,
+            'length': length,
+            'width': width,
+        }
+
+    @staticmethod
+    def get_person_x_person_relationship_edge_kwargs(edge) -> dict:
+        color = EdgeColor(color='#00FF00')
+        width = 1
+        length = None
+        if edge.relationship in edge.Relationship.get_partner_members():
+            color = EdgeColor(color='#FF00FF')
+            width = 3
+            length = None
+        return {
+            'color': color,
+            'width': width,
+            'length': length,
+        }
+
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         vis_data = network.person_x_person_relation(
-            edge_kwargs={
-                'color': EdgeColor(color='#FF0000'),
-                'width': 3,
-            })
+            edge_kwargs=self.get_person_x_person_relation_edge_kwargs)
         vis_data.extend(
             network.person_x_person_relationship(
-                edge_kwargs={
-                    'color': EdgeColor(color='#00FF00'),
-                }
+                edge_kwargs=self.get_person_x_person_relationship_edge_kwargs
             ), duplicate_edges=True)
         context['vis_data'] = vis_data.to_json()
         return context

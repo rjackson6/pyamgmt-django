@@ -1,1 +1,6 @@
-from . import account, music_artist, song
+from . import (
+    account,
+    account_asset,
+    music_artist,
+    song,
+)

@@ -20,7 +20,7 @@ accounts can be fetched on-demand.
 {% block main %}
 <div>
   {% for account in account_list %}
-  <div>
+  <div style="outline: 1px solid slateblue">
     <div>
       {{ account }} {% if account.subtype %}{{ account.subtype }}{% endif %}
     </div>

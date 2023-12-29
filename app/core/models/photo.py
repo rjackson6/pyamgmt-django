@@ -1,12 +1,11 @@
 import enum
-from io import BytesIO
-import os
-from PIL import Image, ImageOps
+import hashlib
 
-from django.core.files import File
 from django.db.models import CharField, ImageField, TextField
 
 from django_base.models import BaseAuditable
+
+from ._utils import resize_image
 
 
 class Photo(BaseAuditable):
@@ -19,40 +18,29 @@ class Photo(BaseAuditable):
 
     short_description = CharField(max_length=255, blank=True)
     description = TextField(blank=True)
-    image_full = ImageField()
     # TODO: SHA hash
-    # TODO: Thumbnail field
-    image_thumbnail = ImageField(null=True, blank=True, editable=False)
-    image_small = ImageField(null=True, blank=True, editable=False)
-    image_medium = ImageField(null=True, blank=True, editable=False)
+    # TODO: The following fields could probably be a mixin, but I'm not sure
+    #  about overriding the save method
+    image_full = ImageField()
+    image_full_sha256 = CharField(
+        max_length=64, unique=True, null=True, editable=False,
+    )
     image_large = ImageField(null=True, blank=True, editable=False)
+    image_medium = ImageField(null=True, blank=True, editable=False)
+    image_small = ImageField(null=True, blank=True, editable=False)
+    image_thumbnail = ImageField(null=True, blank=True, editable=False)
 
     def __str__(self) -> str:
         return self.short_description
 
     def save(self, *args, **kwargs) -> None:
-        width, height = self.image_full.width, self.image_full.height
-        name, ext = os.path.splitext(self.image_full.name)
-        ext = ext[1:].lower()
-        if ext == 'jpg':
-            ext = 'jpeg'
-        for size in self.ImageSize:
-            file_to_save = self.image_full
-            resize = False
-            w, h = size.value
-            if width > w or height > h:
-                resize = True
-            with Image.open(self.image_full) as image_full:
-                size_name = size.name.lower()
-                if resize:
-                    new_image = BytesIO()
-                    t = ImageOps.contain(image_full, size.value)
-                    t.save(new_image, ext)
-                    file_to_save = new_image
-            field = getattr(self, f'image_{size_name}')
-            field.save(
-                f'{name}--{size_name}.{ext}',
-                File(file_to_save),
-                save=False
-            )
+        image_file = self.image_full.open()
+        self.image_full_sha256 = (
+            hashlib.file_digest(image_file, 'sha256')
+            .hexdigest()
+        )
+        images = resize_image(self.image_full, self.ImageSize)
+        for field_name, file in images.items():
+            field = getattr(self, field_name)
+            field.save(file[0], file[1], save=False)
         super().save(*args, **kwargs)

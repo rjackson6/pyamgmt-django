@@ -137,7 +137,6 @@ class PersonXPersonRelation(BaseAuditable):
         CHILD = 'CHILD'
         DAUGHTER = 'DAUGHTER'
         FATHER = 'FATHER'
-        FRIEND = 'FRIEND'
         GRANDCHILD = 'GRANDCHILD'
         GRANDDAUGHTER = 'GRANDDAUGHTER'
         GRANDFATHER = 'GRANDFATHER'
@@ -145,9 +144,35 @@ class PersonXPersonRelation(BaseAuditable):
         GRANDPARENT = 'GRANDPARENT'
         GRANDSON = 'GRANDSON'
         MOTHER = 'MOTHER'
+        PARENT = 'PARENT'
         SIBLING = 'SIBLING'
         SISTER = 'SISTER'
         SON = 'SON'
+
+        @classmethod
+        def get_child_members(cls):
+            return (
+                cls.CHILD,
+                cls.DAUGHTER,
+                cls.SON
+            )
+
+        @classmethod
+        def get_parent_members(cls):
+            return (
+                cls.FATHER,
+                cls.MOTHER,
+                cls.PARENT,
+            )
+
+        @classmethod
+        def get_sibling_members(cls):
+            return (
+                cls.BROTHER,
+                cls.SIBLING,
+                cls.SISTER,
+            )
+
     person_a = ForeignKey(
         Person, on_delete=CASCADE,
         related_name='+'
@@ -179,6 +204,7 @@ class PersonXPersonRelation(BaseAuditable):
 
 class PersonXPersonRelationship(BaseAuditable):
     class Relationship(TextChoices):
+        FRIEND = 'FRIEND'
         HUSBAND = 'HUSBAND'
         INSTRUCTOR = 'INSTRUCTOR'
         PARTNER = 'PARTNER'
@@ -186,6 +212,14 @@ class PersonXPersonRelationship(BaseAuditable):
         STUDENT = 'STUDENT'
         TEACHER = 'TEACHER'
         WIFE = 'WIFE'
+
+        @classmethod
+        def get_partner_members(cls):
+            return (
+                cls.HUSBAND,
+                cls.PARTNER,
+                cls.WIFE,
+            )
 
     person_a = ForeignKey(
         Person, on_delete=CASCADE,

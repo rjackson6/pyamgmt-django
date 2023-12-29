@@ -6,6 +6,11 @@ from django.apps import apps
 from django.db.models.fields.related import RelatedField
 
 
+class MotionPicture(Protocol):
+    pk: int
+    title: str
+
+
 class MusicArtist(Protocol):
     pk: int
     name: str
@@ -17,6 +22,11 @@ class Person(Protocol):
 
 
 class Song(Protocol):
+    pk: int
+    title: str
+
+
+class VideoGame(Protocol):
     pk: int
     title: str
 
@@ -52,6 +62,16 @@ class Node:
     font: NodeFont | None = None
 
     @classmethod
+    def from_motion_picture(
+            cls, motion_picture: MotionPicture, **kwargs) -> Self:
+        return cls(
+            id=f'motion_picture-{motion_picture.pk}',
+            label=motion_picture.title,
+            group='motion_picture',
+            **kwargs
+        )
+
+    @classmethod
     def from_music_artist(cls, music_artist: MusicArtist, **kwargs) -> Self:
         return cls(
             id=f'music_artist-{music_artist.pk}',
@@ -76,6 +96,15 @@ class Node:
             id=f'song-{song.pk}',
             label=song.title,
             group='song',
+            **kwargs
+        )
+
+    @classmethod
+    def from_video_game(cls, video_game: VideoGame, **kwargs) -> Self:
+        return cls(
+            id=f'video_game-{video_game.pk}',
+            label=video_game.title,
+            group='video_game',
             **kwargs
         )
 

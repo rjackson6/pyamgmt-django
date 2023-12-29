@@ -14,6 +14,11 @@ class MotionPictureXPersonInline(admin.TabularInline):
     extra = 2
 
 
+class MusicAlbumArtworkInline(admin.TabularInline):
+    model = models.MusicAlbumArtwork
+    extra = 1
+
+
 class MusicAlbumEditionInline(admin.TabularInline):
     model = models.MusicAlbumEdition
     extra = 1
