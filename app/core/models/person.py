@@ -204,10 +204,12 @@ class PersonXPersonRelation(BaseAuditable):
 
 class PersonXPersonRelationship(BaseAuditable):
     class Relationship(TextChoices):
+        CLASSMATE = 'CLASSMATE'
         FRIEND = 'FRIEND'
         HUSBAND = 'HUSBAND'
         INSTRUCTOR = 'INSTRUCTOR'
         PARTNER = 'PARTNER'
+        SCHOOLMATE = 'SCHOOLMATE'
         SPOUSE = 'SPOUSE'
         STUDENT = 'STUDENT'
         TEACHER = 'TEACHER'
@@ -218,6 +220,7 @@ class PersonXPersonRelationship(BaseAuditable):
             return (
                 cls.HUSBAND,
                 cls.PARTNER,
+                cls.SPOUSE,
                 cls.WIFE,
             )
 
