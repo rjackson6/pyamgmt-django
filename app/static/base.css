@@ -151,6 +151,16 @@ td > a {
     min-width: 3rem;
 }
 
+td:has(table) {
+    border: none;
+    padding: 0;
+}
+
+td > table {
+    border: none;
+    width: 100%;
+}
+
 .monospace {
     font-family: monospace, monospace;
 }

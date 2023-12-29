@@ -57,6 +57,7 @@ from .motion_picture import (
     MotionPicture,
     MotionPictureRecording,
     MotionPictureXMusicAlbum,
+    MotionPictureXPerson,
     MotionPictureXSong,
 )
 from .music import (
@@ -110,6 +111,7 @@ from .person import (
     PersonXSong,
     PersonXSongArrangement,
     PersonXSongPerformance,
+    PersonXVideoGame,
 )
 from .photo import (
     Photo

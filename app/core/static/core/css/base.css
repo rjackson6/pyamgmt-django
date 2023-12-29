@@ -54,9 +54,31 @@ th {
     overflow: auto;
 }
 
+.breadcrumbs {
+    display: inline;
+}
+
+.breadcrumbs__list {
+    border-bottom: 1px solid var(--Titanium);
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.breadcrumbs__list li {
+    display: inline-flex;
+}
+
+.breadcrumbs__list > li + li::before {
+    content: "\21D2";
+    padding: 0 0.2rem;
+}
+
 .info-card {
-    border-left: 3px solid var(--Titanium);
-    border-bottom: 3px solid var(--Titanium);
+    border-left: 1px solid var(--Titanium);
+    border-bottom: 1px solid var(--Titanium);
     float: right;
     min-width: 18rem;
     padding: 1rem;
@@ -69,4 +91,8 @@ th {
 
 .info-card__featured-photo {
     max-width: 12rem;
+}
+
+.td-currency {
+    text-align: right;
 }

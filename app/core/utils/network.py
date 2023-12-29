@@ -9,6 +9,8 @@ from core.models import (
     MusicArtistXPerson,
     MusicArtistXSong,
     MusicArtistXSongPerformance,
+    PersonXPersonRelation,
+    PersonXPersonRelationship,
     PersonXSong,
     PersonXSongPerformance,
 )
@@ -117,6 +119,52 @@ def music_artist_x_person() -> VisNetwork:
                 width=width,
             ))
     return VisNetwork(nodes, edges)
+
+
+def person_x_person(queryset, edge_kwargs: dict = None) -> VisNetwork:
+    edge_kwargs = edge_kwargs or {}
+    nodes = {}
+    edges = []
+    edge_set = set()
+    for edge in queryset:
+        person_a = edge.person_a
+        person_a_node = Node.from_person(person_a)
+        if person_a_node.id not in nodes:
+            nodes[person_a_node.id] = person_a_node
+        person_b = edge.person_b
+        person_b_node = Node.from_person(person_b)
+        if person_b_node.id not in nodes:
+            nodes[person_b_node.id] = person_b_node
+        edge_key = (person_a_node.id, person_b_node.id)
+        if edge_key not in edge_set:
+            edges.append(Edge(
+                from_=person_a_node.id,
+                to=person_b_node.id,
+                **edge_kwargs,
+            ))
+    return VisNetwork(nodes, edges)
+
+
+def person_x_person_relation(
+        queryset=None,
+        edge_kwargs: dict = None) -> VisNetwork:
+    if not queryset:
+        queryset = (
+            PersonXPersonRelation.objects
+            .select_related('person_a', 'person_b')
+        )
+    return person_x_person(queryset, edge_kwargs)
+
+
+def person_x_person_relationship(
+        queryset=None,
+        edge_kwargs: dict = None) -> VisNetwork:
+    if not queryset:
+        queryset = (
+            PersonXPersonRelationship.objects
+            .select_related('person_a', 'person_b')
+        )
+    return person_x_person(queryset, edge_kwargs)
 
 
 def person_x_song() -> VisNetwork:

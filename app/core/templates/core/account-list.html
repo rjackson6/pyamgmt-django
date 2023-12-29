@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+
+
+{% comment %}
+A list of accounts and balances should be displayed.
+Last activity date might be nice.
+
+I think I may want to list financial accounts at the top.
+The other accounts should be visible, but perhaps not set up for the register.
+The financial accounts are the central item for the data.
+
+Accounts should have their hierarchies displayed within their groups
+Grouped accounts should have summation of their nested accounts
+(Probably a manager method, along with the hierarchy functions)
+A depth limit would be practical. Top-level accounts can be paginated, nested
+accounts can be fetched on-demand.
+{% endcomment %}
+
+
+{% block main %}
+<div>
+  {% for account in account_list %}
+  <div>
+    <div>
+      {{ account }} {% if account.subtype %}{{ account.subtype }}{% endif %}
+    </div>
+    <div>{{ account.account_asset }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock main %}

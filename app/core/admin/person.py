@@ -1,12 +1,14 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
+from ..forms.admin import PersonForm
 from ..models import person
 from . import _inlines
 
 
 @admin.register(person.Person)
 class PersonAdmin(admin.ModelAdmin):
+    form = PersonForm
     inlines = [
         _inlines.PersonXPhotoInline,
         _inlines.PersonXPersonRelationInline,
@@ -29,6 +31,12 @@ class PersonAdmin(admin.ModelAdmin):
         if not obj.featured_photo:
             return ''
         return format_html(
-            '<img src="{}">',
+            '<img src="{}" alt="{}">',
             obj.featured_photo.photo.image_thumbnail.url,
+            obj.preferred_name
         )
+
+
+@admin.register(person.PersonXPhoto)
+class PersonXPhoto(admin.ModelAdmin):
+    pass

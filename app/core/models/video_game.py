@@ -44,6 +44,10 @@ class VideoGame(BaseAuditable):
         'MusicAlbum', through='MusicAlbumXVideoGame',
         related_name='+', blank=True,
     )
+    personnel = ManyToManyField(
+        'Person', through='PersonXVideoGame',
+        related_name='+', blank=True,
+    )
 
     def __str__(self) -> str:
         return self.title
@@ -153,6 +157,14 @@ class VideoGamePlatformRegion(BaseAuditable):
     @cached_property
     def admin_description(self) -> str:
         return f'{self.video_game_platform.name}: {self.region}'
+
+
+class VideoGameRole(BaseAuditable):
+    """Credits to personnel."""
+    name = CharField(max_length=255, unique=True)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class VideoGameSeries(BaseAuditable):

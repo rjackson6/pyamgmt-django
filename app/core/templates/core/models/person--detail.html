@@ -1,12 +1,24 @@
 {% extends 'core/model-detail.html' %}
 
 
+{% block breadcrumbs__list %}
+<ol class="breadcrumbs__list">
+  <li>Home</li>
+  <li>
+    <a href="{% url 'core:person:list' %}">
+      Person
+    </a>
+  </li>
+  <li>{{ person.preferred_name }}</li>
+</ol>
+{% endblock breadcrumbs__list %}
+
 {% block info_card %}
 {% if person.featured_photo %}
 <div class="info-card__photo-wrapper">
   <img
       class="info-card__featured-photo"
-      src="{{ person.featured_photo.photo.image_medium.url }}"
+      src="{{ person.featured_photo.photo.image_small.url }}"
       alt="Featured photo">
 </div>
 {% endif %}

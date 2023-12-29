@@ -68,11 +68,13 @@ class TxnLineItem(BaseAuditable):
     Every transaction should have at least two line items representing the
     "from" and "to" accounts.
     """
+    account_id: int
+    txn_id: int
+
     account = ForeignKey(
         'Account', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    account_id: int
     amount = CurrencyField()
     debit = BooleanField(default=False)
     memo = TextField(null=True, blank=True)
@@ -80,10 +82,12 @@ class TxnLineItem(BaseAuditable):
         Txn, on_delete=PROTECT,
         related_name='line_items'
     )
-    txn_id: int
 
     def __str__(self) -> str:
         return f'TxnLineItem {self.pk}: {self.txn_id}'
 
     def polarity(self):
         return self.account.debit_polarity(self.debit)
+
+    def value(self) -> Decimal:
+        return round(self.polarity() * self.amount, 2)

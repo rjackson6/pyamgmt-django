@@ -2,9 +2,13 @@
 
 
 {% block main %}
-<div class="info-card">
+<nav class="breadcrumbs">
+  {% block breadcrumbs__list %}
+  {% endblock breadcrumbs__list %}
+</nav>
+<article class="info-card">
   {% block info_card %}{% endblock info_card %}
-</div>
+</article>
 <main class="content">
   {% block content %}{% lorem %}{% endblock content %}
 </main>

@@ -9,6 +9,11 @@ class MotionPictureXMusicAlbumInline(admin.TabularInline):
     extra = 1
 
 
+class MotionPictureXPersonInline(admin.TabularInline):
+    model = models.MotionPictureXPerson
+    extra = 2
+
+
 class MusicAlbumEditionInline(admin.TabularInline):
     model = models.MusicAlbumEdition
     extra = 1
@@ -113,6 +118,7 @@ class PersonXPersonRelationshipInline(admin.TabularInline):
 
 
 class PersonXPhotoInline(admin.TabularInline):
+    form = forms.admin.PersonXPhotoForm
     model = models.PersonXPhoto
     extra = 1
 
@@ -142,6 +148,11 @@ class PersonXSongPerformanceInline(admin.TabularInline):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related('person', 'song_performance__song_arrangement')
+
+
+class PersonXVideoGameInline(admin.TabularInline):
+    model = models.PersonXVideoGame
+    extra = 1
 
 
 class SongArrangementInline(admin.TabularInline):

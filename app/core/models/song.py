@@ -10,7 +10,7 @@ from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
 from django_base.validators import validate_positive_timedelta
 
-from . import _managers
+from . import managers
 
 # TODO 2023-12-20: Roles can apply to a few different models.
 #  Songs are arranged, composed, and engineered
@@ -99,7 +99,7 @@ class SongArrangement(BaseAuditable):
     )
 
     objects = Manager()
-    originals = _managers.SongArrangementOriginalsManager()
+    originals = managers.song.SongArrangementOriginalsManager()
 
     class Meta:
         constraints = [

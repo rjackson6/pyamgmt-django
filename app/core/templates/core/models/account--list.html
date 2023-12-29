@@ -3,9 +3,26 @@
 
 {% block main %}
 <h1>Accounts</h1>
-<div>
+<table>
+  <thead>
+  <tr>
+    <th></th>
+    <th>Name</th>
+    <th>Balance</th>
+  </tr>
+  </thead>
+  <tbody>
   {% for obj in object_list %}
-  <div>{{ obj }}</div>
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>
+      <a>
+        {{ obj.name }}
+      </a>
+    </td>
+    <td class="td-currency">{{ obj.get_balance }}</td>
+  </tr>
   {% endfor %}
-</div>
+  </tbody>
+</table>
 {% endblock main %}

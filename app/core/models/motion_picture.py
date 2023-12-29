@@ -89,9 +89,36 @@ class MotionPictureXMusicAlbum(BaseAuditable):
         **default_related_names(__qualname__)
     )
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('motion_picture', 'music_album'),
+                name='unique_motion_picture_x_music_album'
+            )
+        ]
+
     @cached_property
     def admin_description(self) -> str:
         return f'{self.motion_picture.title} : {self.music_album.title}'
+
+
+class MotionPictureXPerson(BaseAuditable):
+    motion_picture = ForeignKey(
+        MotionPicture, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    person = ForeignKey(
+        'Person', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('motion_picture', 'person'),
+                name='unique_motion_picture_x_person'
+            )
+        ]
 
 
 class MotionPictureXSong(BaseAuditable):
@@ -113,3 +140,11 @@ class MotionPictureXSong(BaseAuditable):
         'Song', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('motion_picture', 'song'),
+                name='unique_motion_picture_x_song'
+            )
+        ]

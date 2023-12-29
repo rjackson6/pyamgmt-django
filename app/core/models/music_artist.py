@@ -15,7 +15,7 @@ from django_base.validators import (
     validate_year_not_future
 )
 
-from . import _managers
+from . import managers
 
 
 class MusicArtist(BaseAuditable):
@@ -56,7 +56,7 @@ class MusicArtist(BaseAuditable):
     )
 
     objects = Manager()
-    with_related = _managers.MusicArtistManager()
+    with_related = managers.music_artist.MusicArtistManager()
 
     class Meta:
         constraints = [
@@ -161,7 +161,7 @@ class MusicArtistXPerson(BaseAuditable):
     )
 
     objects = Manager()
-    with_related = _managers.MusicArtistXPersonManager()
+    with_related = managers.music_artist.MusicArtistXPersonManager()
 
     class Meta:
         constraints = [

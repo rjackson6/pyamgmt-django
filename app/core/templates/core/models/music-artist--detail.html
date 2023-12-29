@@ -1,7 +1,14 @@
-{% extends 'core/base.html' %}
+{% extends 'core/model-detail.html' %}
 
 
-{% block main %}
+{% block info_card %}
+<div>Name: {{ object.name }}</div>
+<div>Active: {{ object.is_active }}</div>
+<div>Years Active:</div>
+{% endblock info_card %}
+
+
+{% block content %}
 <h1>Music Artist</h1>
 <h2>{{ object.name }}</h2>
 
@@ -35,4 +42,4 @@
 {% endif %}
 {% endwith %}
 
-{% endblock main %}
+{% endblock content %}

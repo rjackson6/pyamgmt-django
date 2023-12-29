@@ -4,6 +4,7 @@ from django.db.models import (
     TextChoices,
     CASCADE, PROTECT, SET_NULL,
     Manager,
+    Sum,
 )
 from django.utils.functional import cached_property
 
@@ -11,6 +12,7 @@ from django_base.models.models import BaseAuditable
 from django_base.utils import default_related_names, pascal_case_to_snake_case
 
 from . import _managers
+from . import managers
 
 
 class Account(BaseAuditable):
@@ -23,6 +25,8 @@ class Account(BaseAuditable):
     Liabilities, Income, Capital, Revenue, Gains, Equity:
         decreased by debit; increased by credit
     """
+
+    txn_line_item_set: Manager
 
     class Subtype(TextChoices):
         ASSET = 'ASSET'  # Checking, Savings, Real, Discrete, Inventory
@@ -43,7 +47,7 @@ class Account(BaseAuditable):
         max_length=9, choices=Subtype.choices, default=Subtype.OTHER
     )
 
-    objects = _managers.AccountManager()
+    objects = managers.account.AccountManager()
     assets = _managers.AccountManagerAsset()
     liabilities = _managers.AccountManagerLiability()
     equities = _managers.AccountManagerEquity()
@@ -60,9 +64,11 @@ class Account(BaseAuditable):
         if self.parent_account == self:
             raise ValidationError("An account may not be its own parent.")
 
-    @property
-    def balance(self) -> int:
-        return 0
+    def get_balance(self) -> int:
+        agg = self.txn_line_item_set.aggregate(
+            total=Sum('amount')
+        )
+        return agg['total']
 
     def debit_polarity(self, debit: bool) -> int:
         if self.debit_increases is debit:

@@ -39,7 +39,22 @@ class MusicArtistXPersonChoiceField(ModelChoiceField):
 
 class PersonChoiceField(ModelChoiceField):
     def label_from_instance(self, obj) -> str:
-        return obj.full_name
+        return obj.preferred_name
+
+
+class PersonXPhotoChoiceField(ModelChoiceField):
+    def __init__(self, queryset, **kwargs):
+        if queryset is not None:
+            queryset = (
+                queryset
+                .select_related('person', 'photo')
+            )
+        super().__init__(queryset, **kwargs)
+
+    def label_from_instance(self, obj) -> str:
+        return (
+            f'[{obj.pk}][{obj.photo.pk}] {obj.photo.short_description}'
+        )
 
 
 class SongChoiceField(ModelChoiceField):

@@ -1,3 +1,13 @@
 {% extends 'core/model-detail.html' %}
 
 
+{% block content %}
+<h1>Song Performance</h1>
+<div style="color: red">
+  <ul>
+    <li>Song(s): {{ object.song_arrangement.songs.all }}</li>
+    <li>Arrangement: {{ object.song_arrangement }}</li>
+    <li>Recording(s): {{ object.song_recording_set.all }}</li>
+  </ul>
+</div>
+{% endblock content %}

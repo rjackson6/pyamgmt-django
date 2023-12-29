@@ -24,6 +24,7 @@ class MusicAlbum(BaseAuditable):
     )
     title = CharField(max_length=255)
     disambiguator = CharField(max_length=255, blank=True)
+    notes = TextField(blank=True)
     music_artists = ManyToManyField(
         'MusicArtist',
         through='MusicAlbumXMusicArtist',

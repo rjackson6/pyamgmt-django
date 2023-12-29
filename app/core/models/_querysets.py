@@ -1,6 +1,10 @@
 from django.db.models import Case, F, Q, QuerySet, Sum, Value, When
 
 
+class AccountQuerySet(QuerySet):
+    ...
+
+
 class TxnQuerySet(QuerySet):
     def with_debits(self) -> QuerySet:
         return self.annotate(

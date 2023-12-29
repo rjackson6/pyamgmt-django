@@ -1,11 +1,8 @@
+from django.db.models import Prefetch
+
 from django_ccbv.views.generic import DetailView, ListView
 
 from core.models import *
-
-
-class AccountListView(ListView):
-    model = Account
-    template_name = 'core/models/account--list.html'
 
 
 class MusicAlbumListView(ListView):
@@ -40,6 +37,16 @@ class PersonDetailView(DetailView):
     queryset = (
         Person.objects
         .select_related('featured_photo__photo')
+        .prefetch_related(
+            Prefetch(
+                'music_albums',
+                queryset=MusicAlbum.objects.order_by('title')
+            ),
+            Prefetch(
+                'music_artists',
+                queryset=MusicArtist.objects.order_by('name')
+            )
+        )
     )
     template_name = 'core/models/person--detail.html'
 

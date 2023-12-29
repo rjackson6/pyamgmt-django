@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from django_ccbv.views import TemplateView
 
-from schemaviz import Edge, Node, NodeFont, VisNetwork
+from schemaviz import Edge, EdgeColor, Node, NodeFont, VisNetwork
 
 from ..models import (
     MusicAlbumXMusicArtist,
@@ -13,6 +13,10 @@ from ..models import (
     MusicArtistXSongPerformance,
 )
 from ..utils import network
+
+
+class NetworkIndex(TemplateView):
+    template_name = 'core/network-index.html'
 
 
 class MusicNetworkView(TemplateView):
@@ -247,6 +251,26 @@ class MusicTagNetworkView(TemplateView):
         context.update({
             'vis_data': vis_data.to_json(),
         })
+        return context
+
+
+class PersonRelationView(TemplateView):
+    template_name = 'core/network.html'
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        vis_data = network.person_x_person_relation(
+            edge_kwargs={
+                'color': EdgeColor(color='#FF0000'),
+                'width': 3,
+            })
+        vis_data.extend(
+            network.person_x_person_relationship(
+                edge_kwargs={
+                    'color': EdgeColor(color='#00FF00'),
+                }
+            ), duplicate_edges=True)
+        context['vis_data'] = vis_data.to_json()
         return context
 
 

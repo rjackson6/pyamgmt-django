@@ -55,7 +55,10 @@ admin.site.register(manufacturer.Manufacturer)
 
 @admin.register(motion_picture.MotionPicture)
 class MotionPictureAdmin(admin.ModelAdmin):
-    inlines = [_inlines.MotionPictureXMusicAlbumInline]
+    inlines = [
+        _inlines.MotionPictureXPersonInline,
+        _inlines.MotionPictureXMusicAlbumInline,
+    ]
     ordering = ('title', 'year_produced')
 
 
@@ -135,6 +138,7 @@ class VideoGameAdmin(admin.ModelAdmin):
     inlines = [
         _inlines.VideoGameEditionInline,
         _inlines.VideoGameAddonInline,
+        _inlines.PersonXVideoGameInline,
         _inlines.MusicAlbumXVideoGameInline,
     ]
     list_display = ('title', 'series')

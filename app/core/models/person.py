@@ -52,6 +52,11 @@ class Person(BaseAuditable):
         null=True, blank=True,
         related_name='+',
     )
+    # DOB could be a property if I cared about storing month, day, and year
+    # separately. Validation would become a combined check, depending on the
+    # data. I think day requires a month, year cannot be future, year + month
+    # cannot be future, year + month + day cannot be future, year + month +
+    # day must validate into datetime.date
 
     music_albums = ManyToManyField(
         'MusicAlbum', through='MusicAlbumXPerson',
@@ -94,33 +99,35 @@ class Person(BaseAuditable):
 
     @property
     def birth_name(self) -> str:
-        text = f'{self.first_name}'
+        values = []
+        if self.first_name:
+            values.append(self.first_name)
         if self.middle_name:
-            text += f' {self.middle_name}'
+            values.append(self.middle_name)
         if self.last_name:
-            text += f' {self.last_name}'
+            values.append(self.last_name)
         if self.suffix:
-            text += f' {self.suffix}'
-        return text
+            values.append(self.suffix)
+        return ' '.join(values)
 
     @property
     def full_name(self) -> str:
         if not any((self.first_name, self.middle_name, self.last_name)):
             return self.preferred_name
-        text = ''
+        values = []
         if self.prefix:
-            text += f'{self.prefix}'
+            values.append(self.prefix)
         if self.first_name:
-            text += f'{self.first_name}'
+            values.append(self.first_name)
         if self.nickname:
-            text += f' "{self.nickname}"'
+            values.append(f'"{self.nickname}"')
         if self.middle_name:
-            text += f' {self.middle_name}'
+            values.append(self.middle_name)
         if self.last_name:
-            text += f' {self.last_name}'
+            values.append(self.last_name)
         if self.suffix:
-            text += f' {self.suffix}'
-        return text
+            values.append(self.suffix)
+        return ' '.join(values)
 
 
 class PersonXPersonRelation(BaseAuditable):
@@ -290,5 +297,45 @@ class PersonXSongPerformance(BaseAuditable):
             UniqueConstraint(
                 fields=('person', 'song_performance'),
                 name='unique_person_x_song_performance'
+            )
+        ]
+
+
+class PersonXVideoGame(BaseAuditable):
+    person = ForeignKey(
+        Person, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    video_game = ForeignKey(
+        'VideoGame', on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    notes = TextField(blank=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('person', 'video_game'),
+                name='unique_person_x_video_game',
+            )
+        ]
+
+
+class PersonXVideoGameXVideoGameRole(BaseAuditable):
+    person_x_video_game = ForeignKey(
+        PersonXVideoGame, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    role = ForeignKey(
+        'VideoGameRole', on_delete=PROTECT,
+        **default_related_names(__qualname__)
+    )
+    notes = TextField(blank=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('person_x_video_game', 'role'),
+                name='unique_person_x_video_game_x_video_game_role'
             )
         ]
