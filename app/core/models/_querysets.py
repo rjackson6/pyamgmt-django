@@ -2,7 +2,13 @@ from django.db.models import Case, F, Q, QuerySet, Sum, Value, When
 
 
 class AccountQuerySet(QuerySet):
-    ...
+    def annotate_balance(self) -> QuerySet:
+        return self.annotate(
+            # CASE WHEN debit +/-
+            # txn_line_item__amount * +/- 1
+            # Sum(debit-corrected amounts)
+            balance=Sum('txn_line_item__amount')
+        )
 
 
 class TxnQuerySet(QuerySet):

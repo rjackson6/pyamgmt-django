@@ -1,0 +1,28 @@
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    border: 1px solid var(--Aero);
+}
+
+.line-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-columns: auto;
+}
+
+.transaction {
+    border: 1px solid var(--Celadon);
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    margin-bottom: 0.5rem;
+}
+
+.transaction-list {
+    border: 1px dashed white;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}

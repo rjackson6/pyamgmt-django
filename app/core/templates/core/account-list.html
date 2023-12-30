@@ -19,13 +19,46 @@ accounts can be fetched on-demand.
 
 {% block main %}
 <div>
-  {% for account in account_list %}
-  <div style="outline: 1px solid slateblue">
-    <div>
-      {{ account }} {% if account.subtype %}{{ account.subtype }}{% endif %}
-    </div>
-    <div>{{ account.account_asset }}</div>
-  </div>
-  {% endfor %}
+  <h1>Accounts</h1>
+  <h2>Financial Accounts</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Account</th>
+      <th>Balance</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for account in financial_accounts %}
+    <tr>
+      <td>
+        <a href="{% url 'core:txn-register' account.pk %}">
+          {{ account }}
+        </a>
+      </td>
+      <td>{{ account.balance }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <h2>Other Accounts</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Account Type</th>
+      <th>Name</th>
+      <th>Balance</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for account in other_accounts %}
+    <tr>
+      <td>{{ account.subtype.title }}</td>
+      <td>{{ account }}</td>
+      <td>{{ account.balance }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock main %}

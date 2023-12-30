@@ -12,6 +12,7 @@ from django_base.models.models import BaseAuditable
 from django_base.utils import default_related_names, pascal_case_to_snake_case
 
 from . import managers
+from . import _querysets
 
 
 class Account(BaseAuditable):
@@ -46,7 +47,9 @@ class Account(BaseAuditable):
         max_length=9, choices=Subtype.choices, default=Subtype.OTHER
     )
 
-    objects = managers.account.AccountManager()
+    objects = managers.account.AccountManager.from_queryset(
+        _querysets.AccountQuerySet
+    )()
     assets = managers.account.AccountManagerAsset()
     liabilities = managers.account.AccountManagerLiability()
     equities = managers.account.AccountManagerEquity()

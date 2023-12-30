@@ -7,6 +7,11 @@ a:hover {
     outline: 1px dashed white;
 }
 
+input {
+    background-color: inherit;
+    color: inherit;
+}
+
 table {
     border: 1px solid var(--Titanium);
 }

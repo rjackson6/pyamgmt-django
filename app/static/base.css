@@ -144,6 +144,9 @@ td {
     border: 1px solid black;
     color: black;
     padding: 0.1rem;
+    /* fixed min-height */
+    height: calc(1lh + 0.2rem + 1px);
+    min-width: 2rem;
 }
 
 td > a {
