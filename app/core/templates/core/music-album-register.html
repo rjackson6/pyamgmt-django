@@ -30,7 +30,8 @@
       {# TODO: First three of other artwork here would look nice #}
       <div>
         {% for rel in music_album.music_album_artwork_set.all %}
-        <img src="{{ rel.image_thumbnail.url }}">
+        <img src="{{ rel.image_thumbnail.url }}"
+             alt="Album Artwork">
         {% endfor %}
       </div>
       <div class="music-album__add-artwork">
@@ -41,7 +42,7 @@
   <div class="editions">
     {% for edition in music_album.music_album_edition_set.all %}
     <div class="edition">
-      <div>
+      <div class="edition__info">
         <h3>{{ edition.name }}</h3>
         <p>{{ edition.track_count }} tracks, {{ edition.duration}}</p>
       </div>
@@ -56,7 +57,14 @@
         <div class="track">
           <div class="track__disc_number">{{ track.disc_number }}</div>
           <div class="track__track_number">{{ track.track_number }}</div>
-          <div class="track__title">{{ track.song_recording.get_title }}</div>
+          <div class="track__title">
+            <span>{{ track.song_recording.get_title }}</span>
+            {% with description=track.song_recording.get_arrangement_description %}
+            {% if description %}
+            <span>({{ track.song_recording.get_arrangement_description }})</span>
+            {% endif %}
+            {% endwith %}
+          </div>
           <div class="track__duration">{{ track.song_recording.duration }}</div>
         </div>
         {% endfor %}

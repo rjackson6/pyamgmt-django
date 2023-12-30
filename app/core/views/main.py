@@ -1,4 +1,4 @@
-from django.db.models import Case, Count, F, Prefetch, Sum, When
+from django.db.models import Case, Count, F, Prefetch, Q, Sum, When
 from django.shortcuts import render
 
 from django_ccbv import ListView, TemplateView
@@ -91,7 +91,9 @@ class MusicAlbumRegisterView(TemplateView):
         )
         # TODO: Debug
         music_albums = music_albums.filter(
-            title__startswith='Under'
+            Q(title__startswith='Chr')
+            | Q(title__startswith='To')
+            | Q(title__startswith='Under')
         )
         context['music_albums'] = music_albums
         return context

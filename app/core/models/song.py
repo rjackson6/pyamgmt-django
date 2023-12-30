@@ -196,6 +196,9 @@ class SongRecording(BaseAuditable):
             )
         ]
 
+    def get_arrangement_description(self) -> str:
+        return f'{self.song_performance.song_arrangement.description}'
+
     def get_title(self) -> str:
         return f'{self.song_performance.song_arrangement.title}'
 
