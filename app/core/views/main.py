@@ -1,9 +1,16 @@
-from django.db.models import Case, Prefetch, When
+from django.db.models import Case, Count, F, Prefetch, Sum, When
 from django.shortcuts import render
 
 from django_ccbv import ListView, TemplateView
 
-from core.models import Account, Txn, TxnLineItem
+from core.models import (
+    Account,
+    MusicAlbum,
+    MusicAlbumEdition,
+    SongRecording,
+    Txn,
+    TxnLineItem, MusicAlbumEditionXSongRecording, MusicArtist, MusicAlbumArtwork,
+)
 
 
 def index(request):
@@ -29,6 +36,64 @@ class AccountListView(ListView):
         context = super().get_context_data(**kwargs)
         context['financial_accounts'] = (x for x in self.object_list if x.financial)
         context['other_accounts'] = (x for x in self.object_list if not x.financial)
+        return context
+
+
+class MusicAlbumRegisterView(TemplateView):
+    template_name = 'core/music-album-register.html'
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        music_albums = (
+            MusicAlbum.objects
+            .select_related('cover_artwork')
+            .prefetch_related(
+                Prefetch(
+                    'music_album_edition_set',
+                    queryset=(
+                        MusicAlbumEdition.objects
+                        .annotate(
+                            duration=Sum(
+                                'music_album_edition_x_song_recording'
+                                '__song_recording__duration'
+                            ),
+                            track_count=Count(
+                                'music_album_edition_x_song_recording'
+                            )
+                        )
+                        .prefetch_related(
+                            Prefetch(
+                                'music_album_edition_x_song_recording_set',
+                                queryset=(
+                                    MusicAlbumEditionXSongRecording.objects
+                                    .select_related(
+                                        'song_recording__song_performance__song_arrangement'
+                                    )
+                                    .order_by('disc_number', 'track_number')
+                                )
+                            )
+                        )
+                    )
+                ),
+                Prefetch(
+                    'music_artists',
+                    queryset=MusicArtist.objects.order_by('name')
+                ),
+                Prefetch(
+                    'music_album_artwork_set',
+                    queryset=(
+                        MusicAlbumArtwork.objects
+                        .exclude(pk=F('music_album__cover_artwork_id'))
+                    )
+                )
+            )
+            .order_by('title')
+        )
+        # TODO: Debug
+        music_albums = music_albums.filter(
+            title__startswith='Under'
+        )
+        context['music_albums'] = music_albums
         return context
 
 

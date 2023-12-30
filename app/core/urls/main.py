@@ -74,6 +74,9 @@ urlpatterns = [
              include(_txn_urls, namespace='txn')),
         path('vehicle/', views.models.VehicleListView.as_view()),
     ])),
+    path('music-album-register/',
+         views.main.MusicAlbumRegisterView.as_view(),
+         name='music-album-register'),
     path('networks/', include([
         path('', views.networks.NetworkIndex.as_view(), name='index'),
         path('music-album-x-music-artist/',

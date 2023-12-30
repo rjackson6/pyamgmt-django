@@ -4,7 +4,7 @@ import hashlib
 from django.db.models import (
     BooleanField, CharField, ForeignKey, ImageField, Manager, ManyToManyField,
     PositiveSmallIntegerField,
-    CASCADE, PROTECT,
+    CASCADE, PROTECT, SET_NULL,
     UniqueConstraint, TextField, QuerySet,
 )
 from django.utils.functional import cached_property
@@ -28,9 +28,16 @@ class MusicAlbum(BaseAuditable):
     title = CharField(max_length=255)
     disambiguator = CharField(max_length=255, blank=True)
     notes = TextField(blank=True)
+    cover_artwork = ForeignKey(
+        'MusicAlbumArtwork', on_delete=SET_NULL,
+        null=True, blank=True,
+        related_name='+',
+    )
+
     music_artists = ManyToManyField(
         'MusicArtist',
         through='MusicAlbumXMusicArtist',
+        related_name='+',
         blank=True
     )
     personnel = ManyToManyField(
@@ -130,6 +137,11 @@ class MusicAlbumEdition(BaseAuditable):
     )
     year_produced = PositiveSmallIntegerField(
         null=True, blank=True, validators=[validate_year_not_future]
+    )
+
+    song_recordings = ManyToManyField(
+        'SongRecording', through='MusicAlbumEditionXSongRecording',
+        related_name='+', blank=True,
     )
 
     def __str__(self) -> str:

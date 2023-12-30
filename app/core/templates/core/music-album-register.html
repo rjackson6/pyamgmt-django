@@ -1,0 +1,75 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block extra_css %}
+{{ block.super }}
+<link
+    rel="stylesheet"
+    href="{% static 'core/css/music-album-register.css' %}">
+{% endblock extra_css %}
+
+
+{% block main %}
+{# This should start with a list of Music Albums #}
+<h1>Album Register</h1>
+{% for music_album in music_albums %}
+<div class="music-album">
+  <div class="music-album__info">
+    <div>
+      <h2 class="music-album__title">{{ music_album.title }}</h2>
+      <p class="music-album__artists">{{ music_album.music_artists.all|join:", "}}</p>
+    </div>
+    <div class="music-album__artwork">
+      <div class="music-album__cover">
+        {% if music_album.cover_artwork %}
+        <img src="{{ music_album.cover_artwork.image_small.url }}"
+             alt="Cover Artwork">
+        {% endif %}
+      </div>
+      {# TODO: First three of other artwork here would look nice #}
+      <div>
+        {% for rel in music_album.music_album_artwork_set.all %}
+        <img src="{{ rel.image_thumbnail.url }}">
+        {% endfor %}
+      </div>
+      <div class="music-album__add-artwork">
+        <p>Add Artwork</p>
+      </div>
+    </div>
+  </div>
+  <div class="editions">
+    {% for edition in music_album.music_album_edition_set.all %}
+    <div class="edition">
+      <div>
+        <h3>{{ edition.name }}</h3>
+        <p>{{ edition.track_count }} tracks, {{ edition.duration}}</p>
+      </div>
+      <div class="tracks">
+        <div class="tracks__headers">
+          <div>Disc</div>
+          <div>Track</div>
+          <div>Title</div>
+          <div>Duration</div>
+        </div>
+        {% for track in edition.music_album_edition_x_song_recording_set.all %}
+        <div class="track">
+          <div class="track__disc_number">{{ track.disc_number }}</div>
+          <div class="track__track_number">{{ track.track_number }}</div>
+          <div class="track__title">{{ track.song_recording.get_title }}</div>
+          <div class="track__duration">{{ track.song_recording.duration }}</div>
+        </div>
+        {% endfor %}
+        <div>
+          {# Adding a track from here should make a few assumptions #}
+          {# If there's not an existing record with that title, proceed #}
+          {# If there is, add a control to prompt disambiguation #}
+          <button>Add Track</button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+{% endblock main %}

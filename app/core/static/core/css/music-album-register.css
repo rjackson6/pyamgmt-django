@@ -1,0 +1,43 @@
+.music-album {
+    border: 1px dashed var(--Bluebonnet);
+    margin-bottom: 1rem;
+}
+
+.music-album__info {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.music-album__add-artwork {
+    border: 1px dashed var(--Timberwolf);
+    padding: 1rem;
+}
+
+.music-album__artwork {
+    align-items: center;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    justify-items: center;
+}
+
+.edition {
+    border: 1px dashed var(--Kelly-green);
+    margin-bottom: 1rem;
+}
+
+.edition {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
+
+.track {
+    border: 1px dashed var(--Robin-egg-blue);
+    display: grid;
+    grid-template-columns: 1fr 1fr 9fr 1fr;
+}
+
+.tracks__headers {
+    border: 1px dashed var(--Catawba);
+    display: grid;
+    grid-template-columns: 1fr 1fr 9fr 1fr;
+}
