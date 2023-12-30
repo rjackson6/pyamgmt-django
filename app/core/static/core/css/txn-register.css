@@ -5,19 +5,22 @@
 
 input {
     border: 1px solid var(--Aero);
+    font-size: inherit;
+    padding: 4px;
+    width: 95%;
 }
 
 .line-items {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-auto-columns: auto;
+    grid-template-columns: 2fr 1fr 1fr;
 }
 
 .transaction {
     border: 1px solid var(--Celadon);
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 4fr 1fr;
     margin-bottom: 0.5rem;
+    padding: 5px;
 }
 
 .transaction-list {

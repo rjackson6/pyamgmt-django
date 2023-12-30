@@ -44,6 +44,10 @@
     grid-template-columns: 1fr 1fr 9fr 1fr;
 }
 
+.track + .track {
+    margin-top: -1px;
+}
+
 .tracks__headers {
     border: 1px dashed var(--Catawba);
     display: grid;

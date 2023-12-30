@@ -25,18 +25,22 @@
       {#  This account should always come first #}
       <div>{{ line_item.account }}</div>
       {% if line_item.debit %}
-      <div style="color: var(--Emerald)">{{ line_item.amount|floatformat:"2" }}</div>
+      <div style="color: var(--Emerald)">{{ line_item.amount }}</div>
       <div></div>
       {% else %}
       <div></div>
-      <div style="color: var(--Persimmon)">{{ line_item.amount|floatformat:"2" }}</div>
+      <div style="color: var(--Persimmon)">{{ line_item.amount }}</div>
       {% endif %}
       {% endfor %}
       {# TODO: Last rows should have subtotals #}
       {# TODO: Symbol or coloration for balanced transactions #}
       {# TODO: If this relates to a PointOfSale, I'd like to have that available #}
       {# TODO: Likewise, if it relates to an Invoice, I'd like to see it #}
+      <div><input></div>
+      <div><input></div>
+      <div><input></div>
     </div>  <!-- .line-items -->
+    <div></div>
   </div>  <!-- .transaction -->
   {% endfor %}
 </div>
