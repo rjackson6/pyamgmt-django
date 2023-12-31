@@ -34,6 +34,9 @@
         <li>{{ CONFIG.ROOT_HEADER_TEXT }}</li>
       </ol>
     </nav>
+    <div class="js-header-clock">
+      {# clock #}
+    </div>
     {% endblock root_header %}
   </header>
   {% endblock _root_header %}
@@ -56,6 +59,7 @@
 {% block csrf_cookie %}{% endblock csrf_cookie %}
 {% block core_javascript %}
 <script src="{% static 'core/js/utils.js' %}"></script>
+<script type="module" src="{% asset 'core/assets/clock.ts' %}"></script>
 {% endblock core_javascript %}
 {% block javascript %}{% endblock javascript %}
 {% endblock _javascript %}

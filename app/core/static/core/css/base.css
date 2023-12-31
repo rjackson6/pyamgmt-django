@@ -60,11 +60,12 @@ th {
 }
 
 .breadcrumbs {
+    border-bottom: 1px solid var(--Titanium);
     display: inline;
+    padding-bottom: 4px;
 }
 
 .breadcrumbs__list {
-    border-bottom: 1px solid var(--Titanium);
     display: flex;
     flex-wrap: wrap;
     list-style: none;

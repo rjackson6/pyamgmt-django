@@ -92,8 +92,11 @@ class MusicAlbumRegisterView(TemplateView):
         # TODO: Debug
         music_albums = music_albums.filter(
             Q(title__startswith='Chr')
-            | Q(title__startswith='To')
+            | Q(title__startswith='Star O')
+            | Q(title__startswith='To F')
             | Q(title__startswith='Under')
+            | Q(title__startswith='Valk')
+            | Q(title__startswith='X')
         )
         context['music_albums'] = music_albums
         return context

@@ -28,6 +28,12 @@ class Person(BaseAuditable):
     Maybe a personal acquaintance, and/or a notable individual with some level
     of fame.
     """
+
+    class Gender(TextChoices):
+        FEMALE = 'F'
+        MALE = 'M'
+        NEUTRAL = 'N'
+
     preferred_name = CharField(max_length=255)
     first_name = CharField(max_length=255, blank=True)
     middle_name = CharField(max_length=255, blank=True)
@@ -38,6 +44,7 @@ class Person(BaseAuditable):
         help_text="Title or Salutation"
     )
     suffix = CharField(max_length=31, blank=True)
+    gender = CharField(max_length=1, choices=Gender.choices, blank=True)
     date_of_birth = DateField(
         null=True, blank=True,
         validators=[validate_date_not_future]
@@ -133,45 +140,12 @@ class Person(BaseAuditable):
 class PersonXPersonRelation(BaseAuditable):
     """Hereditary relationships; permanent."""
     class Relation(TextChoices):
-        BROTHER = 'BROTHER'
         CHILD = 'CHILD'
-        DAUGHTER = 'DAUGHTER'
-        FATHER = 'FATHER'
         GRANDCHILD = 'GRANDCHILD'
-        GRANDDAUGHTER = 'GRANDDAUGHTER'
-        GRANDFATHER = 'GRANDFATHER'
-        GRANDMOTHER = 'GRANDMOTHER'
         GRANDPARENT = 'GRANDPARENT'
-        GRANDSON = 'GRANDSON'
         MOTHER = 'MOTHER'
         PARENT = 'PARENT'
         SIBLING = 'SIBLING'
-        SISTER = 'SISTER'
-        SON = 'SON'
-
-        @classmethod
-        def get_child_members(cls):
-            return (
-                cls.CHILD,
-                cls.DAUGHTER,
-                cls.SON
-            )
-
-        @classmethod
-        def get_parent_members(cls):
-            return (
-                cls.FATHER,
-                cls.MOTHER,
-                cls.PARENT,
-            )
-
-        @classmethod
-        def get_sibling_members(cls):
-            return (
-                cls.BROTHER,
-                cls.SIBLING,
-                cls.SISTER,
-            )
 
     person_a = ForeignKey(
         Person, on_delete=CASCADE,

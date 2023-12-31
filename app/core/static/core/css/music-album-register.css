@@ -3,6 +3,10 @@
     margin-bottom: 1rem;
 }
 
+.music-album:hover {
+    background-color: var(--Charcoal);
+}
+
 .music-album__info {
     display: grid;
     grid-template-columns: 1fr 2fr;
