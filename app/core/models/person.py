@@ -180,22 +180,18 @@ class PersonXPersonRelationship(BaseAuditable):
     class Relationship(TextChoices):
         CLASSMATE = 'CLASSMATE'
         FRIEND = 'FRIEND'
-        HUSBAND = 'HUSBAND'
         INSTRUCTOR = 'INSTRUCTOR'
         PARTNER = 'PARTNER'
         SCHOOLMATE = 'SCHOOLMATE'
         SPOUSE = 'SPOUSE'
         STUDENT = 'STUDENT'
         TEACHER = 'TEACHER'
-        WIFE = 'WIFE'
 
         @classmethod
         def get_partner_members(cls):
             return (
-                cls.HUSBAND,
                 cls.PARTNER,
                 cls.SPOUSE,
-                cls.WIFE,
             )
 
     person_a = ForeignKey(

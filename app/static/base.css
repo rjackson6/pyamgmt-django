@@ -71,7 +71,7 @@
     --Onyx: #353839;
     --Outer-space: #414a4c;
     --Paynes-grey: #536878;
-    --Peacock-blue: #004958;
+    --Peacock-blue: #004958;  /* Nice teal-blue */
     --Persian-blue: #1c39bb;
     --Persian-green: #00a693;
     --Persimmon: #ec5800;
@@ -211,4 +211,8 @@ td > table {
     align-items: center;
     display: flex;
     justify-content: center;
+}
+
+.django_base.pagination {
+    background-color: var(--Charcoal);
 }

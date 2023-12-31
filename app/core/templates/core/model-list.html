@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block extra_css %}
+{{ block.super }}
+<link
+    rel="stylesheet"
+    href="{% static 'core/css/model-list.css' %}">
+{% endblock extra_css %}
+
+
+{% block main %}
+<nav class="breadcrumbs">
+  {% block breadcrumbs__list %}
+  {% endblock breadcrumbs__list %}
+</nav>
+<div class="content-wrapper">
+  {# Page controls can go at top or bottom. #}
+  {# If I want the table to be scrollable independent of the page controls, #}
+  {# I don't need the controls at both the top and bottom. #}
+  {# I think it's more intuitive to have at the bottom. #}
+  <main class="content">
+    {% block content %}{% lorem %}{% endblock content %}
+  </main>
+  <div class="page-controls">
+    {% if page_obj %}
+    {% include 'django_base/_page_controls.html' %}
+    {% endif %}
+  </div>  <!-- /page-controls -->
+</div>  <!-- /content-wrapper -->
+{% endblock main %}

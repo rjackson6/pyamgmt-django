@@ -1,0 +1,26 @@
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-wrapper {
+    display: flex;
+    flex: auto;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.content {
+    flex: auto;
+    overflow: auto;
+}

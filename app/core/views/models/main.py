@@ -8,6 +8,7 @@ from core.models import *
 class MusicAlbumListView(ListView):
     model = MusicAlbum
     ordering = ('title',)
+    paginate_by = 50
     queryset = MusicAlbum.objects.prefetch_related('music_artists')
     template_name = 'core/models/music-album--list.html'
 

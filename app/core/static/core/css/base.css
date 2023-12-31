@@ -23,7 +23,7 @@ td {
 }
 
 th {
-    background-color: initial;
+    background-color: var(--Peacock-blue);
     border: 1px solid var(--Titanium);
     color: inherit;
 }

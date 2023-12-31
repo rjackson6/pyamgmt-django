@@ -168,7 +168,7 @@ class MusicAlbumEdition(BaseAuditable):
             self.music_album_edition_x_song_recording_set
             .select_related(
                 'song_recording__song_performance__song_arrangement')
-            .order_by('track_number')
+            .order_by('disc_number', 'track_number')
         )
 
 
