@@ -1,13 +1,23 @@
-.main {
-    display: flex;
-    flex-direction: column;
-}
-
 input {
     border: 1px solid var(--Aero);
     font-size: inherit;
     padding: 4px;
     width: 95%;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+/**/
+
+.credit {
+    color: var(--Persimmon);
+}
+
+.debit {
+    color: var(--Emerald);
 }
 
 .line-items {
@@ -18,7 +28,7 @@ input {
 .transaction {
     border: 1px solid var(--Celadon);
     display: grid;
-    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-columns: 1fr 2fr 4fr 1fr;
     margin-bottom: 0.5rem;
     padding: 5px;
 }

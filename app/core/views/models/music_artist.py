@@ -12,4 +12,5 @@ class MusicArtistListView(ListView):
 
 class MusicArtistDetailView(DetailView):
     model = MusicArtist
+    queryset = MusicArtist.with_related
     template_name = 'core/models/music-artist--detail.html'

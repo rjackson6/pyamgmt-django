@@ -93,11 +93,12 @@ class MusicArtist(BaseAuditable):
 
 class MusicArtistActivity(BaseAuditable):
     """Dates for MusicArtist activity, as bands can go on hiatus."""
+    music_artist_id: int
+
     music_artist = ForeignKey(
         MusicArtist, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_artist_id: int
     year_active = PositiveSmallIntegerField(
         validators=[validate_year_not_future]
     )
@@ -112,6 +113,13 @@ class MusicArtistActivity(BaseAuditable):
                 fields=('music_artist', 'year_active'),
                 name='unique_music_artist_activity')
         ]
+
+    def __str__(self) -> str:
+        return f'{self.year_active} - {self.year_inactive or "Present"}'
+
+    @property
+    def is_active(self) -> bool:
+        return self.year_inactive is not None
 
 
 class MusicArtistXMusicTag(BaseAuditable):

@@ -4,7 +4,14 @@
 {% block info_card %}
 <div>Name: {{ object.name }}</div>
 <div>Active: {{ object.is_active }}</div>
-<div>Years Active:</div>
+<div>
+  Years Active:
+  <ul>
+    {% for activity in object.music_artist_activity_set.all %}
+    <li>{{ activity }}</li>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock info_card %}
 
 

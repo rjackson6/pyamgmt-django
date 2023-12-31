@@ -13,35 +13,9 @@
 {% block main %}
 <h1>{{ account }}</h1>
 <div class="transaction-list">
+  {% include 'core/_transaction.html' %}
   {% for txn in txns %}
-  <div class="transaction">
-    <div>{{ txn.txn_date }}</div>
-    <div class="line-items">
-      <div>Account</div>
-      <div>Debits</div>
-      <div>Credits</div>
-      {% for line_item in txn.line_items.all %}
-      {# TODO: Reserve a block for _this_ account, e.g., if line_item.account==account #}
-      {#  This account should always come first #}
-      <div>{{ line_item.account }}</div>
-      {% if line_item.debit %}
-      <div style="color: var(--Emerald)">{{ line_item.amount }}</div>
-      <div></div>
-      {% else %}
-      <div></div>
-      <div style="color: var(--Persimmon)">{{ line_item.amount }}</div>
-      {% endif %}
-      {% endfor %}
-      {# TODO: Last rows should have subtotals #}
-      {# TODO: Symbol or coloration for balanced transactions #}
-      {# TODO: If this relates to a PointOfSale, I'd like to have that available #}
-      {# TODO: Likewise, if it relates to an Invoice, I'd like to see it #}
-      <div><input></div>
-      <div><input></div>
-      <div><input></div>
-    </div>  <!-- .line-items -->
-    <div></div>
-  </div>  <!-- .transaction -->
+  {% include 'core/_transaction.html' %}
   {% endfor %}
 </div>
 {% endblock main %}

@@ -84,6 +84,9 @@
 {% endif %}
 {% endwith %}
 
-{% lorem 20 %}
+{% if notes %}
+<h3>Notes</h3>
+<p>{{ person.notes }}</p>
+{% endif %}
 
 {% endblock content %}
