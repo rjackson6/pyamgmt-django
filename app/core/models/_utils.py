@@ -1,18 +1,12 @@
 from collections import deque
-import enum
 from io import BytesIO
 import os
-from typing import Iterable, Protocol
+from typing import Iterable
 
 from PIL import Image, ImageOps
 
 from django.db.models import QuerySet
 from django.db.models.fields.files import ImageFieldFile
-
-
-def get_default_media_format_audio() -> int:
-    from .media_format import MediaFormat
-    return MediaFormat.get_default_audio()
 
 
 # TODO 2023-12-12: This should be a utils.function

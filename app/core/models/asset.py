@@ -15,11 +15,13 @@ class Asset(BaseAuditable):
         DISCRETE = 'DISCRETE', 'DISCRETE'
         INVENTORY = 'INVENTORY', 'INVENTORY'
 
+    account_asset_real_id: int
+
     account_asset_real = ForeignKey(
-        'AccountAssetReal', on_delete=SET_NULL, null=True, blank=True,
+        'AccountAssetReal', on_delete=SET_NULL,
+        null=True, blank=True,
         **default_related_names(__qualname__)
     )
-    account_asset_real_id: int
     description = TextField(null=True, blank=True)
     subtype = CharField(max_length=31, choices=Subtype.choices)
 
@@ -39,11 +41,12 @@ class AssetDiscrete(BaseAuditable):
         CATALOG_ITEM = 'CATALOG_ITEM', 'CATALOG_ITEM'
         VEHICLE = 'VEHICLE', 'VEHICLE'
 
+    asset_id: int
+
     asset = OneToOneField(
         Asset, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    asset_id: int
     date_acquired = DateField(null=True, blank=True)
     date_withdrawn = DateField(null=True, blank=True)
     subtype = CharField(max_length=31, choices=Subtype.choices, default='NONE')
@@ -52,23 +55,20 @@ class AssetDiscrete(BaseAuditable):
         verbose_name = 'Asset::Discrete'
         verbose_name_plural = 'Asset::Discrete'
 
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.asset.description}'
-
 
 class AssetDiscreteVehicle(BaseAuditable):
     """A discrete asset that can be associated with a unique vehicle."""
+    asset_discrete_id: int
+    vehicle_id: int
+
     asset_discrete = OneToOneField(
         AssetDiscrete, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    asset_discrete_id: int
     vehicle = OneToOneField(
         'Vehicle', on_delete=PROTECT,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    vehicle_id: int
 
     class Meta:
         verbose_name = 'Asset::Discrete::Vehicle'
@@ -77,25 +77,20 @@ class AssetDiscreteVehicle(BaseAuditable):
     def __str__(self) -> str:
         return f'AssetDiscreteVehicle {self.pk}: {self.vehicle_id}'
 
-    def admin_description(self) -> str:
-        return (
-            f'{self.asset_discrete.asset.description}'
-            f' : {self.vehicle.vin}'
-        )
-
 
 class AssetDiscreteXCatalogItem(BaseAuditable):
     """A discrete asset that can relate to a CatalogItem."""
+    asset_discrete_id: int
+    catalog_item_id: int
+
     asset_discrete = ForeignKey(
         AssetDiscrete, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    asset_discrete_id: int
     catalog_item = ForeignKey(
         'CatalogItem', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    catalog_item_id: int
 
     class Meta:
         verbose_name = 'Asset::Discrete::CatalogItem'
@@ -107,17 +102,18 @@ class AssetInventory(BaseAuditable):
 
     Example: Copies of DVDs, un-serialized items.
     """
+    asset_id: int
+    catalog_item_id: int
+
     asset = OneToOneField(
         Asset, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    asset_id: int
     # CatalogItem is OneToOne because inventory should accumulate
     catalog_item = OneToOneField(
         'CatalogItem', on_delete=PROTECT,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    catalog_item_id: int
     quantity = IntegerField(default=1)
 
     class Meta:

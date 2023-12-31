@@ -145,11 +145,13 @@ class AccountAssetReal(BaseAuditable):
     Examples: a vehicle, or real estate.
     Implies inherent value, and may be subject to depreciation.
     """
+    account_asset_id: int
+
     account_asset = OneToOneField(
         AccountAsset, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    account_asset_id: int
+    # TODO: I might should put the foreign key to Asset here
 
     class Meta:
         verbose_name_plural = 'Account::Asset::Real'
@@ -164,11 +166,12 @@ class AccountEquity(BaseAuditable):
 
     Examples: Common Stock, Paid-In Capital.
     """
+    account_id: int
+
     account = OneToOneField(
         Account, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    account_id: int
 
     class Meta:
         verbose_name_plural = 'Account::Equity'

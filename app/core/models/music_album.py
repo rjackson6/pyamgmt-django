@@ -2,10 +2,20 @@ import enum
 import hashlib
 
 from django.db.models import (
-    BooleanField, CharField, ForeignKey, ImageField, Manager, ManyToManyField,
+    BooleanField,
+    CASCADE,
+    CharField,
+    ForeignKey,
+    ImageField,
+    Manager,
+    ManyToManyField,
     PositiveSmallIntegerField,
-    CASCADE, PROTECT, SET_NULL,
-    UniqueConstraint, TextField, QuerySet,
+    PROTECT,
+    QuerySet,
+    SET_NULL,
+    TextChoices,
+    TextField,
+    UniqueConstraint,
 )
 from django.utils.functional import cached_property
 
@@ -13,7 +23,7 @@ from django_base.models import BaseAuditable
 from django_base.utils import default_related_names
 from django_base.validators import validate_year_not_future
 
-from ._utils import get_default_media_format_audio, resize_image
+from ._utils import resize_image
 
 
 class MusicAlbum(BaseAuditable):
@@ -100,7 +110,9 @@ class MusicAlbumArtwork(BaseAuditable):
         verbose_name_plural = 'music album artwork'
 
     def __str__(self) -> str:
-        return f'MusicAlbumArtwork {self.pk}: {self.music_album_id}'
+        return (
+            f'MusicAlbumArtwork {self.pk}: {self.music_album_id}'
+            f' : {self.short_description}')
 
     def save(self, *args, **kwargs) -> None:
         image_file = self.image_full.open()
@@ -200,18 +212,26 @@ class MusicAlbumProduction(BaseAuditable):
     That is to say that the same "edition" of an album, like a remaster, could
     be released in multiple formats, like "digital", "CD", or "Vinyl".
     """
-    media_format = ForeignKey(
-        'MediaFormat', on_delete=PROTECT,
-        default=get_default_media_format_audio,
-        **default_related_names(__qualname__)
+
+    class MediaFormat(TextChoices):
+        BR = 'BR', 'Blu-ray'
+        CASSETTE = 'CAS', 'Cassette'
+        CD = 'CD'
+        DIGITAL = 'DL'
+        DVD = 'DVD'
+        VINYL = 'VL'
+
+    media_format = CharField(
+        max_length=3, choices=MediaFormat.choices, blank=True,
     )
     music_album_edition = ForeignKey(
         MusicAlbumEdition, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    total_discs = PositiveSmallIntegerField(default=1)
+    total_discs = PositiveSmallIntegerField(null=True, blank=True)
     year_produced = PositiveSmallIntegerField(
-        null=True, blank=True, validators=[validate_year_not_future]
+        null=True, blank=True,
+        validators=[validate_year_not_future]
     )
 
 
@@ -225,16 +245,17 @@ class MusicAlbumXMusicArtist(BaseAuditable):
     This does not replace individual song artists, as there are "featured"
     tracks, or compilation albums.
     """
+    music_album_id: int
+    music_artist_id: int
+
     music_album = ForeignKey(
         MusicAlbum, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_album_id: int
     music_artist = ForeignKey(
         'MusicArtist', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    music_artist_id: int
 
     class Meta:
         constraints = [

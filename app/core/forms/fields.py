@@ -3,6 +3,24 @@ from itertools import islice
 from django.forms import ModelChoiceField
 
 
+class AccountAssetRealChoiceField(ModelChoiceField):
+    def __init__(self, queryset, **kwargs):
+        if queryset is not None:
+            queryset = (
+                queryset
+                .select_related('account_asset__account')
+            )
+        super().__init__(queryset, **kwargs)
+
+    def label_from_instance(self, obj) -> str:
+        return f'{obj.account_asset.account.name}'
+
+
+class MusicAlbumArtworkChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj) -> str:
+        return f'[{obj.pk}] {obj.music_album.title}: {obj.short_description}'
+
+
 class MusicAlbumEditionChoiceField(ModelChoiceField):
     def __init__(self, queryset, **kwargs):
         if queryset is not None:

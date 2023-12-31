@@ -1,7 +1,18 @@
-{% extends 'core/base.html' %}
+{% extends 'core/model-detail.html' %}
 
 
-{% block main %}
+{% block info_card %}
+{% if object.cover_artwork %}
+<div class="info-card__photo-wrapper">
+  <img
+      src="{{ object.cover_artwork.image_small.url }}"
+      alt="Cover artwork">
+</div>
+{% endif %}
+{% endblock info_card %}
+
+
+{% block content %}
 <h1>Music Album</h1>
 <h2>{{ object.title }}</h2>
 
@@ -68,4 +79,4 @@
 {% endif %}
 {% endwith %}
 
-{% endblock main %}
+{% endblock content %}

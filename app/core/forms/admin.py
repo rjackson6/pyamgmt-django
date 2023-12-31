@@ -4,21 +4,50 @@ See docs for omitting the model attribute from admin-only ModelForms:
 https://docs.djangoproject.com/en/5.0/ref/contrib/admin/#django.contrib.admin.ModelAdmin.form
 """
 
-from functools import partial
-
 from django.forms import ModelForm
 
-from ..models import PersonXPhoto
+from ..models import PersonXPhoto, MusicAlbumArtwork
 from .fields import (
+    AccountAssetRealChoiceField,
+    MusicAlbumArtworkChoiceField,
     MusicAlbumEditionChoiceField,
     MusicArtistChoiceField,
     MusicArtistXPersonChoiceField,
     PersonChoiceField,
     PersonXPhotoChoiceField,
-    SongChoiceField,
     SongPerformanceChoiceField,
     SongRecordingChoiceField,
 )
+
+
+class AssetForm(ModelForm):
+    class Meta:
+        field_classes = {
+            'account_asset_real': AccountAssetRealChoiceField
+        }
+
+
+class MusicAlbumForm(ModelForm):
+    def __init__(self, *args, instance=None, **kwargs):
+        super().__init__(*args, instance=instance, **kwargs)
+        if instance:
+            self.fields['cover_artwork'].queryset = (
+                MusicAlbumArtwork.objects
+                .select_related('music_album')
+                .filter(music_album=instance)
+            )
+
+    class Meta:
+        field_classes = {
+            'cover_artwork': MusicAlbumArtworkChoiceField,
+        }
+
+
+class MusicAlbumProductionForm(ModelForm):
+    class Meta:
+        field_classes = {
+            'music_album_edition': MusicAlbumEditionChoiceField,
+        }
 
 
 class MusicAlbumEditionXSongRecordingForm(ModelForm):
@@ -49,14 +78,6 @@ class MusicArtistXSongPerformanceForm(ModelForm):
         field_classes = {
             'song_performance': SongPerformanceChoiceField,
         }
-
-
-def formfield_for_dbfield(db_field, **kwargs):
-    print('*** formfield_for_dbfield')
-    print(kwargs)
-    if db_field.name == 'featured_photo':
-        return PersonXPhotoChoiceField(**kwargs)
-    return db_field.formfield(**kwargs)
 
 
 class PersonForm(ModelForm):

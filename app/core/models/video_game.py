@@ -34,6 +34,7 @@ class VideoGame(BaseAuditable):
     Editions should not be used for remakes or remasters.
     """
     title = CharField(max_length=100)
+    disambiguator = CharField(max_length=255, blank=True)
     # platforms = ManyToManyField()
     series = ForeignKey(
         'VideoGameSeries', on_delete=SET_NULL,
@@ -48,6 +49,14 @@ class VideoGame(BaseAuditable):
         'Person', through='PersonXVideoGame',
         related_name='+', blank=True,
     )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('title', 'disambiguator'),
+                name='unique_video_game',
+            )
+        ]
 
     def __str__(self) -> str:
         return self.title

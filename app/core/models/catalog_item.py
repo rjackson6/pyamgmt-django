@@ -15,7 +15,6 @@ from django_base.validators import validate_alphanumeric, validate_digit
 
 from core.validators import validate_isbn, validate_isbn_13_check_digit
 from ._fields import CurrencyField
-from ._utils import get_default_media_format_audio
 
 
 class CatalogItem(BaseAuditable):
@@ -123,14 +122,9 @@ class CatalogItemMusicAlbumProduction(BaseAuditable):
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     catalog_item_id: int
-    # media_format = ForeignKey(
-    #     'MediaFormat', on_delete=SET_DEFAULT,
-    #     default=get_default_media_format_audio,
-    #     **default_related_names(__qualname__)
-    # )
-    # media_format_id: int
     music_album_production = ForeignKey(
-        'MusicAlbumProduction', on_delete=SET_NULL, null=True, blank=True,
+        'MusicAlbumProduction', on_delete=SET_NULL,
+        null=True, blank=True,
         **default_related_names(__qualname__)
     )
 
