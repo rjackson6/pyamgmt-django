@@ -50,30 +50,15 @@
 {% if editions %}
 <h3>Editions</h3>
 {% for edition in editions %}
-<h4><a href="{% url 'core:music-album-edition:detail' edition.pk %}">{{ edition }}</a></h4>
+<h4>
+  <a href="{% url 'core:music-album-edition:detail' edition.pk %}">
+    {{ edition }}
+  </a>
+</h4>
 {% if edition.tracks %}
-<table>
-  <thead>
-  <tr>
-    <th>Disc</th>
-    <th>Track</th>
-    <th>Title</th>
-    <th>Duration</th>
-  </tr>
-  </thead>
-  <tbody>
-  {% for track in edition.tracks %}
-  {% with recording=track.song_recording %}
-  <tr>
-    <td>{{ track.disc_number }}</td>
-    <td>{{ track.track_number }}</td>
-    <td>{{ recording.get_title }}</td>
-    <td>{{ recording.duration }}</td>
-  </tr>
-  {% endwith %}
-  {% endfor %}
-  </tbody>
-</table>
+{% with object=edition %}
+{% include 'core/models/_music-album-edition--tracks--table.html' %}
+{% endwith %}
 {% endif %}
 {% endfor %}
 {% endif %}

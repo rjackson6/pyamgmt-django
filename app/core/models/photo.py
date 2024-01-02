@@ -1,7 +1,7 @@
 import enum
 import hashlib
 
-from django.db.models import CharField, ImageField, TextField
+from django.db.models import CharField, ImageField, TextField, ManyToManyField
 
 from django_base.models import BaseAuditable
 
@@ -29,6 +29,11 @@ class Photo(BaseAuditable):
     image_medium = ImageField(null=True, blank=True, editable=False)
     image_small = ImageField(null=True, blank=True, editable=False)
     image_thumbnail = ImageField(null=True, blank=True, editable=False)
+
+    people = ManyToManyField(
+        'Person', through='PersonXPhoto',
+        related_name='+', blank=True,
+    )
 
     def __str__(self) -> str:
         return self.short_description

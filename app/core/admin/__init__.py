@@ -7,5 +7,7 @@ from . import (
     music_artist,
     person,
     record,
-    song
+    song,
+    vehicle,
+    video_game,
 )

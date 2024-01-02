@@ -1,7 +1,7 @@
 from django.db.models import (
     CharField, ForeignKey, PositiveSmallIntegerField,
     UniqueConstraint,
-    CASCADE, PROTECT, SET_NULL, ManyToManyField,
+    CASCADE, PROTECT, SET_NULL, ManyToManyField, TextField,
 )
 from django.utils.functional import cached_property
 
@@ -111,6 +111,7 @@ class MotionPictureXPerson(BaseAuditable):
         'Person', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
+    notes = TextField(blank=True)
 
     class Meta:
         constraints = [

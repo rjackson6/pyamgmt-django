@@ -16,6 +16,8 @@ class PersonAdmin(admin.ModelAdmin):
         _inlines.MusicAlbumXPersonInline,
         _inlines.MusicArtistXPersonInline,
         _inlines.MusicalInstrumentXPersonInline,
+        _inlines.MotionPictureXPersonInline,
+        _inlines.PersonXVideoGameInline,
     ]
     list_display = (
         'image_tag', 'preferred_name', 'full_name', 'is_living',

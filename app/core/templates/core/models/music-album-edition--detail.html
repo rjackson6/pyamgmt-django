@@ -1,71 +1,14 @@
-{% extends 'core/base.html' %}
+{% extends 'core/model-detail.html' %}
 
 
-{% block main %}
+{% block content %}
 <h1>Music Album Edition</h1>
 <h2>{{ object.get_title }}</h2>
 
-{#{% with music_artists=object.music_artists.all %}#}
-{#{% if music_artists %}#}
-{#<h3>Artists</h3>#}
-{#<ul>#}
-{#  {% for music_artist in music_artists %}#}
-{#  <li>#}
-{#    <a href="{% url 'core:music-artist:detail' music_artist.pk %}">#}
-{#      {{ music_artist }}#}
-{#    </a>#}
-{#  </li>#}
-{#  {% endfor %}#}
-{#</ul>#}
-{#{% endif %}#}
-{#{% endwith %}#}
-{##}
-{#{% with personnel=object.personnel.all %}#}
-{#{% if personnel %}#}
-{#<h3>Personnel</h3>#}
-{#<ul>#}
-{#  {% for person in personnel %}#}
-{#  <li>#}
-{#    <a href="{% url 'core:person:detail' person.pk %}">#}
-{#      {{ person }}#}
-{#    </a>#}
-{#  </li>#}
-{#  {% endfor %}#}
-{#</ul>#}
-{#{% endif %}#}
-{#{% endwith %}#}
-{##}
-{#{% with editions=object.music_album_edition_set.all %}#}
-{#{% if editions %}#}
-{#<h3>Editions</h3>#}
-{#{% for edition in editions %}#}
-{#<h4>{{ edition }}</h4>#}
-{#{% if edition.tracks %}#}
-{#<table>#}
-{#  <thead>#}
-{#  <tr>#}
-{#    <th>Disc</th>#}
-{#    <th>Track</th>#}
-{#    <th>Title</th>#}
-{#    <th>Duration</th>#}
-{#  </tr>#}
-{#  </thead>#}
-{#  <tbody>#}
-{#  {% for track in edition.tracks %}#}
-{#  {% with recording=track.song_recording %}#}
-{#  <tr>#}
-{#    <td>{{ track.disc_number }}</td>#}
-{#    <td>{{ track.track_number }}</td>#}
-{#    <td>{{ recording.get_title }}</td>#}
-{#    <td>{{ recording.duration }}</td>#}
-{#  </tr>#}
-{#  {% endwith %}#}
-{#  {% endfor %}#}
-{#  </tbody>#}
-{#</table>#}
-{#{% endif %}#}
-{#{% endfor %}#}
-{#{% endif %}#}
-{#{% endwith %}#}
-{##}
-{% endblock main %}
+{% if object.tracks %}
+{% with detailed=1 %}
+{% include 'core/models/_music-album-edition--tracks--table.html' %}
+{% endwith %}
+{% endif %}
+
+{% endblock content %}

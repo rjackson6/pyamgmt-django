@@ -17,10 +17,15 @@
 {% block info_card %}
 {% if person.featured_photo %}
 <div class="info-card__photo-wrapper">
-  <img
-      class="info-card__featured-photo"
-      src="{{ person.featured_photo.photo.image_small.url }}"
-      alt="Featured photo">
+  <figure class="info-card__photo-figure">
+    <img
+        class="info-card__featured-photo"
+        src="{{ person.featured_photo.photo.image_small.url }}"
+        alt="{{ person.featured_photo.photo.short_description}}">
+    <figcaption class="info-card__photo-caption">
+      {{ person.featured_photo.photo.short_description }}
+    </figcaption>
+  </figure>
 </div>
 {% endif %}
 <div>Name: {{ person.birth_name }}</div>

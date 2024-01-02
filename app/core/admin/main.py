@@ -74,7 +74,13 @@ class MotionPictureXMusicAlbumAdmin(admin.ModelAdmin):
 
 admin.site.register(motion_picture.MotionPictureXSong)
 
-admin.site.register(photo.Photo)
+
+@admin.register(photo.Photo)
+class PhotoAdmin(admin.ModelAdmin):
+    inlines = [
+        _inlines.PersonXPhotoInline,
+    ]
+
 
 admin.site.register(txn.Txn)
 
@@ -107,81 +113,3 @@ class TxnLineItemAdmin(admin.ModelAdmin):
     @staticmethod
     def _txn_date(obj):
         return obj.txn.txn_date
-
-
-@admin.register(vehicle.Vehicle)
-class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
-    list_select_related = (
-        'vehicle_year__vehicle_trim__vehicle_model__vehicle_make',
-    )
-    ordering = (
-        'vehicle_year__vehicle_trim__vehicle_model__vehicle_make__name',
-        'vehicle_year__vehicle_trim__vehicle_model__name',
-        'vehicle_year__vehicle_trim__name',
-        'vehicle_year',
-        'vin'
-    )
-
-
-admin.site.register(vehicle.VehicleMake)
-admin.site.register(vehicle.VehicleMileage)
-admin.site.register(vehicle.VehicleModel)
-admin.site.register(vehicle.VehicleService)
-admin.site.register(vehicle.VehicleServiceItem)
-admin.site.register(vehicle.VehicleTrim)
-admin.site.register(vehicle.VehicleYear)
-
-
-@admin.register(video_game.VideoGame)
-class VideoGameAdmin(admin.ModelAdmin):
-    inlines = [
-        _inlines.VideoGameEditionInline,
-        _inlines.VideoGameAddonInline,
-        _inlines.PersonXVideoGameInline,
-        _inlines.MusicAlbumXVideoGameInline,
-    ]
-    list_display = ('title', 'series')
-    ordering = ('title',)
-
-
-@admin.register(video_game.VideoGameAddon)
-class VideoGameAddonAdmin(admin.ModelAdmin):
-    list_display = ('admin_description', 'release_date')
-    list_select_related = ('video_game',)
-
-
-@admin.register(video_game.VideoGameEdition)
-class VideoGameEditionAdmin(admin.ModelAdmin):
-    inlines = [_inlines.VideoGameEditionXVideoGamePlatformInline]
-    list_display = ('admin_description',)
-    list_select_related = ('video_game',)
-
-
-@admin.register(video_game.VideoGamePlatform)
-class VideoGamePlatformAdmin(admin.ModelAdmin):
-    inlines = [
-        _inlines.VideoGamePlatformRegionInline,
-    ]
-    ordering = ('name',)
-
-
-@admin.register(video_game.VideoGamePlatformEdition)
-class VideoGamePlatformEditionAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
-    ordering = ('video_game_platform__name', 'name')
-
-
-@admin.register(video_game.VideoGamePlatformRegion)
-class VideoGamePlatformRegionAdmin(admin.ModelAdmin):
-    list_display = ('admin_description', 'release_date')
-    list_select_related = ('video_game_platform',)
-    ordering = ('video_game_platform__name', 'region')
-
-
-@admin.register(video_game.VideoGameSeries)
-class VideoGameSeriesAdmin(admin.ModelAdmin):
-    inlines = [
-        _inlines.VideoGameInline,
-    ]
-    ordering = ('name',)

@@ -1,0 +1,28 @@
+<table>
+  <thead>
+  <tr>
+    <th>Disc</th>
+    <th>Track</th>
+    <th>Title</th>
+    {% if detailed %}
+    <th>Credits</th>
+    {% endif %}
+    <th>Duration</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for track in object.tracks %}
+  {% with recording=track.song_recording %}
+  <tr>
+    <td>{{ track.disc_number }}</td>
+    <td>{{ track.track_number }}</td>
+    <td>{{ recording.get_title }}</td>
+    {% if detailed %}
+    <td>{# TODO: Credits #}</td>
+    {% endif %}
+    <td>{{ recording.duration }}</td>
+  </tr>
+  {% endwith %}
+  {% endfor %}
+  </tbody>
+</table>

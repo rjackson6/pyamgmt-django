@@ -90,6 +90,16 @@ th {
     padding: 1rem;
 }
 
+.info-card__photo-caption {
+    text-align: center;
+}
+
+.info-card__photo-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .info-card__photo-wrapper {
     display: flex;
     justify-content: center;
@@ -101,4 +111,9 @@ th {
 
 .td-currency {
     text-align: right;
+}
+
+.td__img--center {
+    text-align: center;
+    vertical-align: center;
 }

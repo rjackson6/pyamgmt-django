@@ -87,10 +87,6 @@ class VideoGameAddon(BaseAuditable):
     def __str__(self) -> str:
         return self.name
 
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.video_game.title} : {self.name}'
-
 
 class VideoGameEdition(BaseAuditable):
     """Deluxe, Supporters, Limited, etc.
@@ -117,10 +113,6 @@ class VideoGameEdition(BaseAuditable):
     def __str__(self) -> str:
         return self.name
 
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.video_game.title} : {self.name}'
-
 
 class VideoGamePlatform(BaseAuditable):
     """
@@ -145,10 +137,6 @@ class VideoGamePlatformEdition(BaseAuditable):
     def __str__(self):
         return self.name
 
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.video_game_platform.name} : {self.name}'
-
 
 class VideoGamePlatformRegion(BaseAuditable):
     Region = _enums.Region
@@ -162,10 +150,6 @@ class VideoGamePlatformRegion(BaseAuditable):
         VideoGamePlatform, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.video_game_platform.name}: {self.region}'
 
 
 class VideoGameRole(BaseAuditable):

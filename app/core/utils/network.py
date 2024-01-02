@@ -172,7 +172,8 @@ def music_album_x_video_game(
     return VisNetwork(nodes, edges)
 
 
-def music_artist_x_person(edge_kwargs: dict | Callable = None) -> VisNetwork:
+def music_artist_x_person(
+        edge_kwargs: dict | Callable = None) -> VisNetwork:
     edge_kwargs = edge_kwargs or {}
     nodes = {}
     edges = []

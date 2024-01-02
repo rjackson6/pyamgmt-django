@@ -1,6 +1,5 @@
 from core.models.config import Config, Options
 
-
 DEFAULTS = {
     Options.ROOT_HEADER_TEXT.value: 'Home'
 }
@@ -12,5 +11,5 @@ def config_context(_request) -> dict:
         if option not in config:
             config[option] = DEFAULTS[option]
     return {
-        'CONFIG': config
+        'CONFIG': config,
     }

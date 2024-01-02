@@ -30,6 +30,7 @@ class MusicAlbumEditionDetailView(DetailView):
 class PersonListView(ListView):
     model = Person
     ordering = ('preferred_name',)
+    paginate_by = 50
     template_name = 'core/models/person--list.html'
 
 
