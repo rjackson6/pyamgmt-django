@@ -57,7 +57,7 @@ class VideoGamePlatformEditionAdmin(admin.ModelAdmin):
 
 @admin.register(video_game.VideoGamePlatformRegion)
 class VideoGamePlatformRegionAdmin(admin.ModelAdmin):
-    list_display = ('admin_description', 'release_date')
+    list_display = ('_description', 'release_date')
     list_select_related = ('video_game_platform',)
     ordering = ('video_game_platform__name', 'region')
 
