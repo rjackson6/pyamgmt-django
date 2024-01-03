@@ -149,6 +149,7 @@ from .vehicle import (
 from .video_game import (
     VideoGame,
     VideoGameAddon,
+    VideoGameDeveloper,
     VideoGameEdition,
     VideoGameEditionXVideoGamePlatform,
     VideoGamePlatform,

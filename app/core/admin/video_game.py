@@ -12,7 +12,8 @@ class VideoGameAdmin(admin.ModelAdmin):
         _inlines.PersonXVideoGameInline,
         _inlines.MusicAlbumXVideoGameInline,
     ]
-    list_display = ('title', 'series')
+    list_display = ('title', 'developer', 'series')
+    list_select_related = ('developer',)
     ordering = ('title',)
 
 
@@ -24,6 +25,9 @@ class VideoGameAddonAdmin(admin.ModelAdmin):
     @staticmethod
     def _description(obj):
         return f'{obj.video_game.title} : {obj.name}'
+
+
+admin.site.register(video_game.VideoGameDeveloper)
 
 
 @admin.register(video_game.VideoGameEdition)

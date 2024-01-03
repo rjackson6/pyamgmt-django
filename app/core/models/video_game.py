@@ -33,8 +33,12 @@ class VideoGame(BaseAuditable):
     Editions should not be used for remakes or remasters.
     """
     title = CharField(max_length=100)
+    developer = ForeignKey(
+        'VideoGameDeveloper', on_delete=CASCADE,
+        null=True, blank=True,
+        **default_related_names(__qualname__)
+    )
     disambiguator = CharField(max_length=255, blank=True)
-    # platforms = ManyToManyField()
     series = ForeignKey(
         'VideoGameSeries', on_delete=SET_NULL,
         null=True, blank=True,
@@ -82,6 +86,13 @@ class VideoGameAddon(BaseAuditable):
                 name='unique_video_game_addon',
             )
         ]
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class VideoGameDeveloper(BaseAuditable):
+    name = CharField(max_length=100, unique=True)
 
     def __str__(self) -> str:
         return self.name
