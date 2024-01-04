@@ -141,10 +141,8 @@ class MusicArtistXMusicTag(BaseAuditable):
                 name='unique_music_artist_x_music_tag'
             )
         ]
-
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.music_artist.name} : {self.music_tag.name}'
+        verbose_name = 'MusicArtist <-> MusicTag'
+        verbose_name_plural = verbose_name
 
 
 class MusicArtistXPerson(BaseAuditable):
@@ -181,6 +179,8 @@ class MusicArtistXPerson(BaseAuditable):
                 name='unique_music_artist_x_person'
             )
         ]
+        verbose_name = 'MusicArtist <-> Person'
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
         return (
@@ -230,6 +230,16 @@ class MusicArtistXPersonActivity(BaseAuditable):
     year_active = PositiveSmallIntegerField(null=True, blank=True)
     year_inactive = PositiveSmallIntegerField(null=True, blank=True)
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('music_artist_x_person', 'year_active'),
+                name='unique_music_artist_x_person_activity_year_active'
+            )
+        ]
+        verbose_name = 'MusicArtist <-> Person Activity'
+        verbose_name_plural = verbose_name
+
 
 class MusicArtistXSong(BaseAuditable):
     """Relates a MusicArtist to a Song"""
@@ -254,6 +264,8 @@ class MusicArtistXSong(BaseAuditable):
                 fields=('music_artist', 'song'),
                 name='unique_music_artist_x_song')
         ]
+        verbose_name = 'MusicArtist <-> Song'
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
         return (
@@ -279,6 +291,8 @@ class MusicArtistXSongArrangement(BaseAuditable):
                 name='unique_music_artist_x_song_arrangement'
             )
         ]
+        verbose_name = 'MusicArtist <-> SongArrangement'
+        verbose_name_plural = verbose_name
 
 
 class MusicArtistXSongPerformance(BaseAuditable):
@@ -299,6 +313,8 @@ class MusicArtistXSongPerformance(BaseAuditable):
                 name='unique_music_artist_x_song_performance'
             )
         ]
+        verbose_name = 'MusicArtist <-> SongPerformance'
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
         return (

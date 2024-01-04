@@ -73,6 +73,10 @@ class CatalogItem(BaseAuditable):
         validators=[MinLengthValidator(12), validate_digit]
     )
 
+    class Meta:
+        verbose_name = 'CatalogItem'
+        verbose_name_plural = verbose_name
+
     def __str__(self):
         return f'[{self.subtype}] {self.name}'
 
@@ -137,6 +141,10 @@ class CatalogItemMotionPictureRecording(BaseAuditable):
         'MotionPictureRecording', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
+
+    class Meta:
+        verbose_name = 'CatalogItem <-> MotionPictureRecording'
+        verbose_name_plural = verbose_name
 
 
 class CatalogItemMusicAlbumProduction(BaseAuditable):

@@ -251,6 +251,8 @@ class PersonXPhoto(BaseAuditable):
                 name='unique_person_x_photo'
             )
         ]
+        verbose_name = 'Person <-> Photo'
+        verbose_name_plural = verbose_name
 
 
 class PersonXSong(BaseAuditable):
@@ -270,6 +272,8 @@ class PersonXSong(BaseAuditable):
                 name='unique_person_x_song'
             )
         ]
+        verbose_name = 'Person <-> Song'
+        verbose_name_plural = verbose_name
 
 
 class PersonXSongArrangement(BaseAuditable):
@@ -289,6 +293,8 @@ class PersonXSongArrangement(BaseAuditable):
                 name='unique_person_x_song_arrangement'
             )
         ]
+        verbose_name = 'Person <-> SongArrangement'
+        verbose_name_plural = verbose_name
 
 
 class PersonXSongPerformance(BaseAuditable):
@@ -308,6 +314,8 @@ class PersonXSongPerformance(BaseAuditable):
                 name='unique_person_x_song_performance'
             )
         ]
+        verbose_name = 'Person <-> SongPerformance'
+        verbose_name_plural = verbose_name
 
 
 class PersonXVideoGame(BaseAuditable):
@@ -328,6 +336,8 @@ class PersonXVideoGame(BaseAuditable):
                 name='unique_person_x_video_game',
             )
         ]
+        verbose_name = 'Person <-> VideoGame'
+        verbose_name_plural = verbose_name
 
 
 class PersonXVideoGameXVideoGameRole(BaseAuditable):
@@ -348,3 +358,5 @@ class PersonXVideoGameXVideoGameRole(BaseAuditable):
                 name='unique_person_x_video_game_x_video_game_role'
             )
         ]
+        verbose_name = 'Person <-> VideoGame <-> VideoGameRole'
+        verbose_name_plural = verbose_name

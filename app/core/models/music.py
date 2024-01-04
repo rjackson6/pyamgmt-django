@@ -60,3 +60,5 @@ class MusicalInstrumentXPerson(BaseAuditable):
                 name='unique_musical_instrument_x_person'
             )
         ]
+        verbose_name = 'MusicalInstrument <-> Person'
+        verbose_name_plural = verbose_name

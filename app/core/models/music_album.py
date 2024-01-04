@@ -266,6 +266,8 @@ class MusicAlbumXMusicArtist(BaseAuditable):
                 fields=('music_album', 'music_artist'),
                 name='unique_music_album_x_music_artist')
         ]
+        verbose_name = 'MusicAlbum <-> MusicArtist'
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
         return (
@@ -290,10 +292,8 @@ class MusicAlbumXMusicTag(BaseAuditable):
                 name='unique_music_album_x_music_tag'
             )
         ]
-
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.music_album.title} : {self.music_tag.name}'
+        verbose_name = 'MusicAlbum <-> MusicTag'
+        verbose_name_plural = verbose_name
 
 
 class MusicAlbumXPerson(BaseAuditable):
@@ -316,9 +316,8 @@ class MusicAlbumXPerson(BaseAuditable):
                 name='unique_music_album_x_person'
             )
         ]
-
-    def admin_description(self) -> str:
-        return f'{self.music_album.title} : {self.person.full_name}'
+        verbose_name = 'MusicAlbum <-> Person'
+        verbose_name_plural = verbose_name
 
 
 class MusicAlbumXPersonXMusicRole(BaseAuditable):
@@ -338,6 +337,8 @@ class MusicAlbumXPersonXMusicRole(BaseAuditable):
                 name='unique_music_album_x_person_role'
             )
         ]
+        verbose_name = 'MusicAlbum <-> Person <-> MusicRole'
+        verbose_name_plural = verbose_name
 
 
 class MusicAlbumXVideoGame(BaseAuditable):
@@ -356,6 +357,5 @@ class MusicAlbumXVideoGame(BaseAuditable):
                 fields=('music_album', 'video_game'),
                 name='unique_music_album_x_video_game')
         ]
-
-    def admin_description(self) -> str:
-        return f'{self.video_game.title} : {self.music_album.title}'
+        verbose_name = 'MusicAlbum <-> VideoGame'
+        verbose_name_plural = verbose_name

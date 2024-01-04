@@ -27,8 +27,12 @@ class MotionPictureSeriesAdmin(admin.ModelAdmin):
 
 @admin.register(motion_picture.MotionPictureXMusicAlbum)
 class MotionPictureXMusicAlbumAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
+    list_display = ('_description',)
     list_select_related = ('motion_picture', 'music_album')
+
+    @staticmethod
+    def _description(obj) -> str:
+        return f'{obj.motion_picture.title} : {obj.music_album.title}'
 
 
 admin.site.register(motion_picture.MotionPictureXSong)

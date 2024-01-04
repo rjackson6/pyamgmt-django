@@ -41,8 +41,12 @@ admin.site.register(book.BookSeries)
 
 @admin.register(book.BookXMotionPicture)
 class BookXMotionPictureAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
+    list_display = ('_description',)
     list_select_related = ('book', 'motion_picture',)
+
+    @staticmethod
+    def _description(obj):
+        return f'{obj.book.title} : {obj.motion_picture.title}'
 
 
 admin.site.register(catalog_item.CatalogItem)

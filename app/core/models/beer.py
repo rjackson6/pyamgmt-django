@@ -19,6 +19,9 @@ class Beer(BaseAuditable):
         null=True, blank=True,
     )
 
+    class Meta:
+        verbose_name_plural = 'breweries'
+
     def __str__(self) -> str:
         return self.name
 

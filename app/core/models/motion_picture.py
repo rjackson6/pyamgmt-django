@@ -99,10 +99,8 @@ class MotionPictureXMusicAlbum(BaseAuditable):
                 name='unique_motion_picture_x_music_album'
             )
         ]
-
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.motion_picture.title} : {self.music_album.title}'
+        verbose_name = 'MotionPicture <-> MusicAlbum'
+        verbose_name_plural = verbose_name
 
 
 class MotionPictureXPerson(BaseAuditable):
@@ -123,6 +121,8 @@ class MotionPictureXPerson(BaseAuditable):
                 name='unique_motion_picture_x_person'
             )
         ]
+        verbose_name = 'MotionPicture <-> Person'
+        verbose_name_plural = verbose_name
 
 
 class MotionPictureXSong(BaseAuditable):
@@ -153,3 +153,5 @@ class MotionPictureXSong(BaseAuditable):
                 name='unique_motion_picture_x_song'
             )
         ]
+        verbose_name = 'MotionPicture <-> Song'
+        verbose_name_plural = verbose_name

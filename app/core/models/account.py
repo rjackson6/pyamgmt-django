@@ -35,6 +35,7 @@ class Account(BaseAuditable):
         INCOME = 'INCOME'  # Salary
         EXPENSE = 'EXPENSE'  # Rent, Utilities, Internet, Fees
         OTHER = 'OTHER'  # Not likely to use
+
     name = CharField(max_length=255, unique=True)
     parent_account = ForeignKey(
         'self',
@@ -57,7 +58,8 @@ class Account(BaseAuditable):
     expenses = managers.account.AccountManagerExpense()
 
     class Meta:
-        verbose_name_plural = 'Account'
+        verbose_name = 'Account'
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
         return f'{self.name}'
@@ -116,7 +118,8 @@ class AccountAsset(BaseAuditable):
     real = managers.account_asset.AccountAssetManagerReal()
 
     class Meta:
-        verbose_name_plural = 'Account::Asset'
+        verbose_name = 'Account::Asset'
+        verbose_name_plural = verbose_name
 
     @cached_property
     def admin_description(self) -> str:
@@ -128,6 +131,7 @@ class AccountAssetFinancial(BaseAuditable):
 
     Examples: a cash or checking account.
     """
+
     account_asset_id: int
 
     account_asset = OneToOneField(
@@ -138,7 +142,8 @@ class AccountAssetFinancial(BaseAuditable):
     institution = None  # TODO 2023-12-12
 
     class Meta:
-        verbose_name_plural = 'Account::Asset::Financial'
+        verbose_name = 'Account::Asset::Financial'
+        verbose_name_plural = verbose_name
 
 
 class AccountAssetReal(BaseAuditable):
@@ -147,6 +152,7 @@ class AccountAssetReal(BaseAuditable):
     Examples: a vehicle, or real estate.
     Implies inherent value, and may be subject to depreciation.
     """
+
     account_asset_id: int
 
     account_asset = OneToOneField(
@@ -157,7 +163,7 @@ class AccountAssetReal(BaseAuditable):
 
     class Meta:
         verbose_name = 'Account::Asset::Real'
-        verbose_name_plural = 'Account::Asset::Real'
+        verbose_name_plural = verbose_name
 
     @cached_property
     def admin_description(self) -> str:
@@ -169,6 +175,7 @@ class AccountEquity(BaseAuditable):
 
     Examples: Common Stock, Paid-In Capital.
     """
+
     account_id: int
 
     account = OneToOneField(
@@ -178,7 +185,7 @@ class AccountEquity(BaseAuditable):
 
     class Meta:
         verbose_name = 'Account::Equity'
-        verbose_name_plural = 'Account::Equity'
+        verbose_name_plural = verbose_name
 
 
 class AccountExpense(BaseAuditable):
@@ -186,6 +193,7 @@ class AccountExpense(BaseAuditable):
 
     Examples: Utilities, Rent, or Fuel.
     """
+
     account_id: int
 
     account = OneToOneField(
@@ -195,7 +203,7 @@ class AccountExpense(BaseAuditable):
 
     class Meta:
         verbose_name = 'Account::Expense'
-        verbose_name_plural = 'Account::Expense'
+        verbose_name_plural = verbose_name
 
 
 class AccountIncome(BaseAuditable):
@@ -203,6 +211,7 @@ class AccountIncome(BaseAuditable):
 
     Examples: Salary, dividends
     """
+
     account_id: int
 
     account = OneToOneField(
@@ -212,7 +221,7 @@ class AccountIncome(BaseAuditable):
 
     class Meta:
         verbose_name = 'Account::Income'
-        verbose_name_plural = 'Account::Income'
+        verbose_name_plural = verbose_name
 
 
 class AccountLiability(BaseAuditable):
@@ -247,11 +256,12 @@ class AccountLiability(BaseAuditable):
 
     class Meta:
         verbose_name = 'Account::Liability'
-        verbose_name_plural = 'Account::Liability'
+        verbose_name_plural = verbose_name
 
 
 class AccountLiabilitySecured(BaseAuditable):
     """A liability account that is held against an asset."""
+
     account_liability_id: int
     asset_id: int
 
@@ -266,4 +276,4 @@ class AccountLiabilitySecured(BaseAuditable):
 
     class Meta:
         verbose_name = 'Account::Liability::Secured'
-        verbose_name_plural = 'Account::Liability::Secured'
+        verbose_name_plural = verbose_name

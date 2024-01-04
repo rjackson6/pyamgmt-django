@@ -10,6 +10,7 @@ from django_base.utils import default_related_names, pascal_case_to_snake_case
 
 class Asset(BaseAuditable):
     """Any item which implies ownership."""
+
     class Subtype(TextChoices):
         DISCRETE = 'DISCRETE', 'DISCRETE'
         INVENTORY = 'INVENTORY', 'INVENTORY'
@@ -25,7 +26,8 @@ class Asset(BaseAuditable):
     subtype = CharField(max_length=31, choices=Subtype.choices)
 
     class Meta:
-        verbose_name_plural = 'Asset'
+        verbose_name = 'Asset'
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
         return f'Asset {self.pk}: {self.description[:30]}'
@@ -36,6 +38,7 @@ class AssetDiscrete(BaseAuditable):
 
     Examples: A vehicle, serialized equipment, or property
     """
+
     class Subtype(TextChoices):
         CATALOG_ITEM = 'CATALOG_ITEM', 'CATALOG_ITEM'
         MANUFACTURED = 'MANUFACTURED', 'MANUFACTURED'
@@ -53,7 +56,7 @@ class AssetDiscrete(BaseAuditable):
 
     class Meta:
         verbose_name = 'Asset::Discrete'
-        verbose_name_plural = 'Asset::Discrete'
+        verbose_name_plural = verbose_name
 
 
 # class AssetDiscreteManufactured(BaseAuditable):
@@ -85,6 +88,7 @@ class AssetDiscrete(BaseAuditable):
 
 class AssetDiscreteVehicle(BaseAuditable):
     """A discrete asset that can be associated with a unique vehicle."""
+
     asset_discrete_id: int
     vehicle_id: int
 
@@ -99,7 +103,7 @@ class AssetDiscreteVehicle(BaseAuditable):
 
     class Meta:
         verbose_name = 'Asset::Discrete::Vehicle'
-        verbose_name_plural = 'Asset::Discrete::Vehicle'
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
         return f'AssetDiscreteVehicle {self.pk}: {self.vehicle_id}'
@@ -110,6 +114,7 @@ class AssetDiscreteXCatalogItem(BaseAuditable):
 
     Although this looks like a subtype, it's joining domains.
     """
+
     asset_discrete_id: int
     catalog_item_id: int
 
@@ -124,7 +129,7 @@ class AssetDiscreteXCatalogItem(BaseAuditable):
 
     class Meta:
         verbose_name = 'Asset::Discrete <-> CatalogItem'
-        verbose_name_plural = 'Asset::Discrete <-> CatalogItem'
+        verbose_name_plural = verbose_name
 
 
 class AssetInventory(BaseAuditable):
@@ -132,6 +137,7 @@ class AssetInventory(BaseAuditable):
 
     Example: Copies of DVDs, un-serialized items.
     """
+
     asset_id: int
     catalog_item_id: int
 
@@ -148,7 +154,7 @@ class AssetInventory(BaseAuditable):
 
     class Meta:
         verbose_name = 'Asset::Inventory'
-        verbose_name_plural = 'Asset::Inventory'
+        verbose_name_plural = verbose_name
 
 
 class AssetType(BaseAuditable):

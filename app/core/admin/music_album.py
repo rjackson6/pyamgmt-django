@@ -107,12 +107,20 @@ class MusicAlbumXMusicArtistAdmin(admin.ModelAdmin):
 @admin.register(music_album.MusicAlbumXPerson)
 class MusicAlbumXPersonAdmin(admin.ModelAdmin):
     inlines = [_inlines.MusicAlbumXPersonXMusicRoleInline]
-    list_display = ('admin_description',)
+    list_display = ('_description',)
     list_select_related = ('music_album', 'person')
+    
+    @staticmethod
+    def _description(obj) -> str:
+        return f'{obj.music_album.title} : {obj.person.full_name}'
 
 
 @admin.register(music_album.MusicAlbumXVideoGame)
 class MusicAlbumXVideoGameAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
+    list_display = ('_description',)
     list_select_related = ('music_album', 'video_game')
     ordering = ('video_game__title', 'music_album__title')
+    
+    @staticmethod
+    def _description(obj) -> str:
+        return f'{obj.video_game.title} : {obj.music_album.title}'

@@ -105,10 +105,5 @@ class BookXMotionPicture(BaseAuditable):
                 name='unique_book_x_motion_picture'
             )
         ]
-
-    @cached_property
-    def admin_description(self) -> str:
-        return (
-            f'{self.book.title} (book) <-> {self.motion_picture.title}'
-            f' ({self.motion_picture.year_produced} film)'
-        )
+        verbose_name = 'Book <-> MotionPicture'
+        verbose_name_plural = verbose_name
