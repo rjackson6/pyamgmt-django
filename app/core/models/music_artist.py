@@ -20,6 +20,7 @@ from . import managers
 
 class MusicArtist(BaseAuditable):
     """An individual musician or a group of musicians."""
+
     music_artist_activity_set: Manager
 
     name = CharField(max_length=255)
@@ -93,6 +94,7 @@ class MusicArtist(BaseAuditable):
 
 class MusicArtistActivity(BaseAuditable):
     """Dates for MusicArtist activity, as bands can go on hiatus."""
+
     music_artist_id: int
 
     music_artist = ForeignKey(
@@ -155,6 +157,7 @@ class MusicArtistXPerson(BaseAuditable):
     Solo artist activity considers their timeline as a music artist by
     profession.
     """
+
     music_artist_id: int
     person_id: int
     music_artist_x_person_activity_set: Manager
@@ -230,6 +233,7 @@ class MusicArtistXPersonActivity(BaseAuditable):
 
 class MusicArtistXSong(BaseAuditable):
     """Relates a MusicArtist to a Song"""
+
     music_artist_id: int
     song_id: int
 

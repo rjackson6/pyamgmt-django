@@ -139,6 +139,7 @@ class Person(BaseAuditable):
 
 class PersonXPersonRelation(BaseAuditable):
     """Hereditary relationships; permanent."""
+
     class Relation(TextChoices):
         CHILD = 'CHILD'
         GRANDCHILD = 'GRANDCHILD'
@@ -177,6 +178,7 @@ class PersonXPersonRelation(BaseAuditable):
 
 
 class PersonXPersonRelationship(BaseAuditable):
+
     class Relationship(TextChoices):
         CLASSMATE = 'CLASSMATE'
         FRIEND = 'FRIEND'

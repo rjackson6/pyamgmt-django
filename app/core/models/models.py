@@ -12,6 +12,7 @@ class Seller(BaseAuditable):
 
 class Unit(BaseAuditable):
     """Unit table."""
+
     class Dimension(TextChoices):
         AREA = 'AREA', 'AREA'
         CURRENT = 'CURRENT', 'CURRENT'

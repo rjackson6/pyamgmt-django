@@ -17,12 +17,14 @@ class PointOfSale(BaseAuditable):
     Similar to an invoice or order, but is typically both paid and fulfilled at
     the time of the transaction.
     """
+
+    party_id: int
+
     barcode = CharField(max_length=255, null=True, blank=True)
     party = ForeignKey(
         'Party', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    party_id: int
     point_of_sale_date = DateField()
     point_of_sale_time = TimeField(null=True, blank=True)
     txn = OneToOneField(
@@ -46,6 +48,7 @@ class PointOfSale(BaseAuditable):
 
 class PointOfSaleDocument(BaseAuditable):
     """Scanned document(s) related to a PointOfSale transaction."""
+
     point_of_sale = ForeignKey(
         PointOfSale, on_delete=PROTECT,
         **default_related_names(__qualname__)
@@ -56,15 +59,17 @@ class PointOfSaleDocument(BaseAuditable):
 
 class PointOfSaleLineItem(BaseAuditable):
     """Line items of a PointOfSale transaction."""
+
     class Subtype(TextChoices):
         CATALOGUE_ITEM = 'CATALOGUE_ITEM', 'CATALOGUE_ITEM'
         NON_CATALOGUE_ITEM = 'NON_CATALOGUE_ITEM', 'NON_CATALOGUE_ITEM'
+
+    point_of_sale_id: int
 
     point_of_sale = ForeignKey(
         PointOfSale, on_delete=PROTECT,
         related_name='line_items'
     )
-    point_of_sale_id: int
     short_memo = CharField(max_length=255, null=True)
     subtype = CharField(max_length=31, choices=Subtype.choices)
 

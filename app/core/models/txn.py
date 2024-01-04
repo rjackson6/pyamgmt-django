@@ -19,12 +19,14 @@ class Txn(BaseAuditable):
     Should have properties for "total debit" and "total credit" derived from its
     line items, and those values should be equal.
     """
+
+    payee_id: int
+
     memo = TextField(null=True, blank=True)
     payee = ForeignKey(
         'Payee', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    payee_id: int
     ref_total = CurrencyField(
         null=True, blank=True,
         verbose_name="Reference Total",
@@ -68,6 +70,7 @@ class TxnLineItem(BaseAuditable):
     Every transaction should have at least two line items representing the
     "from" and "to" accounts.
     """
+
     account_id: int
     txn_id: int
 

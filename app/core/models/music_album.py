@@ -28,6 +28,7 @@ from ._utils import resize_image
 
 class MusicAlbum(BaseAuditable):
     """An individual Music album."""
+
     is_compilation = BooleanField(
         default=False,
         help_text=(
@@ -135,6 +136,7 @@ class MusicAlbumEdition(BaseAuditable):
      Although formats are sometimes linked to editions. "DigiPak", "Bonus track"
      Remastered albums contain remastered tracks, maybe bonuses
     """
+
     music_album_edition_x_song_recording_set: Manager
 
     music_album = ForeignKey(
@@ -245,6 +247,7 @@ class MusicAlbumXMusicArtist(BaseAuditable):
     This does not replace individual song artists, as there are "featured"
     tracks, or compilation albums.
     """
+
     music_album_id: int
     music_artist_id: int
 
@@ -295,6 +298,7 @@ class MusicAlbumXMusicTag(BaseAuditable):
 
 class MusicAlbumXPerson(BaseAuditable):
     """Personnel credits for a Music Album."""
+
     music_album = ForeignKey(
         MusicAlbum, on_delete=CASCADE,
         **default_related_names(__qualname__)
@@ -303,7 +307,7 @@ class MusicAlbumXPerson(BaseAuditable):
         'Person', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    comments = TextField(blank=True, default='')
+    notes = TextField(blank=True, default='')
 
     class Meta:
         constraints = [

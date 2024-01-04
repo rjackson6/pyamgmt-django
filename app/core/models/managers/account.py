@@ -104,6 +104,7 @@ class AccountManager(Manager):
 
     def get_hierarchy_raw(self, pk):
         """Tries to use recursive CTE?"""
+
         params = [pk]
         query = ("""\
             WITH RECURSIVE

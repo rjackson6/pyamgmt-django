@@ -20,11 +20,13 @@ class Vehicle(BaseAuditable):
 
     Accounting reached via Vehicle -> Asset -> Account
     """
+
+    vehicle_year_id: int
+
     vehicle_year = ForeignKey(
         'VehicleYear', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    vehicle_year_id: int
     vin = UpperCharField(
         max_length=17, unique=True, validators=[MinLengthValidator(11)]
     )
@@ -46,6 +48,7 @@ class Vehicle(BaseAuditable):
 
 class VehicleMake(BaseAuditable):
     """The make/brand/marque of a vehicle."""
+
     name = CharField(max_length=255, unique=True, help_text="Make/Brand/Marque")
     manufacturer = ForeignKey(
         'Manufacturer', on_delete=SET_NULL,
@@ -59,11 +62,13 @@ class VehicleMake(BaseAuditable):
 
 class VehicleMileage(BaseAuditable):
     """A mileage record for a Vehicle at a given point in time."""
+
+    vehicle_id: int
+
     vehicle = ForeignKey(
         'Vehicle', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    vehicle_id: int
     odometer_date = DateField(
         validators=[validate_date_not_future],
         help_text="Date on which this odometer reading was captured"
@@ -89,6 +94,9 @@ class VehicleMileage(BaseAuditable):
 
 class VehicleModel(BaseAuditable):
     """The model of a vehicle, e.g., Supra."""
+
+    vehicle_make_id: int
+
     name = CharField(
         max_length=255,
         help_text="Model name, such as 3000GT, Forte, Supra"
@@ -97,7 +105,6 @@ class VehicleModel(BaseAuditable):
         VehicleMake, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    vehicle_make_id: int
 
     class Meta:
         constraints = [
@@ -116,6 +123,9 @@ class VehicleService(BaseAuditable):
 
     Usually encompasses multiple service items.
     """
+
+    vehicle_id: int
+
     date_in = DateField()
     date_out = DateField(null=True, blank=True)
     mileage_in = IntegerField()
@@ -124,29 +134,31 @@ class VehicleService(BaseAuditable):
         Vehicle, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    vehicle_id: int
 
 
 class VehicleServiceItem(BaseAuditable):  # Line item
     """Individual maintenance items from a service."""
     # TODO: Should have foreign keys for service types, like oil change,
     #  oil filter, tire rotation, since those are standard across vehicles.
+    vehicle_service_id: int
+
     description = CharField(max_length=255)
     vehicle_service = ForeignKey(
         VehicleService, on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    vehicle_service_id: int
 
 
 class VehicleTrim(BaseAuditable):
     """An edition/trim of a vehicle model, such as EX, Turbo, Base."""
+
+    vehicle_model_id: int
+
     name = CharField(max_length=255, help_text="Trim Level, such as EX, GT, SS")
     vehicle_model = ForeignKey(
         VehicleModel, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    vehicle_model_id: int
 
     class Meta:
         constraints = [
@@ -162,11 +174,13 @@ class VehicleTrim(BaseAuditable):
 
 class VehicleYear(BaseAuditable):
     """Year that a Make/Model/Trim was actually produced."""
+
+    vehicle_trim_id: int
+
     vehicle_trim = ForeignKey(
         VehicleTrim, on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    vehicle_trim_id: int
     year = IntegerField(
         validators=[MinValueValidator(1886), validate_year_not_future],
         help_text="Production year"

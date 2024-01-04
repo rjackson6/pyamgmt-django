@@ -9,5 +9,6 @@ class Options(TextChoices):
 
 class Config(BaseAuditable):
     """Runtime configuration for the application."""
+
     option = CharField(primary_key=True, max_length=16, choices=Options.choices)
     value = CharField(max_length=255)

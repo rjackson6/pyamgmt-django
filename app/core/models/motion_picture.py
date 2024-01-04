@@ -55,7 +55,7 @@ class MotionPictureRecording(BaseAuditable):
 
     Takes into account media (digital, DVD, maybe even distributor).
     """
-    # media_format = ForeignKey()
+
     motion_picture = ForeignKey(
         MotionPicture, on_delete=PROTECT,
         **default_related_names(__qualname__)
@@ -79,6 +79,7 @@ class MotionPictureSeries(BaseAuditable):
 
 class MotionPictureXMusicAlbum(BaseAuditable):
     """Relates a motion picture to its soundtrack and/or score."""
+
     motion_picture_id: int
     music_album_id: int
 
@@ -132,6 +133,7 @@ class MotionPictureXSong(BaseAuditable):
     Motion Picture" sometimes imply different meanings. I don't know if
     soundtracks or film scores are always published, either.
     """
+
     motion_picture_id: int
     song_id: int
 

@@ -32,6 +32,7 @@ class VideoGame(BaseAuditable):
     Sometimes editions are just bundles that include add-ons.
     Editions should not be used for remakes or remasters.
     """
+
     title = CharField(max_length=100)
     # developer = ForeignKey(
     #     'VideoGameDeveloper', on_delete=CASCADE,
@@ -105,6 +106,7 @@ class VideoGameEdition(BaseAuditable):
     like Soul Calibur and Terraria. These should be their own edition, e.g.,
     "Terraria PC Edition".
     """
+
     name = CharField(max_length=100)
     release_date = DateField(null=True, blank=True)
     video_game = ForeignKey(
@@ -164,6 +166,7 @@ class VideoGamePlatformRegion(BaseAuditable):
 
 class VideoGameRole(BaseAuditable):
     """Credits to personnel."""
+
     name = CharField(max_length=255, unique=True)
 
     def __str__(self) -> str:
@@ -172,6 +175,7 @@ class VideoGameRole(BaseAuditable):
 
 class VideoGameSeries(BaseAuditable):
     """A grouping of related video games."""
+
     name = CharField(max_length=63, unique=True)
     parent_series = ForeignKey(
         'self', on_delete=SET_NULL,
@@ -198,6 +202,7 @@ class VideoGameXVideoGamePlatform:
 
     TODO 2023-12-12: Console games were regionalized for PAL/NTSC
     """
+
     release_date = DateField(null=True, blank=True)
     video_game = ForeignKey(
         VideoGame, on_delete=PROTECT,

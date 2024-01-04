@@ -19,11 +19,12 @@ from django.db.models.fields.files import ImageFieldFile
 #  Since this mutates the given list and objects, the return could be the flat
 #  version.
 def calculate_depth(
-    data_list: list[dict],
-    key: str,
-    depth_key: str = 'depth',
+        data_list: list[dict],
+        key: str,
+        depth_key: str = 'depth',
 ) -> list:
     """"""
+
     queue = deque([(id(x), x, 1) for x in data_list])
     memo = set()
     while queue:
@@ -40,6 +41,7 @@ def resize_image(image_field: ImageFieldFile, sizes: Iterable) -> dict:
     """Given an image and an iterable of tuple dimensions, resize the
     image to the given size constraints.
     """
+
     data = {}
     image_width, image_height = image_field.width, image_field.height
     name, ext = os.path.splitext(image_field.name)
@@ -66,11 +68,12 @@ def resize_image(image_field: ImageFieldFile, sizes: Iterable) -> dict:
 
 
 def traverse_depth(
-    data_list: list[dict],
-    key: str,
-    depth_key: str = 'depth',
+        data_list: list[dict],
+        key: str,
+        depth_key: str = 'depth',
 ) -> list:
     """Updates dictionaries with depth and returns the flattened list."""
+
     all_ = []
     queue = deque([(id(x), x, 1) for x in data_list])
     memo = set()

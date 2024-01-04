@@ -12,6 +12,7 @@ class Order(BaseAuditable):
     """A purchase record which is usually paid in advance, but not immediately
     fulfilled.
     """
+
     order_date = DateField()
     order_number = CharField(max_length=255)
     party = ForeignKey(

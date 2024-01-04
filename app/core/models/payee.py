@@ -9,6 +9,9 @@ from django_base.utils import default_related_names
 
 class Payee(BaseAuditable):
     """Within scope of transaction, the entity receiving payment."""
+
+    party_id: int
+
     memo = TextField(null=True, blank=True)
     name = CharField(
         max_length=255,
@@ -22,7 +25,6 @@ class Payee(BaseAuditable):
         blank=True,
         **default_related_names(__qualname__)
     )
-    party_id: int
 
     def __str__(self) -> str:
         return f'{self.name}'

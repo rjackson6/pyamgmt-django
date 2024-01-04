@@ -40,6 +40,7 @@ class Song(BaseAuditable):
     This is a bit abstract, in that it does not fully represent the recordings
     or derivative works.
     """
+
     title = CharField(max_length=255)
     disambiguator = ForeignKey(
         SongDisambiguator, on_delete=SET_NULL,
@@ -135,6 +136,7 @@ class SongPerformance(BaseAuditable):
     Demo performances are their own category, as they tend to vary between live
     one-takes or studio sessions with some engineering.
     """
+
     class PerformanceType(TextChoices):
         DEMO = 'DEMO', 'Demo Recording'
         LIVE = 'LIVE', 'Live Performance'
@@ -174,6 +176,7 @@ class SongPerformance(BaseAuditable):
 
 class SongRecording(BaseAuditable):
     """Capture of a performance to any persistent media."""
+
     duration = DurationField(
         null=True, blank=True,
         validators=[validate_positive_timedelta],

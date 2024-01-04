@@ -8,6 +8,7 @@ class MusicTag(BaseAuditable):
     that are of a different style. Tagging makes a better representation of this
     than a single-value enumeration.
     """
+
     name = LowerCharField(max_length=31, unique=True)
 
     def __str__(self) -> str:

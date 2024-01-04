@@ -11,6 +11,7 @@ from django_base.utils import default_related_names, ordinal
 
 class Book(BaseAuditable):
     """Every CRUD app needs a book model."""
+
     title = CharField(max_length=255)
     series = ForeignKey(
         'BookSeries', on_delete=SET_NULL, null=True, blank=True,
@@ -29,6 +30,7 @@ class BookEdition(BaseAuditable):
     As books may have revisions or updates, this is how they are tracked in the
     database under the same body of work.
     """
+
     book = ForeignKey(
         Book, on_delete=PROTECT,
         **default_related_names(__qualname__)
@@ -57,6 +59,7 @@ class BookPublication(BaseAuditable):
     - This is where hardcover / paperback would live, I think
         - The ISBN is usually different between the two
     """
+
     book_edition = ForeignKey(
         BookEdition, on_delete=PROTECT,
         **default_related_names(__qualname__)
@@ -85,6 +88,7 @@ class BookXMotionPicture(BaseAuditable):
 
     The edition of the book doesn't really matter.
     """
+
     book = ForeignKey(
         Book, on_delete=CASCADE,
         **default_related_names(__qualname__)

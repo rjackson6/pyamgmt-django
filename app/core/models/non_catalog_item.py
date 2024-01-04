@@ -9,6 +9,7 @@ from django_base.utils import default_related_names
 
 class NonCatalogItem(BaseAuditable):
     """A non-tangible or generic item, such as a tax levied."""
+
     name = CharField(max_length=255, unique=True)
 
     def __str__(self) -> str:

@@ -10,6 +10,7 @@ from django_base.utils import default_related_names, pascal_case_to_snake_case
 
 class Invoice(BaseAuditable):
     """Payment due to a party for a good or service."""
+
     invoice_date = DateField()
     invoice_number = CharField(max_length=255)
     party = ForeignKey(
@@ -29,9 +30,11 @@ class InvoiceDocument(BaseAuditable):
 
 class InvoiceLineItem(BaseAuditable):
     """A line item related to an Invoice."""
+
     class Subtype(TextChoices):
         CATALOGUE_ITEM = 'CATALOGUE_ITEM', 'CATALOGUE_ITEM'
         NON_CATALOGUE_ITEM = 'NON_CATALOGUE_ITEM', 'NON_CATALOGUE_ITEM'
+
     invoice = ForeignKey(
         Invoice, on_delete=CASCADE,
         **default_related_names(__qualname__)
@@ -45,16 +48,18 @@ class InvoiceLineItem(BaseAuditable):
 
 class InvoiceLineItemXNonCatalogItem(BaseAuditable):
     """Relates a NonCatalogItem record to an InvoiceLineItem record."""
+
+    invoice_line_item_id: int
+    non_catalog_item_id: int
+
     invoice_line_item = OneToOneField(
         InvoiceLineItem, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    invoice_line_item_id: int
     non_catalog_item = ForeignKey(
         'NonCatalogItem', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
-    non_catalog_item_id: int
 
     def __str__(self) -> str:
         return (

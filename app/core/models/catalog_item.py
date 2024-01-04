@@ -24,9 +24,11 @@ class CatalogItem(BaseAuditable):
     asset or inventory.
     Does not include concepts like labor hours, services, or warranties.
     """
+
     class Subtype(TextChoices):
         DIGITAL_SONG = 'DIGITAL_SONG', 'DIGITAL_SONG'
         MUSIC_ALBUM = 'MUSIC_ALBUM', 'MUSIC_ALBUM'
+
     asin = UpperCharField(
         max_length=10, unique=True, null=True, blank=True,
         validators=[MinLengthValidator(10), validate_alphanumeric],
@@ -93,15 +95,37 @@ class CatalogItemDigitalSong(BaseAuditable):
     - Even if a song is released as a "Single", that "Single" still requires a
       medium for physical distribution, which makes it a "Single Album"
     """
+
+    catalog_item_id: int
+
     catalog_item = OneToOneField(
         CatalogItem, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    catalog_item_id: int
     song_recording = OneToOneField(
         'SongRecording', on_delete=CASCADE, null=True, blank=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
+
+
+class CatalogItemManufactured(BaseAuditable):
+    catalog_item = OneToOneField(
+        CatalogItem, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
+    manufacturer = ForeignKey(
+        'Manufacturer', on_delete=PROTECT, null=True, blank=True,
+        **default_related_names(__qualname__)
+    )
+    part_number = CharField(max_length=255, blank=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('manufacturer', 'part_number'),
+                name='unique_catalog_item_manufactured'
+            )
+        ]
 
 
 class CatalogItemMotionPictureRecording(BaseAuditable):
@@ -117,11 +141,13 @@ class CatalogItemMotionPictureRecording(BaseAuditable):
 
 class CatalogItemMusicAlbumProduction(BaseAuditable):
     """A produced Music Album distributed in a particular format."""
+
+    catalog_item_id: int
+
     catalog_item = OneToOneField(
         CatalogItem, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    catalog_item_id: int
     music_album_production = ForeignKey(
         'MusicAlbumProduction', on_delete=SET_NULL,
         null=True, blank=True,
@@ -136,23 +162,30 @@ class CatalogItemXCatalogItem(BaseAuditable):
     bundle probably shouldn't contain bundles, though there's no real
     enforcement mechanism for that.
     """
+
     catalog_item_a = ForeignKey('CatalogItem', on_delete=CASCADE, related_name='+')
     catalog_item_b = ForeignKey('CatalogItem', on_delete=CASCADE, related_name='+')
     relationship = None
 
 
 class CatalogItemXInvoiceLineItem(BaseAuditable):
-    """Relates a CatalogItem record to an InvoiceLineItem record."""
+    """Relates a CatalogItem record to an InvoiceLineItem record.
+
+    A properly formed invoice line item should only relate to a single catalog
+    item.
+    """
+
+    invoice_line_item_id: int
+    catalog_item_id: int
+
     invoice_line_item = OneToOneField(
         'InvoiceLineItem', on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    invoice_line_item_id: int
     catalog_item = ForeignKey(
         'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    catalog_item_id: int
     unit_price = CurrencyField()
     # seller?
     quantity = IntegerField()
@@ -162,41 +195,52 @@ class CatalogItemXInvoiceLineItem(BaseAuditable):
 
 
 class CatalogItemXOrderLineItem(BaseAuditable):
-    """Relates a CatalogItem record to an OrderLineItem record."""
+    """Relates a CatalogItem record to an OrderLineItem record.
+
+    A properly formed order line item should only relate to a single catalog
+    item.
+    """
+
+    order_line_item_id: int
+    catalog_item_id: int
+
     order_line_item = OneToOneField(
         'OrderLineItem', on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    order_line_item_id: int
     catalog_item = ForeignKey(
         'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    catalog_item_id: int
 
     def __str__(self) -> str:
         return f'CatalogItemXOrderLineItem {self.pk}: {self.catalog_item_id}'
 
 
 class CatalogItemXPointOfSaleLineItem(BaseAuditable):
-    """Relates a CatalogItem record to a PointOfSaleLineItem record"""
+    """Relates a CatalogItem record to a PointOfSaleLineItem record.
+
+    Only one relation should exist per line item.
+    """
+
+    catalog_item_id: int
+    point_of_sale_line_item_id: int
+    unit_id: int
+
     point_of_sale_line_item = OneToOneField(
         'PointOfSaleLineItem', on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    point_of_sale_line_item_id: int
     catalog_item = ForeignKey(
         'CatalogItem', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    catalog_item_id: int
     quantity = DecimalField(max_digits=19, decimal_places=5, default=1)
     unit_price = CurrencyField()
     unit = ForeignKey(
         'Unit', on_delete=SET_NULL, null=True, blank=True,
         **default_related_names(__qualname__)
     )
-    unit_id: int
 
     def __str__(self) -> str:
         return (

@@ -101,11 +101,12 @@ class AccountAsset(BaseAuditable):
         REAL = 'REAL', 'REAL'
         OTHER = 'OTHER', 'OTHER'
 
+    account_id: int
+
     account = OneToOneField(
         Account, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    account_id: int
     subtype = CharField(
         max_length=31, choices=Subtype.choices, default=Subtype.OTHER
     )
@@ -127,11 +128,12 @@ class AccountAssetFinancial(BaseAuditable):
 
     Examples: a cash or checking account.
     """
+    account_asset_id: int
+
     account_asset = OneToOneField(
         AccountAsset, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    account_asset_id: int
     account_number = CharField(max_length=63, null=True, blank=True)
     institution = None  # TODO 2023-12-12
 
@@ -154,6 +156,7 @@ class AccountAssetReal(BaseAuditable):
     # TODO: I might should put the foreign key to Asset here
 
     class Meta:
+        verbose_name = 'Account::Asset::Real'
         verbose_name_plural = 'Account::Asset::Real'
 
     @cached_property
@@ -174,6 +177,7 @@ class AccountEquity(BaseAuditable):
     )
 
     class Meta:
+        verbose_name = 'Account::Equity'
         verbose_name_plural = 'Account::Equity'
 
 
@@ -182,13 +186,15 @@ class AccountExpense(BaseAuditable):
 
     Examples: Utilities, Rent, or Fuel.
     """
+    account_id: int
+
     account = OneToOneField(
         Account, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    account_id: int
 
     class Meta:
+        verbose_name = 'Account::Expense'
         verbose_name_plural = 'Account::Expense'
 
 
@@ -197,13 +203,15 @@ class AccountIncome(BaseAuditable):
 
     Examples: Salary, dividends
     """
+    account_id: int
+
     account = OneToOneField(
         Account, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    account_id: int
 
     class Meta:
+        verbose_name = 'Account::Income'
         verbose_name_plural = 'Account::Income'
 
 
@@ -220,14 +228,17 @@ class AccountLiability(BaseAuditable):
         - HELOC is Secured (by equity)
             - somewhat revolving? Open term with a limit?
     """
+
     class Subtype(TextChoices):
         SECURED = 'SECURED', 'SECURED'
         OTHER = 'OTHER', 'OTHER'
+
+    account_id: int
+
     account = OneToOneField(
         Account, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    account_id: int
     account_number = CharField(max_length=63, null=True, blank=True)
     lender = None  # TODO 2023-12-12
     subtype = CharField(
@@ -235,21 +246,24 @@ class AccountLiability(BaseAuditable):
     )
 
     class Meta:
+        verbose_name = 'Account::Liability'
         verbose_name_plural = 'Account::Liability'
 
 
 class AccountLiabilitySecured(BaseAuditable):
     """A liability account that is held against an asset."""
+    account_liability_id: int
+    asset_id: int
+
     account_liability = OneToOneField(
         AccountLiability, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    account_liability_id: int
     asset = ForeignKey(
         'Asset', on_delete=PROTECT,
         **default_related_names(__qualname__)
     )
-    asset_id: int
 
     class Meta:
+        verbose_name = 'Account::Liability::Secured'
         verbose_name_plural = 'Account::Liability::Secured'
