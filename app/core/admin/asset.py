@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ..forms.admin import AssetForm
+from ..forms.admin import AssetForm, AssetDiscreteXCatalogItemForm
 from ..models import asset
 
 
@@ -33,7 +33,18 @@ class AssetDiscreteVehicleAdmin(admin.ModelAdmin):
         )
 
 
-admin.site.register(asset.AssetDiscreteXCatalogItem)
+@admin.register(asset.AssetDiscreteXCatalogItem)
+class AssetDiscreteXCatalogItemAdmin(admin.ModelAdmin):
+    form = AssetDiscreteXCatalogItemForm
+    list_display = ('_description',)
+    list_select_related = ('asset_discrete__asset',)
+
+    @staticmethod
+    def _description(obj) -> str:
+        return (
+            f'{obj.asset_discrete.asset.description}'
+            f' : {obj.catalog_item}'
+        )
 
 
 @admin.register(asset.AssetInventory)

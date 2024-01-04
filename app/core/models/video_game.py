@@ -33,11 +33,11 @@ class VideoGame(BaseAuditable):
     Editions should not be used for remakes or remasters.
     """
     title = CharField(max_length=100)
-    developer = ForeignKey(
-        'VideoGameDeveloper', on_delete=CASCADE,
-        null=True, blank=True,
-        **default_related_names(__qualname__)
-    )
+    # developer = ForeignKey(
+    #     'VideoGameDeveloper', on_delete=CASCADE,
+    #     null=True, blank=True,
+    #     **default_related_names(__qualname__)
+    # )
     disambiguator = CharField(max_length=255, blank=True)
     series = ForeignKey(
         'VideoGameSeries', on_delete=SET_NULL,

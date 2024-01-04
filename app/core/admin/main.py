@@ -2,14 +2,19 @@ from django.contrib import admin
 
 from ..models import (
     author, beer, book, catalog_item, city, config, invoice,
-    manufacturer, motion_picture, photo, txn, vehicle, video_game,
+    manufacturer, photo, txn,
 )
 from . import _inlines
 
 
 admin.site.register(author.Author)
 
-admin.site.register(beer.Beer)
+
+@admin.register(beer.Beer)
+class BeerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'style', 'brewery',)
+    list_select_related = ('brewery', 'style')
+    ordering = ('name',)
 
 
 @admin.register(beer.BeerStyle)
@@ -51,28 +56,6 @@ admin.site.register(invoice.Invoice)
 admin.site.register(invoice.InvoiceLineItem)
 
 admin.site.register(manufacturer.Manufacturer)
-
-
-@admin.register(motion_picture.MotionPicture)
-class MotionPictureAdmin(admin.ModelAdmin):
-    inlines = [
-        _inlines.MotionPictureXPersonInline,
-        _inlines.MotionPictureXMusicAlbumInline,
-    ]
-    ordering = ('title', 'year_produced')
-
-
-admin.site.register(motion_picture.MotionPictureRecording)
-admin.site.register(motion_picture.MotionPictureSeries)
-
-
-@admin.register(motion_picture.MotionPictureXMusicAlbum)
-class MotionPictureXMusicAlbumAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
-    list_select_related = ('motion_picture', 'music_album')
-
-
-admin.site.register(motion_picture.MotionPictureXSong)
 
 
 @admin.register(photo.Photo)

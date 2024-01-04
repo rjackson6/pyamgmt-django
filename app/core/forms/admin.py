@@ -9,6 +9,7 @@ from django.forms import ModelForm
 from ..models import PersonXPhoto, MusicAlbumArtwork
 from .fields import (
     AccountAssetRealChoiceField,
+    AssetDiscreteChoiceField,
     MusicAlbumArtworkChoiceField,
     MusicAlbumEditionChoiceField,
     MusicArtistChoiceField,
@@ -18,6 +19,13 @@ from .fields import (
     SongPerformanceChoiceField,
     SongRecordingChoiceField,
 )
+
+
+class AssetDiscreteXCatalogItemForm(ModelForm):
+    class Meta:
+        field_classes = {
+            'asset_discrete': AssetDiscreteChoiceField
+        }
 
 
 class AssetForm(ModelForm):

@@ -22,6 +22,8 @@ class MotionPicture(BaseAuditable):
         null=True, blank=True,
         validators=[validate_year_not_future]
     )
+    notes = TextField(blank=True)
+
     music_albums = ManyToManyField(
         'MusicAlbum', through='MotionPictureXMusicAlbum',
         related_name='+', blank=True,

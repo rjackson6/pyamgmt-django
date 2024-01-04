@@ -12,9 +12,10 @@ class VideoGameAdmin(admin.ModelAdmin):
         _inlines.PersonXVideoGameInline,
         _inlines.MusicAlbumXVideoGameInline,
     ]
-    list_display = ('title', 'developer', 'series')
-    list_select_related = ('developer',)
+    list_display = ('title', 'series')
+    list_select_related = ('series',)
     ordering = ('title',)
+    search_fields = ('title',)
 
 
 @admin.register(video_game.VideoGameAddon)

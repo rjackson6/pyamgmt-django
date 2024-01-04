@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block root_main %}
+<h1>Welcome</h1>
+<ul>
+  <li>
+    <a href="{% url 'core-beer:network' %}">Beer</a>
+  </li>
+  <li>
+    <a href="{% url 'core:index' %}">Index</a>
+  </li>
+  <li>
+    <a href="{% url 'admin:index' %}">Admin</a>
+  </li>
+</ul>
+{% endblock root_main %}

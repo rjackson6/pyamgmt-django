@@ -1,7 +1,7 @@
 from django.db.models import (
     CharField, DateField, ForeignKey, IntegerField, OneToOneField, TextField,
     TextChoices,
-    CASCADE, PROTECT, SET_NULL
+    CASCADE, PROTECT, SET_NULL, UniqueConstraint
 )
 from django.utils.functional import cached_property
 
@@ -93,6 +93,12 @@ class AssetDiscreteXCatalogItem(BaseAuditable):
     )
 
     class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('asset_discrete', 'catalog_item'),
+                name='unique_asset_discrete_x_catalog_item'
+            )
+        ]
         verbose_name = 'Asset::Discrete::CatalogItem'
         verbose_name_plural = 'Asset::Discrete::CatalogItem'
 

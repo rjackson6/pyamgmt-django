@@ -78,7 +78,7 @@ urlpatterns = [
          views.main.MusicAlbumRegisterView.as_view(),
          name='music-album-register'),
     path('networks/', include([
-        path('', views.networks.NetworkIndex.as_view(), name='index'),
+        path('', views.networks.NetworkIndex.as_view(), name='network-index'),
         path('music-album-x-music-artist/',
              views.networks.MusicArtistDetailedNetworkView.as_view()),
         path('film-games-and-music/',

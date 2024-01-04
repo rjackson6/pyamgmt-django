@@ -7,10 +7,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 import debug_toolbar
 
+from . import views
+
 admin.site.site_header = 'PyAMgmt Admin'
 
 urlpatterns = [
+    path('', views.root, name='root'),
     path('admin/', admin.site.urls),
+    # path('beer/', include('core.urls.beer', namespace='beer')),
     path('beer/', include('core.urls.beer')),
     path('pyamgmt/', include('core.urls.main')),
     path('schemaviz/', include('schemaviz.urls')),
