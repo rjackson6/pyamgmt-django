@@ -10,6 +10,10 @@ from .main import (
 from .account import (
     AccountListView,
 )
+from .catalog_item import (
+    CatalogItemDetailView,
+    CatalogItemListView,
+)
 from .music_artist import (
     MusicArtistDetailView,
     MusicArtistListView,

@@ -1,7 +1,7 @@
-{% extends 'core/base.html' %}
+{% extends 'core/model-list.html' %}
 
 
-{% block main %}
+{% block content %}
 <h1>Vehicles</h1>
 <table>
   <thead>
@@ -16,7 +16,7 @@
   <tbody>
   {% for obj in object_list %}
   <tr>
-    <td>{{ obj.vin }}</td>
+    <td class="monospace">{{ obj.vin }}</td>
     <td>{{ obj.vehicle_year.year }}</td>
     <td>{{ obj.vehicle_year.vehicle_trim.vehicle_model.vehicle_make.name }}</td>
     <td>{{ obj.vehicle_year.vehicle_trim.vehicle_model.name }}</td>
@@ -25,4 +25,4 @@
   {% endfor %}
   </tbody>
 </table>
-{% endblock main %}
+{% endblock content %}

@@ -10,7 +10,9 @@ class MotionPictureAdmin(admin.ModelAdmin):
         _inlines.MotionPictureXPersonInline,
         _inlines.MotionPictureXMusicAlbumInline,
     ]
-    ordering = ('title', 'year_produced')
+    list_display = ('title', 'disambiguator', 'year_produced',)
+    ordering = ('title', 'year_produced',)
+    search_fields = ('title',)
 
 
 admin.site.register(motion_picture.MotionPictureRecording)

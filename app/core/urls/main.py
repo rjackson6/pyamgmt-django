@@ -13,6 +13,12 @@ _account_urls = make_urls([
     path('', views.models.AccountListView.as_view(), name='list')
 ])
 
+_catalog_item_urls = make_urls([
+    path('', views.models.CatalogItemListView.as_view(), name='list'),
+    path('<int:pk>/',
+         views.models.CatalogItemDetailView.as_view(), name='detail'),
+])
+
 _music_album_urls = make_urls([
     path('', views.models.MusicAlbumListView.as_view(), name='list'),
     path('<int:pk>/', include([
@@ -54,11 +60,17 @@ _txn_urls = make_urls([
     path('', views.models.TxnListView.as_view(), name='list'),
 ])
 
+_vehicle_urls = make_urls([
+    path('', views.models.VehicleListView.as_view(), name='list')
+])
+
 urlpatterns = [
     path('', views.main.index, name='index'),
     path('models/', include([
         path('account/',
              include(_account_urls, namespace='account')),
+        path('catalog-item/',
+             include(_catalog_item_urls, namespace='catalog-item')),
         path('music-album/',
              include(_music_album_urls, namespace='music-album')),
         path('music-album-edition/',
@@ -72,7 +84,8 @@ urlpatterns = [
              include(_song_performance_urls, namespace='song-performance')),
         path('txn/',
              include(_txn_urls, namespace='txn')),
-        path('vehicle/', views.models.VehicleListView.as_view()),
+        path('vehicle/',
+             include(_vehicle_urls, namespace='vehicle')),
     ])),
     path('music-album-register/',
          views.main.MusicAlbumRegisterView.as_view(),

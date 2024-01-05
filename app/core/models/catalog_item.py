@@ -78,7 +78,14 @@ class CatalogItem(BaseAuditable):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return f'[{self.subtype}] {self.name}'
+        return f'{self.name}'
+
+    @property
+    def amazon_url(self) -> str:
+        if self.asin:
+            return f'https://www.amazon.com/dp/{self.asin}'
+        else:
+            return ''
 
 
 class CatalogItemBookPublication(BaseAuditable):

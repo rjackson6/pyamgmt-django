@@ -1,0 +1,31 @@
+{% extends 'core/model-list.html' %}
+
+
+{% block content %}
+<h1>Catalog</h1>
+<table>
+  <thead>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for obj in object_list %}
+  <tr>
+    <td><a href="{% url 'core:catalog-item:detail' obj.pk %}">{{ obj }}</a></td>
+    <td>
+      {% if obj.amazon_url %}
+      <a href="{{ obj.amazon_url }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="monospace">
+        {{ obj.asin }}
+      </a>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}
