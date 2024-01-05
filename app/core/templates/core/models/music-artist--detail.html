@@ -1,6 +1,19 @@
 {% extends 'core/model-detail.html' %}
 
 
+{% block breadcrumbs__list %}
+<ol class="breadcrumbs__list">
+  <li>Home</li>
+  <li>
+    <a href="{% url 'core:music-artist:list' %}">
+      Music Artist
+    </a>
+  </li>
+  <li>{{ object.name }}</li>
+</ol>
+{% endblock breadcrumbs__list %}
+
+
 {% block info_card %}
 <div>Name: {{ object.name }}</div>
 <div>Active: {{ object.is_active }}</div>

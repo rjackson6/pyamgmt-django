@@ -10,6 +10,13 @@ a:hover {
 input {
     background-color: inherit;
     color: inherit;
+    font-size: inherit;
+}
+
+select {
+    background-color: inherit;
+    color: inherit;
+    font-size: inherit;
 }
 
 table {

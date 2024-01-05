@@ -4,7 +4,6 @@ from .main import (
     MusicAlbumEditionDetailView,
     PersonDetailView,
     PersonListView,
-    SongPerformanceDetailView,
     VehicleListView,
 )
 from .account import (
@@ -17,6 +16,10 @@ from .catalog_item import (
 from .music_artist import (
     MusicArtistDetailView,
     MusicArtistListView,
+)
+from .song import (
+    SongPerformanceDetailView,
+    SongPerformanceListView,
 )
 from .txn import (
     TxnListView,

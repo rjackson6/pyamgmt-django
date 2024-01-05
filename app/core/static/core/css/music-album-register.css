@@ -4,7 +4,8 @@
 }
 
 .music-album:hover {
-    background-color: var(--Charcoal);
+    /*background-color: var(--Charcoal);*/
+    background-color: var(--Gunmetal--light);
 }
 
 .music-album__info {

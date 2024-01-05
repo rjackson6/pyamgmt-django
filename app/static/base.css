@@ -39,6 +39,7 @@
     --Fern-green: #4f7942;
     --Garnet: #733635;
     --Gunmetal: #2a3439;  /* Nice grey background color */
+    --Gunmetal--light: #323c41;
     --Han-blue: #446cff;
     --Han-purple: #5218fa;
     --Heliotrope: #df73ff;
@@ -214,5 +215,5 @@ td > table {
 }
 
 .django_base.pagination {
-    background-color: var(--Charcoal);
+    background-color: var(--Peacock-blue);
 }

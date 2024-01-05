@@ -53,11 +53,6 @@ class PersonDetailView(DetailView):
     template_name = 'core/models/person--detail.html'
 
 
-class SongPerformanceDetailView(DetailView):
-    model = SongPerformance
-    template_name = 'core/models/song-performance--detail.html'
-
-
 class VehicleListView(ListView):
     model = Vehicle
     queryset = (

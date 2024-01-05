@@ -1,7 +1,12 @@
 input {
     border: 1px solid var(--Aero);
-    font-size: inherit;
     padding: 4px;
+    width: 95%;
+}
+
+select {
+    border: 1px solid var(--Aero);
+    padding: 3px 4px 4px;
     width: 95%;
 }
 

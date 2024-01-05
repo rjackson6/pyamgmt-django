@@ -49,6 +49,7 @@ _person_urls = make_urls([
 ])
 
 _song_performance_urls = make_urls([
+    path('', views.models.SongPerformanceListView.as_view(), name='list'),
     path('<int:pk>/', include([
         path('',
              views.models.SongPerformanceDetailView.as_view(),

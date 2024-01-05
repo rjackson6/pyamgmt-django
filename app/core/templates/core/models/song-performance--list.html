@@ -1,0 +1,26 @@
+{% extends 'core/model-list.html' %}
+
+
+{% block content %}
+<h1>Song Performance</h1>
+<table>
+  <thead>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for obj in object_list %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>
+      <a href="{% url 'core:song-performance:detail' obj.pk %}">
+        {{ obj }}
+      </a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}
