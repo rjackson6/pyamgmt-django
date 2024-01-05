@@ -1,7 +1,10 @@
 import enum
 import hashlib
 
-from django.db.models import CharField, ImageField, TextField, ManyToManyField
+from django.db.models import (
+    CharField, ImageField, PositiveSmallIntegerField, TextField,
+    ManyToManyField,
+)
 
 from django_base.models import BaseAuditable
 
@@ -18,7 +21,8 @@ class Photo(BaseAuditable):
 
     short_description = CharField(max_length=255, blank=True)
     description = TextField(blank=True)
-    # TODO: SHA hash
+    year_taken = PositiveSmallIntegerField(null=True, blank=True)
+    attribution = CharField(max_length=255, blank=True)
     # TODO: The following fields could probably be a mixin, but I'm not sure
     #  about overriding the save method
     image_full = ImageField()

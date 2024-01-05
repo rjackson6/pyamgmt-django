@@ -20,9 +20,14 @@ input {
     color: var(--Emerald);
 }
 
-.line-items {
+.line-item {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
+}
+
+.line-items {
+    display: flex;
+    flex-direction: column;
 }
 
 .transaction {

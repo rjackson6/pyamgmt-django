@@ -25,21 +25,26 @@
     {# I think maybe the line-items section should be a table inside a form #}
     {# Or each div-row is a form with some id or reference to the object #}
     {# Event handling local to each section #}
-    <div>Account</div>
-    <div>Debits</div>
-    <div>Credits</div>
+    <div class="line-item">
+      <div>Account</div>
+      <div>Debits</div>
+      <div>Credits</div>
+    </div>
+    {# TODO: This should be a template fragment, like txn-line-item--form #}
     {% for line_item in txn.line_items.all %}
     {# TODO: Reserve a block for _this_ account, e.g., if line_item.account==account #}
     {#  This account should always come first #}
-    <div><input value="{{ line_item.account }}"></div>
-    {% if line_item.debit %}
-    <div class="debit"><input value="{{ line_item.amount }}"></div>
-    <div><input></div>
-    {% else %}
-    <div><input></div>
-{#      <div class="credit">{{ line_item.amount }}</div>#}
-    <div class="credit"><input value="{{ line_item.amount }}"></div>
-    {% endif %}
+    <form class="line-item">
+      <div><input value="{{ line_item.account }}"></div>
+      {% if line_item.debit %}
+      <div class="debit"><input value="{{ line_item.amount }}"></div>
+      <div><input></div>
+      {% else %}
+      <div><input></div>
+  {#      <div class="credit">{{ line_item.amount }}</div>#}
+      <div class="credit"><input value="{{ line_item.amount }}"></div>
+      {% endif %}
+    </form>
     {% endfor %}
     {# TODO: Last rows should have subtotals #}
     {# TODO: Symbol or coloration for balanced transactions #}
@@ -49,9 +54,6 @@
       <select>
       </select>
     </div>
-    <div><input></div>
-    <div><input></div>
-    <div><button>Add</button></div>
   </div>  <!-- .line-items -->
   <div></div>
 </div>  <!-- .transaction -->
