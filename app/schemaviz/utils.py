@@ -1,5 +1,6 @@
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, field
+from itertools import chain
 from typing import Protocol, Self
 
 from django.apps import apps
@@ -88,7 +89,6 @@ class Node(NodeOptions):
             id=f'music_artist-{music_artist.pk}',
             label=music_artist.name,
             group='music_artist',
-            font=NodeFont(size=30),
             **kwargs
         )
 
@@ -150,32 +150,59 @@ class Edge(EdgeOptions):
 
 @dataclass(slots=True)
 class VisNetwork:
-    # TODO: Just key edges with (from, to) values.
     nodes: dict[str, Node] = field(default_factory=dict)
-    edges: list[Edge] = field(default_factory=list)
-    _node_set: set[tuple[str, str]] = field(default_factory=set, init=False)
-    _edge_set: set[tuple[str, str]] = field(default_factory=set, init=False)
+    edges: defaultdict[tuple[str, str], list[Edge]] = field(
+        default_factory=lambda: defaultdict(list)
+    )
+
+    def add_node(self, node: Node) -> None:
+        if node.id not in self.nodes:
+            self.nodes[node.id] = node
+
+    def get_or_add_node(self, node: Node) -> Node:
+        if node.id not in self.nodes:
+            self.nodes[node.id] = node
+        else:
+            node = self.nodes[node.id]
+        return node
 
     def extend(
             self,
             network: Self,
-            duplicate_edges: bool = False,
+            combine: bool = True,
             overwrite_nodes: bool = False,
+            allow_duplicate_edges: bool = False,
     ) -> None:
+        if combine:
+            # only certain attributes should be combined
+            for k, node in network.nodes.items():
+                if k not in self.nodes:
+                    self.add_node(node)
+                    continue
+                if self.nodes[k].mass and node.mass:
+                    self.nodes[k].mass += node.mass
+                if self.nodes[k].value and node.value:
+                    self.nodes[k].value += node.value
         if overwrite_nodes:
             self.nodes.update(network.nodes)
         else:
             network.nodes.update(self.nodes)
             self.nodes = network.nodes
-        if duplicate_edges:
-            self.edges.extend(network.edges)
-        else:
-            self.edges.extend(
-                x for x in network.edges
-                if (x.from_, x.to) not in self._edge_set
-            )
-        self._node_set.update(network._node_set)
-        self._edge_set.update(network._edge_set)
+        for key, lst in network.edges.items():
+            if allow_duplicate_edges:
+                self.edges[key].extend(lst)
+            elif key not in self.edges:
+                self.edges[key] = lst
+
+    def collect_mass(self, use_for_value: bool = True) -> None:
+        """For each 'to' in edges, add that to the mass of the node."""
+        for (from_node, to_node) in self.edges:
+            node = self.nodes[to_node]
+            if not node.mass:
+                node.mass = 1
+            node.mass += 1
+            if use_for_value:
+                node.value = node.mass
 
     def to_dict(self) -> dict:
         return asdict(self, dict_factory=vis_dict_factory)
@@ -186,6 +213,7 @@ class VisNetwork:
             if not k.startswith('_')
         }
         data['nodes'] = list(data['nodes'].values())
+        data['edges'] = list(chain(*data['edges'].values()))
         return data
 
 
@@ -242,7 +270,7 @@ class VisOptions:
 # noinspection PyProtectedMember
 def apps_dataset() -> dict:
     nodes = {}
-    edges = []
+    edges = defaultdict(list)
     tos = Counter()
     for mdl in apps.get_models():
         label = mdl._meta.label
@@ -273,7 +301,7 @@ def apps_dataset() -> dict:
                     length=length,
                     smooth=smooth,
                 )
-                edges.append(edge)
+                edges[(label, related_label)].append(edge)
                 # Use to_ as the "mass" for the related node
                 tos[related_label] += 1
     # Add the counts to the nodes after the keys are populated
