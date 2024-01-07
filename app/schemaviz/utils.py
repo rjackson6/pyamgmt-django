@@ -49,7 +49,18 @@ class NodeFont:
 
 
 @dataclass(kw_only=True)
-class Node:
+class NodeOptions:
+    font: NodeFont | None = None
+    mass: int | None = None
+    opacity: float | None = None
+    physics: bool | None = None
+    shape: str | None = None
+    value: int | None = None
+
+
+@dataclass(kw_only=True)
+class Node(NodeOptions):
+    # TODO 2024-01-07: Enum for these would be easier
     valid_shapes = (
         'ellipse', 'circle', 'database', 'box', 'text',
         'image', 'circularImage', 'diamond', 'dot', 'star', 'triangle',
@@ -60,11 +71,6 @@ class Node:
     id: str
     label: str
     group: str = ''
-    mass: int = 1  # "count" would help generalize
-    physics: bool | None = None
-    shape: str | None = None
-    value: int = 1
-    font: NodeFont | None = None
 
     @classmethod
     def from_motion_picture(
@@ -124,9 +130,9 @@ class EdgeColor:
 
 
 @dataclass(kw_only=True)
-class Edge:
-    from_: str
-    to: str
+class EdgeOptions:
+    arrows: dict | str | None = None
+    chosen: dict | bool | None = None
     color: EdgeColor | None = None
     dashes: list | bool | None = None
     label: str = ''
@@ -134,6 +140,12 @@ class Edge:
     physics: bool | None = None
     smooth: dict | bool | None = None
     width: int | None = None
+
+
+@dataclass
+class Edge(EdgeOptions):
+    from_: str
+    to: str
 
 
 @dataclass(slots=True)

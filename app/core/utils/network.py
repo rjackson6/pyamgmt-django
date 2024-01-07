@@ -2,7 +2,7 @@ from collections import defaultdict
 import itertools
 from typing import Callable
 
-from schemaviz.utils import Edge, EdgeColor, Node, VisNetwork
+from schemaviz.utils import Edge, Node, VisNetwork
 
 from core.models import (
     MotionPictureXPerson,
