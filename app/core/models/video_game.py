@@ -1,6 +1,6 @@
 from django.db.models import (
     CharField, DateField, ForeignKey,
-    CASCADE, PROTECT, SET_NULL, UniqueConstraint, ManyToManyField, PositiveSmallIntegerField,
+    CASCADE, PROTECT, SET_NULL, UniqueConstraint, ManyToManyField, PositiveSmallIntegerField, TextField,
 )
 
 from django_base.models import BaseAuditable
@@ -53,6 +53,7 @@ class VideoGame(BaseAuditable):
         null=True, blank=True,
         validators=[validate_year_not_future]
     )
+    notes = TextField(blank=True)
     music_albums = ManyToManyField(
         'MusicAlbum', through='MusicAlbumXVideoGame',
         related_name='+', blank=True,

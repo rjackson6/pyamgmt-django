@@ -19,9 +19,6 @@ class Beer(BaseAuditable):
         null=True, blank=True,
     )
 
-    class Meta:
-        verbose_name_plural = 'breweries'
-
     def __str__(self) -> str:
         return self.name
 
@@ -39,6 +36,9 @@ class Brewery(BaseAuditable):
         'USCity', on_delete=SET_NULL,
         null=True, blank=True,
     )
+
+    class Meta:
+        verbose_name_plural = 'breweries'
 
     def __str__(self) -> str:
         return f'{self.name}'

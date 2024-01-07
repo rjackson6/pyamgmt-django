@@ -29,7 +29,7 @@ class MusicArtist(BaseAuditable):
         null=True, blank=True,
         help_text="Website or homepage for this music artist."
     )
-    comments = TextField(blank=True, default='')
+    notes = TextField(blank=True, default='')
     # Relationships
     music_albums = ManyToManyField(
         'MusicAlbum', through='MusicAlbumXMusicArtist',

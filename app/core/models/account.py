@@ -121,10 +121,6 @@ class AccountAsset(BaseAuditable):
         verbose_name = 'Account::Asset'
         verbose_name_plural = verbose_name
 
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.account.name}'
-
 
 class AccountAssetFinancial(BaseAuditable):
     """An asset which is monetary.

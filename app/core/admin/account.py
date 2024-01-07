@@ -12,8 +12,12 @@ class AccountAdmin(admin.ModelAdmin):
 
 @admin.register(account.AccountAsset)
 class AccountAssetAdmin(admin.ModelAdmin):
-    list_display = ('admin_description', 'subtype')
+    list_display = ('_description', 'subtype')
     list_select_related = ('account',)
+
+    @staticmethod
+    def _description(obj) -> str:
+        return obj.account.name
 
 
 admin.site.register(account.AccountAssetFinancial)

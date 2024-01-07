@@ -22,7 +22,7 @@ class Photo(BaseAuditable):
     short_description = CharField(max_length=255, blank=True)
     description = TextField(blank=True)
     year_taken = PositiveSmallIntegerField(null=True, blank=True)
-    attribution = CharField(max_length=255, blank=True)
+    attribution = TextField(blank=True)
     # TODO: The following fields could probably be a mixin, but I'm not sure
     #  about overriding the save method
     image_full = ImageField()

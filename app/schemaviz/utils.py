@@ -133,6 +133,7 @@ class Edge:
 
 @dataclass(slots=True)
 class VisNetwork:
+    # TODO: Just key edges with (from, to) values.
     nodes: dict[str, Node] = field(default_factory=dict)
     edges: list[Edge] = field(default_factory=list)
     _node_set: set[tuple[str, str]] = field(default_factory=set, init=False)

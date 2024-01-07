@@ -12,7 +12,7 @@ class VideoGameAdmin(admin.ModelAdmin):
         _inlines.PersonXVideoGameInline,
         _inlines.MusicAlbumXVideoGameInline,
     ]
-    list_display = ('title', 'series', 'year_first_published')
+    list_display = ('title', 'year_first_published', 'series',)
     list_select_related = ('series',)
     ordering = ('title', 'disambiguator')
     search_fields = ('title',)
