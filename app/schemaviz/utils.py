@@ -6,6 +6,11 @@ from django.apps import apps
 from django.db.models.fields.related import RelatedField
 
 
+def vis_dict_factory(kv_pairs) -> dict:
+    m = {'from_': 'from'}
+    return {m.get(k, k): v for k, v, in kv_pairs if v is not None}
+
+
 class MotionPicture(Protocol):
     pk: int
     title: str
@@ -161,7 +166,7 @@ class VisNetwork:
         self._edge_set.update(network._edge_set)
 
     def to_dict(self) -> dict:
-        return asdict(self, dict_factory=self.dict_factory)
+        return asdict(self, dict_factory=vis_dict_factory)
 
     def to_json(self) -> dict:
         data = {
@@ -171,10 +176,55 @@ class VisNetwork:
         data['nodes'] = list(data['nodes'].values())
         return data
 
+
+@dataclass(slots=True)
+class VisOptions:
+    layout: dict = field(default_factory=dict)
+    nodes: dict = field(default_factory=dict)
+    edges: dict = field(default_factory=dict)
+    physics: dict = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not self.layout:
+            self.layout = self.get_default_layout()
+        if not self.nodes:
+            self.nodes = self.get_default_nodes()
+        if not self.edges:
+            self.edges = self.get_default_edges()
+        if not self.physics:
+            self.physics = self.get_default_physics()
+
+    def to_dict(self) -> dict:
+        return asdict(self, dict_factory=vis_dict_factory)
+
     @staticmethod
-    def dict_factory(kv_pairs) -> dict:
-        m = {'from_': 'from'}
-        return {m.get(k, k): v for k, v, in kv_pairs if v is not None}
+    def get_default_layout() -> dict:
+        return dict(
+            improvedLayout=False
+        )
+
+    @staticmethod
+    def get_default_nodes() -> dict:
+        return dict(
+            font=dict(size=24),
+            opacity=0.8,
+            shape='box',
+        )
+
+    @staticmethod
+    def get_default_edges() -> dict:
+        return dict(
+            smooth=False
+        )
+
+    @staticmethod
+    def get_default_physics() -> dict:
+        return dict(
+            barnesHut=dict(
+                gravitationalConstant=-10000,
+                springLength=200,
+            )
+        )
 
 
 # noinspection PyProtectedMember

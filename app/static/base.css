@@ -39,7 +39,7 @@
     --Fern-green: #4f7942;
     --Garnet: #733635;
     --Gunmetal: #2a3439;  /* Nice grey background color */
-    --Gunmetal--light: #323c41;
+    --Gunmetal--light: #313b40;
     --Han-blue: #446cff;
     --Han-purple: #5218fa;
     --Heliotrope: #df73ff;
@@ -216,4 +216,18 @@ td > table {
 
 .django_base.pagination {
     background-color: var(--Peacock-blue);
+    border: 2px solid var(--Timberwolf);
+    padding: 0.2rem;
+}
+
+.django_base.pagination__step-links {
+    display: grid;
+    gap: 2rem;
+    grid-template-areas: "f p c c n l";
+    justify-items: center;
+    width: 60%;
+}
+
+.django_base.pagination__current {
+    grid-area: c;
 }

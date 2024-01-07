@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from django_ccbv.views import TemplateView
 
-from schemaviz import Edge, EdgeColor, Node, VisNetwork
+from schemaviz import Edge, EdgeColor, Node, VisNetwork, VisOptions
 
 from ..models import (
     MusicAlbumXMusicTag,
@@ -46,7 +46,23 @@ class FilmGamesAndMusicNetworkView(TemplateView):
         vis_data.extend(network.person_x_song())
         vis_data.extend(network.person_x_song_performance())
         vis_data.extend(network.person_x_video_game())
-        context.update({'vis_data': vis_data.to_json()})
+        vis_options = VisOptions(
+            nodes=dict(
+                font=dict(size=20),
+                opacity=0.8,
+                shape='dot',
+            ),
+            physics=dict(
+                barnesHut=dict(
+                    gravitationalConstant=-30000,
+                    springLength=300,
+                )
+            )
+        )
+        context.update({
+            'vis_data': vis_data.to_json(),
+            'vis_options': vis_options.to_dict()
+        })
         return context
 
 
@@ -55,7 +71,7 @@ class MusicArtistNetworkView(TemplateView):
 
     Factors out specific albums and songs from display to reduce rendering.
     """
-    template_name = 'core/music-artist-network.html'
+    template_name = 'core/network.html'
 
     @staticmethod
     def get_music_artist_x_person_edge_kwargs(edge) -> dict:
@@ -96,7 +112,23 @@ class MusicArtistNetworkView(TemplateView):
                 'color': EdgeColor(color='6688FF'),
             }
         ))
-        context.update({'vis_data': vis_data.to_json()})
+        vis_options = VisOptions(
+            nodes=dict(
+                font=dict(size=20),
+                opacity=0.8,
+                shape='box',
+            ),
+            physics=dict(
+                barnesHut=dict(
+                    gravitationalConstant=-30000,
+                    springLength=300,
+                )
+            )
+        )
+        context.update({
+            'vis_data': vis_data.to_json(),
+            'vis_options': vis_options.to_dict(),
+        })
         return context
 
 

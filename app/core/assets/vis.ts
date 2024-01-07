@@ -1,10 +1,7 @@
 import {Network} from "vis-network";
 
 
-const visData = JSON.parse(document.getElementById("vis-data")!.textContent!);
-console.log(visData);
-const container = document.getElementById("vis-container");
-const options = {
+const defaultOptions = {
     layout: {
         improvedLayout: false,
     },
@@ -26,4 +23,19 @@ const options = {
     }
 };
 
-new Network(container!, visData, options);
+
+const visData = JSON.parse(document.getElementById("vis-data")!.textContent!);
+let visOptions;
+let element = document.getElementById("vis-options");
+if (element !== null) {
+    visOptions = JSON.parse(element.textContent!);
+}
+else {
+    visOptions = defaultOptions;
+}
+
+console.log(visData);
+console.log(visOptions);
+
+const container = document.getElementById("vis-container");
+new Network(container!, visData, visOptions);

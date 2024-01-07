@@ -4,4 +4,5 @@ from .utils import (
     Node,
     NodeFont,
     VisNetwork,
+    VisOptions,
 )

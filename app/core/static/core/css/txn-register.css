@@ -43,6 +43,10 @@ select {
     padding: 5px;
 }
 
+.transaction:hover {
+    background-color: var(--Gunmetal--light);
+}
+
 .transaction-list {
     border: 1px dashed white;
     display: flex;
