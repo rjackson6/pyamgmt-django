@@ -44,7 +44,7 @@ select {
 }
 
 .transaction:hover {
-    background-color: var(--Gunmetal--light);
+    background-color: var(--Gunmetal);
 }
 
 .transaction-list {

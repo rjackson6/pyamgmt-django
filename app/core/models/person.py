@@ -137,6 +137,19 @@ class Person(BaseAuditable):
         return ' '.join(values)
 
 
+class PersonNameOnly(BaseAuditable):
+    """An aggregating table for relating common names of people, but who don't
+    have a public biography available.
+
+    Intended for use with credits, as the only correlations that can be
+    assumed name (and maybe role, depending on standard business titles).
+    """
+    name = CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class PersonXPersonRelation(BaseAuditable):
     """Hereditary relationships; permanent."""
 

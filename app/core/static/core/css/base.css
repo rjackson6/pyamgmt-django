@@ -36,7 +36,7 @@ th {
 }
 
 #root-main {
-    background-color: var(--Gunmetal);
+    background-color: var(--Gunmetal--darker);
     color: white;
     display: flex;
 }

@@ -5,7 +5,7 @@
 
 .music-album:hover {
     /*background-color: var(--Charcoal);*/
-    background-color: var(--Gunmetal--light);
+    background-color: var(--Gunmetal--dark);
 }
 
 .music-album__info {
@@ -47,6 +47,10 @@
     border: 1px dashed var(--Robin-egg-blue);
     display: grid;
     grid-template-columns: 1fr 1fr 9fr 1fr;
+}
+
+.track:hover {
+    background-color: var(--Gunmetal);
 }
 
 .track + .track {
