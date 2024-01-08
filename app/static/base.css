@@ -1,6 +1,7 @@
 /* Variables */
 :root {
-    --Aero: #00b9e8;  /* Nice bold border color */
+    --Aero--dark: #00b2e1;
+    --Aero: #00b9e8;  /* Nice bold border */
     --Apple-green: #8ab800;
     --Apple-red: #be0032;
     --Amaranth: #e52b50;
@@ -37,13 +38,16 @@
     --Electric-blue: #7df9ff;
     --Emerald: #50c878;
     --Fern-green: #4f7942;
+    --Garnet--darker: #652827;
+    --Garnet--dark: #6c2f2e;
     --Garnet: #733635;
     --Gunmetal--darkest: #151f24;
     --Gunmetal--darker: #1c262b;
     --Gunmetal--dark: #232d32;
-    --Gunmetal: #2a3439;  /* Nice grey background color */
+    --Gunmetal: #2a3439;  /* Nice grey background */
     --Gunmetal--light: #313b40;
     --Gunmetal--lighter: #384247;
+    --Gunmetal--lightest: #3f494e;
     --Han-blue: #446cff;
     --Han-purple: #5218fa;
     --Heliotrope: #df73ff;
@@ -71,7 +75,7 @@
     --Mikado-yellow: #ffc40c;
     --Mint: #3eb489;
     --Moonstone: #3aa8c1;
-    --Myrtle: #21421e;  /* Nice green background color */
+    --Myrtle: #21421e;  /* Nice green background */
     --Naples-yellow: #fada5e;
     --Onyx: #353839;
     --Outer-space: #414a4c;
@@ -84,7 +88,7 @@
     --Phthalo-green: #123524;
     --Pine-green: #01796f;
     --Platinum: #e5e4e2;
-    --Prussian-blue: #003153;
+    --Prussian-blue: #003153;  /* Nice blue background */
     --Robin-egg-blue: #00cccc;
     --Rosewood: #65000b;
     --Royal-blue: #002366;
