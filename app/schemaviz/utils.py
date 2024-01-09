@@ -51,7 +51,7 @@ class NodeFont:
 
 @dataclass(kw_only=True)
 class NodeOptions:
-    font: NodeFont | None = None
+    font: NodeFont | dict | None = None
     mass: int | None = None
     opacity: float | None = None
     physics: bool | None = None
@@ -218,11 +218,27 @@ class VisNetwork:
 
 
 @dataclass(slots=True)
+class LayoutOptions:
+    improvedLayout: bool | None = None
+
+
+@dataclass(slots=True)
+class BarnesHutOptions:
+    gravitationalConstant: int | None = None
+    springLength: int | None = None
+
+
+@dataclass(slots=True)
+class PhysicsOptions:
+    barnesHut: BarnesHutOptions | dict | None = None
+
+
+@dataclass(slots=True)
 class VisOptions:
-    layout: dict = field(default_factory=dict)
-    nodes: dict = field(default_factory=dict)
-    edges: dict = field(default_factory=dict)
-    physics: dict = field(default_factory=dict)
+    layout: LayoutOptions | dict = field(default_factory=dict)
+    nodes:  NodeOptions | dict = field(default_factory=dict)
+    edges: EdgeOptions | dict = field(default_factory=dict)
+    physics: PhysicsOptions | dict = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.layout:
@@ -238,29 +254,29 @@ class VisOptions:
         return asdict(self, dict_factory=vis_dict_factory)
 
     @staticmethod
-    def get_default_layout() -> dict:
-        return dict(
+    def get_default_layout() -> LayoutOptions:
+        return LayoutOptions(
             improvedLayout=False
         )
 
     @staticmethod
-    def get_default_nodes() -> dict:
-        return dict(
-            font=dict(size=24),
+    def get_default_nodes() -> NodeOptions:
+        return NodeOptions(
+            font=NodeFont(size=24),
             opacity=0.8,
             shape='box',
         )
 
     @staticmethod
-    def get_default_edges() -> dict:
-        return dict(
+    def get_default_edges() -> EdgeOptions:
+        return EdgeOptions(
             smooth=False
         )
 
     @staticmethod
-    def get_default_physics() -> dict:
-        return dict(
-            barnesHut=dict(
+    def get_default_physics() -> PhysicsOptions:
+        return PhysicsOptions(
+            barnesHut=BarnesHutOptions(
                 gravitationalConstant=-10000,
                 springLength=200,
             )

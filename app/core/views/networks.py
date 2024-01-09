@@ -1,6 +1,16 @@
 from django_ccbv.views import TemplateView
 
-from schemaviz import Edge, EdgeColor, Node, VisNetwork, VisOptions
+from schemaviz import (
+    BarnesHutOptions,
+    Edge,
+    EdgeColor,
+    Node,
+    NodeFont,
+    NodeOptions,
+    PhysicsOptions,
+    VisNetwork,
+    VisOptions,
+)
 
 from ..models import (
     MusicAlbumXMusicTag,
@@ -44,8 +54,8 @@ class FilmGamesAndMusicNetworkView(TemplateView):
         vis_data.extend(network.person_to_video_game())
 
         vis_options = VisOptions(
-            nodes=dict(
-                font=dict(
+            nodes=NodeOptions(
+                font=NodeFont(
                     color='white',
                     size=20,
                 ),
@@ -53,10 +63,9 @@ class FilmGamesAndMusicNetworkView(TemplateView):
                 shape='dot',
                 value=1,
             ),
-            physics=dict(
-                barnesHut=dict(
+            physics=PhysicsOptions(
+                barnesHut=BarnesHutOptions(
                     gravitationalConstant=-5000,
-                    # springLength=300,
                 )
             )
         )
@@ -83,7 +92,7 @@ class MusicArtistNetworkView(TemplateView):
             width = 1
         return {
             'dashes': dashes,
-            'width': width
+            'width': width,
         }
 
     def get_context_data(self, **kwargs) -> dict:
@@ -99,13 +108,11 @@ class MusicArtistNetworkView(TemplateView):
         vis_data.extend(network.person_to_music_artist_via_music_album(
             edge_kwargs={
                 'color': EdgeColor(color='66FF66'),
-                # 'length': 600,
             }
         ))
         vis_data.extend(network.person_to_music_artist_via_song(
             edge_kwargs={
                 'color': EdgeColor(color='2266FF'),
-                # 'length': 600,
             }
         ))
         vis_data.extend(network.person_to_music_artist_via_song_performance(
@@ -114,8 +121,8 @@ class MusicArtistNetworkView(TemplateView):
             }
         ))
         vis_options = VisOptions(
-            nodes=dict(
-                font=dict(
+            nodes=NodeOptions(
+                font=NodeFont(
                     color='white',
                     size=20,
                 ),
@@ -123,12 +130,6 @@ class MusicArtistNetworkView(TemplateView):
                 shape='dot',
                 value=1,
             ),
-            physics=dict(
-                barnesHut=dict(
-                    gravitationalConstant=-5000,
-                    # springLength=300,
-                )
-            )
         )
         context.update({
             'vis_data': vis_data.to_json(),
