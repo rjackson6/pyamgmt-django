@@ -142,6 +142,17 @@ class AssetInventory(BaseAuditable):
     """An item that is not uniquely identifiable.
 
     Example: Copies of DVDs, un-serialized items.
+
+    `quantity` is a reference field. Common consumables, like groceries, aren't
+    really going to be inventoried. Spare parts and materials, however, can be
+    used for a specific project, or charged against a particular discrete asset.
+    I should be able to charge items against events and have the quantity
+    consumed; however, I think it's enough to measure rates of consumption
+    through purchase frequency, and I don't own anything with capital components
+    that warrant a spare parts system.
+
+    That said, `quantity` is a harmless field to keep and use for informational
+    purposes.
     """
 
     asset_id: int
