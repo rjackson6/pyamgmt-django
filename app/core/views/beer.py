@@ -12,60 +12,56 @@ class BeerNetworkView(TemplateView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
+        vn = VisNetwork()
         qs = (
             Beer.objects.select_related('brewery__city')
         )
-        nodes = {}
-        edges = []
         for beer in qs:
             beer_key = f'beer-{beer.pk}'
             brewery = beer.brewery
             brewery_key = f'brewery-{brewery.pk}'
-            if beer_key not in nodes:
-                nodes[beer_key] = Node(
+            if beer_key not in vn.nodes:
+                vn.nodes[beer_key] = Node(
                     id=beer_key,
                     label=beer.name,
                     group='beer',
                 )
                 if beer.style:
                     beer_style_key = f'style-{beer.style.pk}'
-                    if beer_style_key not in nodes:
-                        nodes[beer_style_key] = Node(
+                    if beer_style_key not in vn.nodes:
+                        vn.nodes[beer_style_key] = Node(
                             id=beer_style_key,
                             label=f'{beer.style.name}',
                             group='beer-style'
                         )
-                    edges.append(Edge(
+                    vn.edges[(beer_style_key, beer_key)].append(Edge(
                         from_=beer_style_key,
                         to=beer_key,
                         dashes=True,
-                        length=500,
                     ))
-            if brewery_key not in nodes:
-                nodes[brewery_key] = Node(
+            if brewery_key not in vn.nodes:
+                vn.nodes[brewery_key] = Node(
                     id=brewery_key,
                     label=f'{brewery.name}',
                     group='brewery',
                 )
                 if brewery.city:
                     state_key = f'state-{brewery.city.us_state}'
-                    if state_key not in nodes:
-                        nodes[state_key] = Node(
+                    if state_key not in vn.nodes:
+                        vn.nodes[state_key] = Node(
                             id=state_key,
                             label=f'{brewery.city.us_state}',
                             group='state'
                         )
-                    edges.append(Edge(
+                    vn.edges[(state_key, brewery_key)].append(Edge(
                         from_=state_key,
                         to=brewery_key,
                         dashes=True,
-                        length=1000,
                         smooth=False,
                     ))
-            edges.append(Edge(
+            vn.edges[(brewery_key, beer_key)].append(Edge(
                 from_=brewery_key,
                 to=beer_key,
             ))
-        vis_data = VisNetwork(nodes, edges)
-        context['vis_data'] = vis_data.to_json()
+        context['vis_data'] = vn.to_json()
         return context

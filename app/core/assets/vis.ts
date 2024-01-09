@@ -7,20 +7,14 @@ const defaultOptions = {
     },
     nodes: {
         font: {
-            size: 24,
+            size: 20,
         },
         opacity: 0.8,
-        shape: "box",
+        shape: "dot",
     },
     edges: {
         smooth: false,
     },
-    physics: {
-        barnesHut: {
-            gravitationalConstant: -10000,
-            springLength: 200,
-        },
-    }
 };
 
 
