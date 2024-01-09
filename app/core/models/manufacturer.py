@@ -6,7 +6,8 @@ from django_base.utils import pascal_case_to_snake_case
 
 class Manufacturer(BaseAuditable):
     business = OneToOneField(
-        'Business', on_delete=SET_NULL, null=True, blank=True,
+        'Business', on_delete=SET_NULL,
+        null=True, blank=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     name = CharField(max_length=255, unique=True)

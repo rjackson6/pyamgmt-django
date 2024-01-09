@@ -28,7 +28,8 @@ class PointOfSale(BaseAuditable):
     point_of_sale_date = DateField()
     point_of_sale_time = TimeField(null=True, blank=True)
     txn = OneToOneField(
-        'Txn', on_delete=SET_NULL, null=True, blank=True,
+        'Txn', on_delete=SET_NULL,
+        null=True, blank=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
 

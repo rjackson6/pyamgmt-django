@@ -146,8 +146,6 @@ class AccountAssetReal(BaseAuditable):
 
     Examples: a vehicle, or real estate.
     Implies inherent value, and may be subject to depreciation.
-    An asset shouldn't be able to relate to multiple accounts, as this would
-    double-charge values.
     """
 
     account_asset_id: int
@@ -156,18 +154,32 @@ class AccountAssetReal(BaseAuditable):
         AccountAsset, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    asset_discrete = OneToOneField(
-        'AssetDiscrete', on_delete=SET_NULL,
-        null=True, blank=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
 
     class Meta:
         verbose_name = 'Account::Asset::Real'
         verbose_name_plural = verbose_name
 
-    def get_date_acquired(self):
-        ...
+
+class AccountAssetRealXAssetDiscrete(BaseAuditable):
+    """Relationship between discrete possessions and their financial 'bucket'.
+
+    This works around generalized accounts like 'Tools' or 'Furniture'. For the
+    sake of accounting, they are still 'Real Assets', but a discrete asset may
+    not be duplicated in multiple accounts.
+    """
+
+    account_asset_real = ForeignKey(
+        AccountAssetReal, on_delete=CASCADE,
+        **default_related_names(__qualname__)
+    )
+    asset_discrete = OneToOneField(
+        'AssetDiscrete', on_delete=PROTECT, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
+
+    class Meta:
+        verbose_name = 'Account::Asset::Real <-> Asset::Discrete'
+        verbose_name_plural = verbose_name
 
 
 class AccountEquity(BaseAuditable):
