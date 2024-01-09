@@ -1,7 +1,15 @@
 from django.db.models import (
-    CharField, DateField, ForeignKey, IntegerField, OneToOneField, TextField,
+    CASCADE,
+    CharField,
+    DateField,
+    ForeignKey,
+    IntegerField,
+    OneToOneField,
+    PROTECT,
+    SET_NULL,
     TextChoices,
-    CASCADE, PROTECT, SET_NULL,
+    TextField,
+    UniqueConstraint,
 )
 
 from django_base.models import BaseAuditable
@@ -9,21 +17,18 @@ from django_base.utils import default_related_names, pascal_case_to_snake_case
 
 
 class Asset(BaseAuditable):
-    """Any item which implies ownership."""
+    """Any item which implies ownership.
+
+    The subtype is required to distinguish between business logic.
+    """
 
     class Subtype(TextChoices):
+        # CONTRACT = 'CONTRACT', 'CONTRACT'
         DISCRETE = 'DISCRETE', 'DISCRETE'
         INVENTORY = 'INVENTORY', 'INVENTORY'
 
-    account_asset_real_id: int
-
-    account_asset_real = ForeignKey(
-        'AccountAssetReal', on_delete=SET_NULL,
-        null=True, blank=True,
-        **default_related_names(__qualname__)
-    )
-    description = TextField(null=True, blank=True)
-    subtype = CharField(max_length=31, choices=Subtype.choices)
+    description = TextField(blank=True, default='')
+    subtype = CharField(max_length=9, choices=Subtype.choices)
 
     class Meta:
         verbose_name = 'Asset'
@@ -36,12 +41,14 @@ class Asset(BaseAuditable):
 class AssetDiscrete(BaseAuditable):
     """An item that is uniquely identifiable.
 
-    Examples: A vehicle, serialized equipment, or property
+    Examples: A vehicle, serialized equipment, or property.
+    I would perhaps go further to suggest that a discrete asset can be sold and
+    resold.
     """
 
     class Subtype(TextChoices):
-        CATALOG_ITEM = 'CATALOG_ITEM', 'CATALOG_ITEM'
         MANUFACTURED = 'MANUFACTURED', 'MANUFACTURED'
+        REAL_ESTATE = 'REAL_ESTATE', 'REAL_ESTATE'
         VEHICLE = 'VEHICLE', 'VEHICLE'
 
     asset_id: int
@@ -52,42 +59,64 @@ class AssetDiscrete(BaseAuditable):
     )
     date_acquired = DateField(null=True, blank=True)
     date_withdrawn = DateField(null=True, blank=True)
-    subtype = CharField(max_length=31, choices=Subtype.choices, default='NONE')
+    subtype = CharField(max_length=12, choices=Subtype.choices, blank=True)
 
     class Meta:
         verbose_name = 'Asset::Discrete'
         verbose_name_plural = verbose_name
 
 
-# class AssetDiscreteManufactured(BaseAuditable):
-#     asset = OneToOneField(
-#         Asset, on_delete=CASCADE, primary_key=True,
-#         related_name=pascal_case_to_snake_case(__qualname__)
-#     )
-#     manufacturer = ForeignKey(
-#         'Manufacturer', on_delete=SET_NULL, null=True, blank=True,
-#         **default_related_names(__qualname__)
-#     )
-#     serial = CharField(max_length=255, blank=True)
+class AssetDiscreteManufactured(BaseAuditable):
+    """Ownership of a manufactured item.
+
+    Uniquely identifiable by a serial number, which would also be known to the
+    manufacturer of the item. This allows lookup for product registration,
+    warranties, and services.
+    """
+
+    asset = OneToOneField(
+        Asset, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
+    catalog_item_manufactured = ForeignKey(
+        'CatalogItemManufactured', on_delete=SET_NULL,
+        null=True, blank=True,
+        **default_related_names(__qualname__)
+    )
+    serial = CharField(
+        max_length=255,
+        help_text="Manufacturer serial number (or other unique identifier)"
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('catalog_item_manufactured', 'serial'),
+                name='unique_asset_discrete_manufactured_serial',
+                nulls_distinct=False
+            )
+        ]
 
 
-# class AssetDiscreteSerialized(BaseAuditable):
-#     """An item that is uniquely identifiable by serial number."""
-#     asset_discrete = OneToOneField(
-#         AssetDiscrete, on_delete=CASCADE, primary_key=True,
-#         related_name=pascal_case_to_snake_case(__qualname__)
-#     )
-#     serial = CharField(max_length=255)
-#     out_of = CharField(max_length=255, blank=True)
-#     notes = TextField(blank=True)
-#
-#     class Meta:
-#         verbose_name = 'Asset::Discrete::Serialized'
-#         verbose_name_plural = 'Asset::Discrete::Serialized'
+class AssetDiscreteRealEstate(BaseAuditable):
+    """Ownership of a unique parcel of real estate, such as housing or land."""
+
+    asset_discrete = OneToOneField(
+        AssetDiscrete, on_delete=CASCADE, primary_key=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
+    real_estate_parcel = OneToOneField(
+        'RealEstateParcel', on_delete=PROTECT,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
 
 
 class AssetDiscreteVehicle(BaseAuditable):
-    """A discrete asset that can be associated with a unique vehicle."""
+    """A discrete asset that can be associated with a unique vehicle.
+
+    Though Vehicles are Manufactured, this relates to the more detailed Vehicle
+    model.
+    """
 
     asset_discrete_id: int
     vehicle_id: int
@@ -107,29 +136,6 @@ class AssetDiscreteVehicle(BaseAuditable):
 
     def __str__(self) -> str:
         return f'AssetDiscreteVehicle {self.pk}: {self.vehicle_id}'
-
-
-class AssetDiscreteXCatalogItem(BaseAuditable):
-    """A discrete asset that can relate to a CatalogItem.
-
-    Although this looks like a subtype, it's joining domains.
-    """
-
-    asset_discrete_id: int
-    catalog_item_id: int
-
-    asset_discrete = OneToOneField(
-        AssetDiscrete, on_delete=CASCADE, primary_key=True,
-        related_name=pascal_case_to_snake_case(__qualname__)
-    )
-    catalog_item = ForeignKey(
-        'CatalogItem', on_delete=PROTECT,
-        **default_related_names(__qualname__)
-    )
-
-    class Meta:
-        verbose_name = 'Asset::Discrete <-> CatalogItem'
-        verbose_name_plural = verbose_name
 
 
 class AssetInventory(BaseAuditable):

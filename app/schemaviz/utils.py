@@ -1,5 +1,6 @@
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, field
+from enum import auto, StrEnum
 from itertools import chain
 from typing import Protocol, Self
 
@@ -49,26 +50,37 @@ class NodeFont:
     multi: bool | str | None = None
 
 
+class NodeShape(StrEnum):
+    BOX = auto()
+    CIRCLE = auto()
+    CIRCULAR_IMAGE = 'circularImage'
+    CUSTOM = auto()
+    DATABASE = auto()
+    DIAMOND = auto()
+    DOT = auto()
+    ELLIPSE = auto()
+    HEXAGON = auto()
+    ICON = auto()
+    IMAGE = auto()
+    STAR = auto()
+    SQUARE = auto()
+    TEXT = auto()
+    TRIANGLE = auto()
+    TRIANGLE_DOWN = 'triangleDown'
+
+
 @dataclass(kw_only=True)
 class NodeOptions:
     font: NodeFont | dict | None = None
     mass: int | None = None
     opacity: float | None = None
     physics: bool | None = None
-    shape: str | None = None
+    shape: NodeShape | str | None = None
     value: int | None = None
 
 
 @dataclass(kw_only=True)
 class Node(NodeOptions):
-    # TODO 2024-01-07: Enum for these would be easier
-    valid_shapes = (
-        'ellipse', 'circle', 'database', 'box', 'text',
-        'image', 'circularImage', 'diamond', 'dot', 'star', 'triangle',
-        'triangleDown', 'hexagon', 'square', 'icon',
-        'custom',
-    )
-
     id: str
     label: str
     group: str = ''

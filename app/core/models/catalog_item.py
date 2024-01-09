@@ -2,10 +2,17 @@ from decimal import Decimal
 
 from django.core.validators import MinLengthValidator
 from django.db.models import (
-    CharField, DecimalField, ForeignKey, IntegerField, JSONField, OneToOneField,
+    CASCADE,
+    CharField,
+    DecimalField,
+    ForeignKey,
+    IntegerField,
+    JSONField,
+    OneToOneField,
+    PROTECT,
+    SET_NULL,
     UniqueConstraint,
     TextChoices,
-    CASCADE, PROTECT, SET_DEFAULT, SET_NULL,
 )
 
 from django_base.models import BaseAuditable
@@ -23,20 +30,26 @@ class CatalogItem(BaseAuditable):
     Can generally be ordered, purchased, re-sold, and accumulated as a discrete
     asset or inventory.
     Does not include concepts like labor hours, services, or warranties.
+
+    My primary key is essentially *my* catalog number, despite the fact that my
+    table doesn't get mailed out before the holidays.
     """
 
     class Subtype(TextChoices):
         DIGITAL_SONG = 'DIGITAL_SONG', 'DIGITAL_SONG'
+        MANUFACTURED = 'MANUFACTURED', 'MANUFACTURED'
         MUSIC_ALBUM = 'MUSIC_ALBUM', 'MUSIC_ALBUM'
 
     asin = UpperCharField(
-        max_length=10, unique=True, null=True, blank=True,
+        max_length=10, unique=True,
+        null=True, blank=True,
         validators=[MinLengthValidator(10), validate_alphanumeric],
         verbose_name="ASIN",
         help_text="Amazon Standard Identification Number"
     )
     ean_13 = CharField(
-        max_length=13, unique=True, null=True, blank=True,
+        max_length=13, unique=True,
+        null=True, blank=True,
         validators=[MinLengthValidator(13), validate_digit],
         verbose_name="EAN-13",
         help_text="European Article Number"
@@ -44,13 +57,15 @@ class CatalogItem(BaseAuditable):
     eav = JSONField(null=True, blank=True)
     # isbn is also part of GSIN / gs1 spec now, apparently
     isbn = CharField(
-        max_length=10, unique=True, null=True, blank=True,
+        max_length=10, unique=True,
+        null=True, blank=True,
         validators=[MinLengthValidator(10), validate_isbn],
         verbose_name="ISBN",
         help_text="International Standard Book Number"
     )
     isbn_13 = CharField(
-        max_length=13, unique=True, null=True, blank=True,
+        max_length=13, unique=True,
+        null=True, blank=True,
         validators=[
             MinLengthValidator(13),
             validate_digit,
@@ -59,14 +74,15 @@ class CatalogItem(BaseAuditable):
         verbose_name="ISBN-13"
     )
     ismn = CharField(
-        max_length=13, unique=True, null=True, blank=True,
+        max_length=13, unique=True,
+        null=True, blank=True,
         validators=[MinLengthValidator(13)],
         verbose_name="ISMN",
         help_text="International Standard Music Number"
     )
     name = CharField(max_length=255)
     subtype = CharField(
-        max_length=31, choices=Subtype.choices, null=True, blank=True
+        max_length=31, choices=Subtype.choices, blank=True
     )
     upc_a = CharField(
         max_length=12, unique=True, null=True, blank=True,
@@ -120,21 +136,32 @@ class CatalogItemDigitalSong(BaseAuditable):
 
 
 class CatalogItemManufactured(BaseAuditable):
+    """Items that are characterized by a manufacturer and part number.
+
+    This is one of the most general subtypes of catalog items. Favor the use of
+    other subtypes if they describe the item more specifically.
+    """
+
     catalog_item = OneToOneField(
         CatalogItem, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
     manufacturer = ForeignKey(
-        'Manufacturer', on_delete=PROTECT, null=True, blank=True,
+        'Manufacturer', on_delete=PROTECT,
+        null=True, blank=True,
         **default_related_names(__qualname__)
     )
-    part_number = CharField(max_length=255, blank=True)
+    part_number = CharField(
+        max_length=255, blank=True,
+        help_text="Model or Part Number"
+    )
 
     class Meta:
         constraints = [
             UniqueConstraint(
                 fields=('manufacturer', 'part_number'),
-                name='unique_catalog_item_manufactured'
+                name='unique_catalog_item_manufactured',
+                nulls_distinct=False,
             )
         ]
 
@@ -178,8 +205,10 @@ class CatalogItemXCatalogItem(BaseAuditable):
     enforcement mechanism for that.
     """
 
-    catalog_item_a = ForeignKey('CatalogItem', on_delete=CASCADE, related_name='+')
-    catalog_item_b = ForeignKey('CatalogItem', on_delete=CASCADE, related_name='+')
+    catalog_item_a = ForeignKey(
+        'CatalogItem', on_delete=CASCADE, related_name='+')
+    catalog_item_b = ForeignKey(
+        'CatalogItem', on_delete=CASCADE, related_name='+')
     relationship = None
 
 

@@ -6,7 +6,6 @@ from django.db.models import (
     Manager,
     Sum,
 )
-from django.utils.functional import cached_property
 
 from django_base.models.models import BaseAuditable
 from django_base.utils import default_related_names, pascal_case_to_snake_case
@@ -147,6 +146,8 @@ class AccountAssetReal(BaseAuditable):
 
     Examples: a vehicle, or real estate.
     Implies inherent value, and may be subject to depreciation.
+    An asset shouldn't be able to relate to multiple accounts, as this would
+    double-charge values.
     """
 
     account_asset_id: int
@@ -155,15 +156,18 @@ class AccountAssetReal(BaseAuditable):
         AccountAsset, on_delete=CASCADE, primary_key=True,
         related_name=pascal_case_to_snake_case(__qualname__)
     )
-    # TODO: I might should put the foreign key to Asset here
+    asset_discrete = OneToOneField(
+        'AssetDiscrete', on_delete=SET_NULL,
+        null=True, blank=True,
+        related_name=pascal_case_to_snake_case(__qualname__)
+    )
 
     class Meta:
         verbose_name = 'Account::Asset::Real'
         verbose_name_plural = verbose_name
 
-    @cached_property
-    def admin_description(self) -> str:
-        return f'{self.account_asset.account.name}'
+    def get_date_acquired(self):
+        ...
 
 
 class AccountEquity(BaseAuditable):

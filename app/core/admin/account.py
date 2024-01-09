@@ -25,4 +25,9 @@ admin.site.register(account.AccountAssetFinancial)
 
 @admin.register(account.AccountAssetReal)
 class AccountAssetRealAdmin(admin.ModelAdmin):
-    list_display = ('admin_description',)
+    list_display = ('_description',)
+    list_select_related = ('account_asset__acount',)
+
+    @staticmethod
+    def _description(obj) -> str:
+        return obj.account_asset.account.name

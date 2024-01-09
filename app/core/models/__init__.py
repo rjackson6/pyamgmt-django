@@ -15,8 +15,9 @@ from .account import (
 from .asset import (
     Asset,
     AssetDiscrete,
+    AssetDiscreteManufactured,
+    AssetDiscreteRealEstate,
     AssetDiscreteVehicle,
-    AssetDiscreteXCatalogItem,
     AssetInventory,
     AssetType,
 )
@@ -38,6 +39,7 @@ from .business import (
 from .catalog_item import (
     CatalogItem,
     CatalogItemDigitalSong,
+    CatalogItemManufactured,
     CatalogItemMusicAlbumProduction,
 )
 from .city import USCity
@@ -120,6 +122,9 @@ from .point_of_sale import (
     PointOfSale,
     PointOfSaleDocument,
     PointOfSaleLineItem,
+)
+from .real_estate import (
+    RealEstateParcel,
 )
 from .record import (
     RecordLabel,

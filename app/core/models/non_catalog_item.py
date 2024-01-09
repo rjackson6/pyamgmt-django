@@ -48,7 +48,7 @@ class NonCatalogItemXPointOfSaleLineItem(BaseAuditable):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['non_catalog_item', 'point_of_sale_line_item'],
+                fields=('non_catalog_item', 'point_of_sale_line_item'),
                 name='unique_non_catalog_item_x_point_of_sale_line_item'
             )
         ]
