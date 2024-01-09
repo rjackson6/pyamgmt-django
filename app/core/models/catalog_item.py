@@ -82,7 +82,7 @@ class CatalogItem(BaseAuditable):
     )
     name = CharField(max_length=255)
     subtype = CharField(
-        max_length=31, choices=Subtype.choices, blank=True
+        max_length=31, choices=Subtype.choices, blank=True, default='',
     )
     upc_a = CharField(
         max_length=12, unique=True, null=True, blank=True,
