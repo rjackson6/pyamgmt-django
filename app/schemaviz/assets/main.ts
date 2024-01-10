@@ -8,8 +8,10 @@ let options: Options = {
         font: {
             size: 20
         },
+        mass: 1,
         opacity: 0.8,
         shape: 'dot',
+        value: 1,
     },
     edges: {
         arrows: {
@@ -17,28 +19,6 @@ let options: Options = {
                 enabled: true
             }
         },
-        // color: {
-        //     opacity: 0.5
-        // },
-        // physics: false,
-        // smooth: {
-            // enabled: false,  // true
-            // type: 'dynamic',  // dynamic
-        // }
     },
-    physics: {
-        barnesHut: {
-            gravitationalConstant: -2000,  // -2000
-            damping: 0.5,  // 0.09
-            springLength: 100,  // 95
-            springConstant: 0.02,  // 0.04
-            avoidOverlap: 0.1,  // 0
-        },
-        repulsion: {
-            nodeDistance: 200,  // 100
-            damping: 0.5,  // 0.09
-        },
-        // solver: 'repulsion'  // 'barnesHut'
-    }
 };
 new Network(container!, data, options);

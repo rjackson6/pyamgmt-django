@@ -274,9 +274,9 @@ class VisOptions:
     @staticmethod
     def get_default_nodes() -> NodeOptions:
         return NodeOptions(
-            font=NodeFont(size=24),
+            font=NodeFont(size=20),
             opacity=0.8,
-            shape='box',
+            shape='dot',
         )
 
     @staticmethod
@@ -287,19 +287,12 @@ class VisOptions:
 
     @staticmethod
     def get_default_physics() -> PhysicsOptions:
-        return PhysicsOptions(
-            barnesHut=BarnesHutOptions(
-                gravitationalConstant=-10000,
-                springLength=200,
-            )
-        )
+        return PhysicsOptions()
 
 
 # noinspection PyProtectedMember
 def apps_dataset() -> dict:
-    nodes = {}
-    edges = defaultdict(list)
-    tos = Counter()
+    vn = VisNetwork()
     for mdl in apps.get_models():
         label = mdl._meta.label
         node = Node(
@@ -307,7 +300,7 @@ def apps_dataset() -> dict:
             label=mdl._meta.object_name,
             group=mdl._meta.app_label
         )
-        nodes[label] = node
+        vn.nodes[label] = node
         fields = mdl._meta.get_fields()
         for field_ in fields:
             if isinstance(field_, RelatedField):
@@ -318,7 +311,6 @@ def apps_dataset() -> dict:
                     edge_color = EdgeColor(color='CC5555', opacity=0.9)
                 elif field_.many_to_many:
                     edge_color = EdgeColor(color='8888FF', opacity=0.6)
-                    length = 400
                     smooth = False
                 related_model = field_.related_model
                 related_label = related_model._meta.label
@@ -329,12 +321,6 @@ def apps_dataset() -> dict:
                     length=length,
                     smooth=smooth,
                 )
-                edges[(label, related_label)].append(edge)
-                # Use to_ as the "mass" for the related node
-                tos[related_label] += 1
-    # Add the counts to the nodes after the keys are populated
-    for k, count in tos.items():
-        nodes[k].value += count
-        nodes[k].mass += count
-    x = VisNetwork(nodes, edges)
-    return x.to_json()
+                vn.edges[(label, related_label)].append(edge)
+    vn.collect_mass()
+    return vn.to_json()

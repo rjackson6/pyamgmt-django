@@ -35,4 +35,4 @@ class UserXBeer(BaseAuditable):
             )
         ]
         verbose_name = 'User <-> Beer'
-        verbose_name_plural = verbose_name
+        verbose_name_plural = 'Users <-> Beer'
