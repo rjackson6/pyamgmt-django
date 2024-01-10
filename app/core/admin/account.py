@@ -21,7 +21,14 @@ class AccountAssetAdmin(admin.ModelAdmin):
         return obj.account.name
 
 
-admin.site.register(account.AccountAssetFinancial)
+@admin.register(account.AccountAssetFinancial)
+class AccountAssetFinancialAdmin(admin.ModelAdmin):
+    list_display = ('_description',)
+    list_select_related = ('account_asset__account',)
+
+    @staticmethod
+    def _description(obj) -> str:
+        return obj.account_asset.account.name
 
 
 @admin.register(account.AccountAssetReal)
@@ -65,6 +72,15 @@ class AccountExpenseAdmin(admin.ModelAdmin):
         return obj.account.name
 
 
-admin.site.register(account.AccountIncome)
+@admin.register(account.AccountIncome)
+class AccountIncomeAdmin(admin.ModelAdmin):
+    list_display = ('_description',)
+    list_select_related = ('account',)
+
+    @staticmethod
+    def _description(obj) -> str:
+        return obj.account.name
+
+
 admin.site.register(account.AccountLiability)
 admin.site.register(account.AccountLiabilitySecured)
