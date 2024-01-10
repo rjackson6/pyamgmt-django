@@ -1,9 +1,6 @@
-from collections import defaultdict
-
 from django_ccbv.views import TemplateView
 
-from schemaviz import Edge, Node, NodeFont, VisNetwork
-
+from schemaviz import Edge, Node, VisNetwork
 from ..models import Beer
 
 

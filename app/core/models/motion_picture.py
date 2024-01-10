@@ -3,7 +3,6 @@ from django.db.models import (
     UniqueConstraint,
     CASCADE, PROTECT, SET_NULL, ManyToManyField, TextField,
 )
-from django.utils.functional import cached_property
 
 from django_base.models import BaseAuditable
 from django_base.utils import default_related_names

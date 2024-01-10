@@ -6,10 +6,12 @@ from django_ccbv import ListView, TemplateView
 from core.models import (
     Account,
     MusicAlbum,
+    MusicAlbumArtwork,
     MusicAlbumEdition,
-    SongRecording,
+    MusicAlbumEditionXSongRecording,
+    MusicArtist,
     Txn,
-    TxnLineItem, MusicAlbumEditionXSongRecording, MusicArtist, MusicAlbumArtwork,
+    TxnLineItem,
 )
 
 
