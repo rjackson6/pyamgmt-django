@@ -168,6 +168,7 @@ class MusicArtistXPerson(BaseAuditable):
         'Person', on_delete=CASCADE,
         **default_related_names(__qualname__)
     )
+    notes = TextField(blank=True)
 
     objects = Manager()
     with_related = managers.music_artist.MusicArtistXPersonManager()

@@ -22,15 +22,6 @@ class BeerStyleAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
 
-@admin.register(beer.BeerXUser)
-class BeerXUserAdmin(admin.ModelAdmin):
-    list_display = ('_description', 'has_tried', 'approved')
-
-    @staticmethod
-    def _description(obj):
-        return f'{obj.user}: {obj.beer.name}'
-
-
 @admin.register(beer.Brewery)
 class BreweryAdmin(admin.ModelAdmin):
     ordering = ('name',)
