@@ -38,6 +38,14 @@ Aside from the mileage logs for vehicles, these features are outside the primary
 
 ![Rendering of connected records, 2024-01-09](app/static/film-games-music--2024-01-09--001.png)
 
+_Rendering of connections between People, Film, Music, and Video Games_
+
+- _Blue: Person_
+- _Red: Music Artist_
+- _Green: Film_
+- _Yellow: Video Game_
+
+
 ## Backstory
 
 This originally branched from a project that was being developed using Python's native TK library. While that was a fun experience in and of itself, I found `tkinter` to be a bit limiting. Sure, it's cross-platform and built into Python's standard library, but web-based technologies severely outpace what TK offers in terms of interface and scalability.
