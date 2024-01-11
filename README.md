@@ -34,25 +34,30 @@ Aside from the mileage logs for vehicles, these features are outside the primary
 
 ## Example Outputs
 
-### Network visulatization
+### Network Visualization
+
+Below is a rendering from 2024-01-09 of 1986 nodes and 2755 edges from records I've accumulated in my database:
 
 ![Rendering of connected records, 2024-01-09](app/static/film-games-music--2024-01-09--001.png)
 
-_Rendering of connections between People, Film, Music, and Video Games_
+_`vis-network` rendering of connections between People, Film, Music, and Video Games_
 
 - _Blue: Person_
 - _Red: Music Artist_
 - _Green: Film_
 - _Yellow: Video Game_
 
+## Development
+
+I currently use the WSL2 for development. I use Docker with the WSL2 backend for managing additional components (Postgres, Redis, etc.). Other environments or backends may need adjustments for networking, as my settings assume WSL2's default network interface to the host machine.
 
 ## Backstory
 
-This originally branched from a project that was being developed using Python's native TK library. While that was a fun experience in and of itself, I found `tkinter` to be a bit limiting. Sure, it's cross-platform and built into Python's standard library, but web-based technologies severely outpace what TK offers in terms of interface and scalability.
+This originally branched from a project that was being developed using Python's native TK library. While that was a fun experience in and of itself, I found `tkinter` to be limiting. Sure, it's cross-platform and built into Python's standard library, but web-based technologies severely outpace what TK offers in terms of interface and scalability.
 
 Rather than using a local application using SQLAlchemy with a local SQLite database, I decided to change my mindset of architecture to better align with the tools that I build commercially. Instead of packaging a Python application that would be installed on one or more machines, and setting up the networking for multiple instances to access the same database, I started to favor the idea of using a "real" web server that locally networked machines could access via HTTP. When I set up the first debugging instance, and realized that I could access my application from my smartphone's browser, I knew there was no going back.
 
-With that in mind, I started to refactor my original project into a Django application.
+With that in mind, I started to refactor my original project into a Django application. This is the direction that I'll maintain until I have a compelling reason to change the implementation.
 
 ## Disclaimers
 
