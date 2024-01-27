@@ -1,0 +1,299 @@
+/* Variables */
+/* This ended up turning into my own color index.
+   This should probably be post-processed to include only the used colors in
+   dist
+*/
+:root {
+    --Aero--dark: #00a3cc;
+    --Aero: #00b9e8;  /* Nice bold border */
+    --Apple-green: #8ab800;
+    --Apple-red: #be0032;
+    --Amaranth: #e52b50;
+    --Amber: #ffbf00;
+    --Amber-SAE: #ff7e00;
+    --Amethyst: #9966cc;
+    --Arylide-yellow: #e9d66b;
+    --Aureolin: #fdee00;
+    --Azure: #0080ff;
+    --Barn-red: #7c0902;
+    --Beau-blue: #bcd4e6;
+    --Bistre: #3d2b1f;
+    --Black-coral: #54626f;
+    --Bluebonnet: #1c1cf0;
+    --Bronze: #cd7f32;
+    --Byzantium: #702963;
+    --Cadmium-green: #006b3c;
+    --Cadmium-orange: #ed872d;
+    --Cadmium-red: #e30022;
+    --Cadmium-yellow: #fff600;
+    --Cardinal-red: #c51e3a;
+    --Catawba: #703642;
+    --Celadon: #ace1af;
+    --Cerulean: #007ba7;
+    --Charcoal: #36454f;
+    --Cinereous: #98817b;
+    --Cobalt-blue: #0047ab;
+    --Copper: #b87333;
+    --Davys-grey: #555555;
+    --Denim: #1560bd;
+    --Ebony: #555d50;
+    --Eerie-black: #1b1b1b;
+    --Egyptian-blue: #1034a6;
+    --Electric-blue: #7df9ff;
+    --Emerald: #50c878;
+    --Fern-green: #4f7942;
+    --Garnet--darker: #652827;
+    --Garnet--dark: #6c2f2e;
+    --Garnet: #733635;
+    --Gunmetal--darkest:  #151f24;
+    --Gunmetal--darker:   #1c262b;
+    --Gunmetal--dark:     #232d32;
+    --Gunmetal:           #2a3439;  /* Nice grey background */
+    --Gunmetal--light:    #313b40;
+    --Gunmetal--lighter:  #384247;
+    --Gunmetal--lightest: #3f494e;
+    --Han-blue: #446cff;
+    --Han-purple: #5218fa;
+    --Heliotrope: #df73ff;
+    --Honolulu-blue: #006db0;
+    --Iceberg: #71a6d2;
+    --Imperial-red: #ed2939;
+    --Independence: #4c516d;
+    --International-Klein-Blue: #002fa7;
+    --Isabelline: #f4f0ec;
+    --Jade-green: #00a86b;
+    --Jasper: #d05340;
+    --Jet: #343434;
+    --Jonquil: #f4ca16;
+    --Kelly-green: #4cbb17;
+    --Keppel: #3ab09e;
+    --Lapis-lazuli: #26619c;
+    --Laurel-green: #a9ba9d;
+    --Lavender-floral: #b57edc;
+    --Lavender-grey: #c4c3d0;
+    --Licorice: #1a1110;
+    --Malachite: #0bda51;
+    --Manatee: #979aaa;
+    --Marengo: #4c5866;
+    --Maya-blue: #73c2fb;
+    --Mikado-yellow: #ffc40c;
+    --Mint: #3eb489;
+    --Moonstone: #3aa8c1;
+    --Myrtle: #21421e;  /* Nice green background */
+    --Naples-yellow: #fada5e;
+    --Onyx: #353839;
+    --Outer-space: #414a4c;
+    --Paynes-grey: #536878;
+    --Peacock-blue: #004958;  /* Nice teal-blue */
+    --Persian-blue: #1c39bb;
+    --Persian-green: #00a693;
+    --Persimmon: #ec5800;
+    --Phthalo-blue: #000f89;
+    --Phthalo-green: #123524;
+    --Pine-green: #01796f;
+    --Platinum: #e5e4e2;
+    --Prussian-blue: #003153;  /* Nice blue background */
+    --Robin-egg-blue: #00cccc;
+    --Rosewood: #65000b;
+    --Royal-blue: #002366;
+    --Sap-green: #507d2a;
+    --Scheeles-green: #478800;
+    --Timberwolf: #dbd7d2;  /* Works well with gunmetal */
+    --Titanium: #878681;
+    --Titanium-yellow: #eee600;
+    --Twin-bed: #bedbed;
+    --Tyrian-purple: #66023c;
+    --Ultramarine: #120a8f;
+    --Vanilla: #f3e5ab;
+    --Venetian-red: #c80815;
+    --Verdigris: #43b3ae;
+    --Viridian: #40826d;
+    --Xanadu: #738678;
+    --YInMn-blue: #2e5090;
+    --Zinnwaldite: #2c1608;
+}
+
+:root {
+    --hsl-Eerie-black:              hsl(  0,   0%,  11%);
+    --hsl-Jet:                      hsl(  0,   0%,  20%);
+    --hsl-Davys-grey:               hsl(  0,   0%,  33%);
+
+    --hsl-Garnet--darker:           hsl(  1,  37%,  23%);
+    --hsl-Garnet--dark:             hsl(  1,  37%,  28%);
+    --hsl-Garnet:                   hsl(  1,  37%,  33%);
+
+    --hsl-Barn-red--dark:           hsl(  3,  97%,  20%);
+    --hsl-Barn-red:                 hsl(  3,  97%,  25%);
+    --hsl-Barn-red--light:          hsl(  3,  97%,  30%);
+
+    --hsl-Licorice:                 hsl(  6,  24%,   8%);
+    --hsl-Licorice--light:          hsl(  6,  24%,  13%);
+    --hsl-Licorice--lighter:        hsl(  6,  24%,  18%);
+
+    --hsl-Jasper:                   hsl(  8,  61%,  53%);
+    --hsl-Cinereous:                hsl( 12,  12%,  54%);
+    --hsl-Persimmon:                hsl( 22, 100%,  46%);
+    --hsl-Zinnwaldite:              hsl( 23,  69%,  10%);
+    --hsl-Bistre:                   hsl( 24,  33%,  18%);
+    --hsl-Cadmium-orange:           hsl( 28,  84%,  55%);
+    --hsl-Copper:                   hsl( 29,  57%,  46%);
+    --hsl-Isabelline:               hsl( 30,  27%,  94%);
+    --hsl-Bronze:                   hsl( 30,  61%,  50%);
+    --hsl-Amber-SAE:                hsl( 30, 100%,  50%);
+
+    --hsl-Timberwolf--darkest:      hsl( 33,  11%,  69%);
+    --hsl-Timberwolf--darker:       hsl( 33,  11%,  74%);
+    --hsl-Timberwolf--dark:         hsl( 33,  11%,  79%);
+    --hsl-Timberwolf:               hsl( 33,  11%,  84%);
+
+    --hsl-Platinum--dark:           hsl( 40,   5%,  84%);
+    --hsl-Platinum:                 hsl( 40,   5%,  89%);
+
+    --hsl-Amber--darker:            hsl( 45, 100%,  40%);
+    --hsl-Amber--dark:              hsl( 45, 100%,  45%);
+    --hsl-Amber:                    hsl( 45, 100%,  50%);
+    --hsl-Amber--light:             hsl( 45, 100%,  55%);
+    --hsl-Amber--lighter:           hsl( 45, 100%,  60%);
+
+    --hsl-Vanilla:                  hsl( 48,  75%,  81%);
+    --hsl-Jonquil:                  hsl( 49,  91%,  52%);
+
+    --hsl-Titanium--darker:         hsl( 50,   2%,  42%);
+    --hsl-Titanium--dark:           hsl( 50,   2%,  47%);
+    --hsl-Titanium:                 hsl( 50,   2%,  52%);
+    --hsl-Titanium--light:          hsl( 50,   2%,  57%);
+    --hsl-Titanium--lighter:        hsl( 50,   2%,  62%);
+
+    --hsl-Arylide-yellow:           hsl( 51,  74%,  67%);
+    --hsl-Aureolin:                 hsl( 56, 100%,  50%);
+    --hsl-Titanium-yellow:          hsl( 58, 100%,  47%);
+    --hsl-Cadmium-yellow:           hsl( 58, 100%,  50%);
+
+    --hsl-Apple-green--dark:        hsl( 75, 100%,  31%);
+    --hsl-Apple-green:              hsl( 75, 100%,  36%);
+    --hsl-Apple-green--light:       hsl( 75, 100%,  41%);
+
+    --hsl-Scheeles-green:           hsl( 89, 100%,  27%);
+    --hsl-Sap-green:                hsl( 93,  50%,  33%);
+    --hsl-Laurel-green:             hsl( 95,  17%,  67%);
+    --hsl-Ebony:                    hsl( 97,   8%,  34%);
+
+    --hsl-Kelly-green--darker:      hsl(101,  78%,  31%);
+    --hsl-Kelly-green--dark:        hsl(101,  78%,  36%);
+    --hsl-Kelly-green:              hsl(101,  78%,  41%);
+
+    --hsl-Fern-green:               hsl(106,  29%,  37%);
+    --hsl-Myrtle:                   hsl(115,  38%,  19%);
+
+    --hsl-Celadon--dark:            hsl(123,  47%,  73%);
+    --hsl-Celadon:                  hsl(123,  47%,  78%);
+    --hsl-Celadon--light:           hsl(123,  47%,  83%);
+
+    --hsl-Xanadu:                   hsl(136,   8%,  49%);
+    --hsl-Emerald:                  hsl(140,  52%,  55%);
+
+    --hsl-Malachite--darkest:       hsl(140,  90%,  30%);
+    --hsl-Malachite--darker:        hsl(140,  90%,  35%);
+    --hsl-Malachite--dark:          hsl(140,  90%,  40%);
+    --hsl-Malachite:                hsl(140,  90%,  45%);
+
+    --hsl-Phthalo-green:            hsl(151,  49%,  14%);
+    --hsl-Cadmium-green:            hsl(154, 100%,  21%);
+    --hsl-Mint:                     hsl(158,  49%,  47%);
+    --hsl-Jade-green:               hsl(158, 100%,  33%);
+    --hsl-Viridian:                 hsl(161,  34%,  38%);
+
+    --hsl-Keppel--darker:           hsl(171,  50%,  36%);
+    --hsl-Keppel--dark:             hsl(171,  50%,  41%);
+    --hsl-Keppel:                   hsl(171,  50%,  46%);
+
+    --hsl-Persian-green--darker:    hsl(173, 100%,  23%);
+    --hsl-Persian-green--dark:      hsl(173, 100%,  28%);
+    --hsl-Persian-green:            hsl(173, 100%,  33%);
+
+    --hsl-Pine-green:               hsl(175,  98%,  24%);
+    --hsl-Verdigris:                hsl(177,  46%,  48%);
+    --hsl-Robin-egg-blue:           hsl(180, 100%,  40%);
+
+    --hsl-Electric-blue--darkest:   hsl(183, 100%,  60%);
+    --hsl-Electric-blue--darker:    hsl(183, 100%,  65%);
+    --hsl-Electric-blue--dark:      hsl(183, 100%,  70%);
+    --hsl-Electric-blue:            hsl(183, 100%,  75%);
+
+    --hsl-Peacock-blue--dark:       hsl(190, 100%,  12%);
+    --hsl-Peacock-blue:             hsl(190, 100%,  17%);
+    --hsl-Peacock-blue--light:      hsl(190, 100%,  22%);
+
+    --hsl-Outer-space:              hsl(191,   8%,  28%);
+    --hsl-Moonstone:                hsl(191,  54%,  49%);
+
+    --hsl-Aero--darkest:            hsl(192, 100%,  30%);
+    --hsl-Aero--darker:             hsl(192, 100%,  35%);
+    --hsl-Aero--dark:               hsl(192, 100%,  40%);
+    --hsl-Aero:                     hsl(192, 100%,  45%);
+    --hsl-Aero--light:              hsl(192, 100%,  50%);
+    --hsl-Aero--lighter:            hsl(192, 100%,  55%);
+    --hsl-Aero--lightest:           hsl(192, 100%,  60%);
+
+    --hsl-Onyx:                     hsl(195,   4%,  22%);
+    --hsl-Cerulean:                 hsl(196, 100%,  33%);
+
+    --hsl-Gunmetal--darkest:        hsl(200,  15%,   4%);
+    --hsl-Gunmetal--darker:         hsl(200,  15%,   9%);
+    --hsl-Gunmetal--dark:           hsl(200,  15%,  14%);
+    --hsl-Gunmetal:                 hsl(200,  15%,  19%);
+    --hsl-Gunmetal--light:          hsl(200,  15%,  24%);
+    --hsl-Gunmetal--lighter:        hsl(200,  15%,  29%);
+    --hsl-Gunmetal--lightest:       hsl(200,  15%,  34%);
+
+    --hsl-Twin-bed:                 hsl(203,  57%,  84%);
+    --hsl-Honolulu-blue:            hsl(203, 100%,  35%);
+    --hsl-Charcoal:                 hsl(204,  19%,  26%);
+    --hsl-Maya-blue:                hsl(205,  94%,  72%);
+
+    --hsl-Prussian-blue--dark:      hsl(205, 100%,  11%);
+    --hsl-Prussian-blue:            hsl(205, 100%,  16%);
+    --hsl-Prussian-blue--light:     hsl(205, 100%,  21%);
+    --hsl-Prussian-blue--lighter:   hsl(205, 100%,  26%);
+    --hsl-Prussian-blue--lightest:  hsl(205, 100%,  31%);
+
+    --hsl-Paynes-grey:              hsl(206,  18%,  40%);
+    --hsl-Beau-blue:                hsl(206,  46%,  82%);
+    --hsl-Iceberg:                  hsl(207,  52%,  63%);
+    --hsl-Black-coral:              hsl(209,  14%,  38%);
+    --hsl-Lapis-lazuli:             hsl(210,  61%,  38%);
+    --hsl-Azure:                    hsl(210, 100%,  50%);
+    --hsl-Marengo:                  hsl(212,  15%,  35%);
+    --hsl-Denim:                    hsl(213,  80%,  41%);
+    --hsl-Cobalt-blue:              hsl(215, 100%,  34%);
+    --hsl-YInMn-blue:               hsl(219,  52%,  37%);
+    --hsl-Royal-blue:               hsl(219, 100%,  20%);
+    --hsl-International-Klein-Blue: hsl(223, 100%,  33%);
+    --hsl-Egyptian-blue:            hsl(226,  82%,  36%);
+    --hsl-Han-blue:                 hsl(227, 100%,  63%);
+    --hsl-Persian-blue:             hsl(229,  74%,  42%);
+    --hsl-Manatee:                  hsl(231,  10%,  63%);
+    --hsl-Independence:             hsl(231,  18%,  36%);
+    --hsl-Phthalo-blue:             hsl(233, 100%,  27%);
+    --hsl-Bluebonnet:               hsl(240,  88%,  53%);
+    --hsl-Ultramarine:              hsl(244,  87%,  30%);
+    --hsl-Lavender-grey:            hsl(245,  12%,  79%);
+
+    --hsl-Han-purple-darker:        hsl(255,  96%,  44%);
+    --hsl-Han-purple-dark:          hsl(255,  96%,  49%);
+    --hsl-Han-purple:               hsl(255,  96%,  54%);
+
+    --hsl-Amethyst:                 hsl(270,  50%,  60%);
+    --hsl-Lavender-floral:          hsl(275,  57%,  68%);
+    --hsl-Heliotrope:               hsl(286, 100%,  73%);
+    --hsl-Byzantium:                hsl(311,  46%,  30%);
+    --hsl-Tyrian-purple:            hsl(325,  96%,  20%);
+    --hsl-Apple-red:                hsl(344, 100%,  37%);
+    --hsl-Catawba:                  hsl(348,  35%,  33%);
+    --hsl-Amaranth:                 hsl(348,  78%,  53%);
+    --hsl-Cardinal-red:             hsl(350,  74%,  45%);
+    --hsl-Cadmium-red:              hsl(351, 100%,  45%);
+    --hsl-Rosewood:                 hsl(353, 100%,  20%);
+    --hsl-Imperial-red:             hsl(355,  84%,  55%);
+    --hsl-Venetian-red:             hsl(356,  92%,  41%);
+}

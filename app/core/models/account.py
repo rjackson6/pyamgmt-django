@@ -48,8 +48,7 @@ class Account(BaseAuditable):
     )
 
     objects = managers.account.AccountManager.from_queryset(
-        _querysets.AccountQuerySet
-    )()
+        _querysets.AccountQuerySet)()
     assets = managers.account.AccountManagerAsset()
     liabilities = managers.account.AccountManagerLiability()
     equities = managers.account.AccountManagerEquity()

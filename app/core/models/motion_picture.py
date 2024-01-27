@@ -1,7 +1,13 @@
 from django.db.models import (
-    CharField, ForeignKey, PositiveSmallIntegerField,
+    CASCADE,
+    CharField,
+    ForeignKey,
+    ManyToManyField,
+    PositiveSmallIntegerField,
+    PROTECT,
+    SET_NULL,
+    TextField,
     UniqueConstraint,
-    CASCADE, PROTECT, SET_NULL, ManyToManyField, TextField,
 )
 
 from django_base.models import BaseAuditable
