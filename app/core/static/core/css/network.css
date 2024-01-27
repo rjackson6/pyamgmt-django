@@ -1,5 +1,5 @@
 .main {
-    background-color: var(--Gunmetal--darkest);
+    background-color: var(--hsl-Gunmetal--darker);
 }
 
 #vis-container {

@@ -166,7 +166,10 @@
 
     --hsl-Arylide-yellow:           hsl( 51,  74%,  67%);
     --hsl-Aureolin:                 hsl( 56, 100%,  50%);
-    --hsl-Titanium-yellow:          hsl( 58, 100%,  47%);
+
+    --hsl-Cadmium-yellow--darkest:  hsl( 58, 100%,  35%);
+    --hsl-Cadmium-yellow--darker:   hsl( 58, 100%,  40%);
+    --hsl-Cadmium-yellow--dark:     hsl( 58, 100%,  45%);
     --hsl-Cadmium-yellow:           hsl( 58, 100%,  50%);
 
     --hsl-Apple-green--dark:        hsl( 75, 100%,  31%);
