@@ -1,3 +1,5 @@
+:focus,:active  { outline-offset: 2px }
+
 a:link,
 a:visited {
     color: white;
@@ -85,7 +87,7 @@ th {
 }
 
 .breadcrumbs__list > li + li::before {
-    content: "\21D2";
+    content: "\21D2";  /* double-right arrow */
     padding: 0 0.2rem;
 }
 

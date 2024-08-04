@@ -199,6 +199,9 @@
     --hsl-Malachite--darker:        hsl(140,  90%,  35%);
     --hsl-Malachite--dark:          hsl(140,  90%,  40%);
     --hsl-Malachite:                hsl(140,  90%,  45%);
+    --hsl-Malachite--light:         hsl(140,  90%,  50%);
+    --hsl-Malachite--lighter:       hsl(140,  90%,  55%);
+    --hsl-Malachite--lightest:      hsl(140,  90%,  60%);
 
     --hsl-Phthalo-green:            hsl(151,  49%,  14%);
     --hsl-Cadmium-green:            hsl(154, 100%,  21%);
@@ -213,6 +216,8 @@
     --hsl-Persian-green--darker:    hsl(173, 100%,  23%);
     --hsl-Persian-green--dark:      hsl(173, 100%,  28%);
     --hsl-Persian-green:            hsl(173, 100%,  33%);
+    --hsl-Persian-green--light:     hsl(173, 100%,  38%);
+    --hsl-Persian-green--lighter:   hsl(173, 100%,  43%);
 
     --hsl-Pine-green:               hsl(175,  98%,  24%);
     --hsl-Verdigris:                hsl(177,  46%,  48%);
@@ -239,7 +244,12 @@
     --hsl-Aero--lightest:           hsl(192, 100%,  60%);
 
     --hsl-Onyx:                     hsl(195,   4%,  22%);
+
+    --hsl-Cerulean--darker:         hsl(196, 100%,  23%);
+    --hsl-Cerulean--dark:           hsl(196, 100%,  28%);
     --hsl-Cerulean:                 hsl(196, 100%,  33%);
+    --hsl-Cerulean--light:          hsl(196, 100%,  38%);
+    --hsl-Cerulean--lighter:        hsl(196, 100%,  43%);
 
     --hsl-Gunmetal--darkest:        hsl(200,  15%,   4%);
     --hsl-Gunmetal--darker:         hsl(200,  15%,   9%);
